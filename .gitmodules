@@ -1,4 +1,4 @@
 [submodule "kosa-spring-cloud-config"]
 	path = kosa-spring-cloud-config
-	url = git@github.com:kosa3-OverClock/kosa-spring-cloud-config.git
+	url = https://github.com/kosa3-OverClock/kosa-spring-cloud-config.git
     branch = main
