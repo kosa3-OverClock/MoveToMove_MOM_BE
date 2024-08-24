@@ -1,4 +1,4 @@
-package com.kosa.kosafinalprojbaeken;
+package com.kosa.kosafinalprojbakend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
