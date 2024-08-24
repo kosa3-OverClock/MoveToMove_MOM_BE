@@ -1,4 +1,4 @@
-package com.kosa.kosafinalprojbaeken;
+package com.kosa.kosafinalprojbaekend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
