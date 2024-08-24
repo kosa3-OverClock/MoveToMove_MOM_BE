@@ -1,1 +1,1 @@
-# kosa3-OverClock-kosa-FinalProj-baekend
+# kosa3-OverClock-kosa-FinalProj-backend

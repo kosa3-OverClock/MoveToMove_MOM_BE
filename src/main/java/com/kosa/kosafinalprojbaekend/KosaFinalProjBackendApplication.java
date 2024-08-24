@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class KosaFinalProjBaekenApplication {
+public class KosaFinalProjBackendApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(KosaFinalProjBaekenApplication.class, args);
+        SpringApplication.run(KosaFinalProjBackendApplication.class, args);
     }
 
 }
