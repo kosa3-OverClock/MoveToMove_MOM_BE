@@ -1,29 +1,13 @@
-# 1단계: 빌드를 위한 Gradle 이미지
-FROM gradle:8.8-jdk17 AS builder
-
-# Gradle 종속성 캐시 디렉토리 설정
-WORKDIR /home/gradle/src
-
-# 종속성 파일만 먼저 복사하고 캐싱을 위한 설정
-COPY build.gradle.kts settings.gradle.kts ./
-
-# Gradle 종속성 캐싱
-RUN gradle --no-daemon dependencies
-
-# 나머지 소스 코드 복사
-COPY --chown=gradle:gradle . .
-
-# Gradle 빌드 수행 (JAR 파일 생성)
-RUN gradle clean bootJar --no-daemon
-
-# 2단계: 실행을 위한 경량 JDK 이미지
+# JDK17 이미지 사용
 FROM openjdk:17-jdk-alpine
 
-# 애플리케이션 실행 디렉토리 설정
-WORKDIR /overclock
+VOLUME /tmp
 
-# 빌드 단계에서 생성된 JAR 파일을 복사
-COPY --from=builder /home/gradle/src/build/libs/*.jar movetomove.jar
+# JAR_FILE 변수에 값을 저장
+ARG JAR_FILE=./build/libs/movetomove-0.0.1-SNAPSHOT.jar
 
-# 컨테이너 시작 시 애플리케이션 실행 명령어
-ENTRYPOINT ["java", "-jar", "movetomove.jar"]
+# 변수에 저장된 것을 컨테이너 실행시 이름을 mom.jar파일로 변경하여 컨테이너에 저장
+COPY ${JAR_FILE} mom.jar
+
+# 빌드된 이미지가 run될 때 실행할 명령어
+ENTRYPOINT ["java","-jar","mom.jar"]
