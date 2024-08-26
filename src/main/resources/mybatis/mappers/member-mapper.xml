@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kosa.kosafinalprojbackend.mybatis.mappers.member.MemberMapper">
+
+    <select id="existsByEmail" resultType="boolean">
+        SELECT EXISTS (SELECT 1
+                         FROM members
+                        WHERE email = #{email}
+                      ) AS result
+    </select>
+
+</mapper>
