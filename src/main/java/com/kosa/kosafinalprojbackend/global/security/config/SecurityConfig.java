@@ -48,12 +48,12 @@ public class SecurityConfig {
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
     // 일반 로그인
-    http.formLogin(httpSecurityFormLoginConfigurer -> {
-            httpSecurityFormLoginConfigurer.loginPage("/**")
-            ;
-        });
-
-    http.httpBasic(AbstractHttpConfigurer::disable);
+//    http.formLogin(httpSecurityFormLoginConfigurer -> {
+//            httpSecurityFormLoginConfigurer.loginPage("/**")
+//            ;
+//        });
+//
+//    http.httpBasic(AbstractHttpConfigurer::disable);
 
 
     // 소셜 로그인

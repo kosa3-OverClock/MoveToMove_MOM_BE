@@ -23,16 +23,13 @@ import lombok.ToString;
 public class ErrorResponse {
 
     private String Message;
-    private String code;
 
     public ErrorResponse(final ResponseCode code) {
         this.Message = code.getMessage();
-        this.code = code.getCode();
     }
 
     public ErrorResponse(final ResponseCode code, final String message) {
         this.Message = message;
-        this.code = code.getCode();
     }
 
     public static ErrorResponse of(final ResponseCode code) {
