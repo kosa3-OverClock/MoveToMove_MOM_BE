@@ -1,4 +1,4 @@
-package com.kosa.kosafinalprojbaekend.global.security.model;
+package com.kosa.kosafinalprojbackend.global.security.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

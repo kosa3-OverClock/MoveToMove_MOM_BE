@@ -1,4 +1,4 @@
-package com.kosa.kosafinalprojbaekend.global.security.filter;
+package com.kosa.kosafinalprojbackend.global.security.filter;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;

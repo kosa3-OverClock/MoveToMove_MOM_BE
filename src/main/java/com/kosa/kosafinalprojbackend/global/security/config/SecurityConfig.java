@@ -1,6 +1,6 @@
-package com.kosa.kosafinalprojbaekend.global.security.config;
+package com.kosa.kosafinalprojbackend.global.security.config;
 
-import com.kosa.kosafinalprojbaekend.global.security.filter.JwtAuthenticationFilter;
+import com.kosa.kosafinalprojbackend.global.security.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
+
 
 @Configuration
 @EnableWebSecurity
@@ -51,10 +52,14 @@ public class SecurityConfig {
             ;
         });
 
+    http.httpBasic(AbstractHttpConfigurer::disable);
+
     // 소셜 로그인
-    http.authorizeHttpRequests((auth) -> auth
-        .requestMatchers("/**").permitAll()
-        .anyRequest().authenticated());
+//    http.oauth2Login((oauth2) -> oauth2
+//        .userInfoEndpoint(
+//            (userInfoEndpointConfig) -> userInfoEndpointConfig.userService(customOAuth2UserService))
+//        .successHandler(oAuth2AuthenticationSuccessHandler)
+//    );
 
     return http.build();
   }

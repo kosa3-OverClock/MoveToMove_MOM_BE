@@ -1,9 +1,7 @@
-package com.kosa.kosafinalprojbaekend.global.security.filter;
+package com.kosa.kosafinalprojbackend.global.security.filter;
 
-import com.kosa.kosafinalprojbaekend.global.security.model.CustomUserDetails;
+import com.kosa.kosafinalprojbackend.global.security.model.CustomUserDetails;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 
 import java.nio.charset.StandardCharsets;

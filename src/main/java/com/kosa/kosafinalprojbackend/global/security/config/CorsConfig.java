@@ -1,4 +1,4 @@
-package com.kosa.kosafinalprojbaekend.global.security.config;
+package com.kosa.kosafinalprojbackend.global.security.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
