@@ -2,11 +2,36 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.kosa.kosafinalprojbackend.mybatis.mappers.member.MemberMapper">
 
-    <select id="existsByEmail" resultType="boolean">
+    <!-- 이메일 여부  -->
+    <select id="existsByMemberEmail" parameterType="string" resultType="boolean">
         SELECT EXISTS (SELECT 1
                          FROM members
-                        WHERE email = #{email}
-                      ) AS result
+                        WHERE email = #{email}) AS result
     </select>
+
+
+    <!-- 닉네임 여부 -->
+    <select id="existsByMemberNickName" parameterType="string" resultType="boolean">
+        SELECT EXISTS (SELECT 1
+                         FROM members
+                        WHERE nick_name = #{nickName}) AS result
+    </select>
+
+
+    <!-- 회원가입 -->
+    <insert id="insertMember" parameterType="com.kosa.kosafinalprojbackend.domains.member.model.form.SignUpForm">
+        INSERT
+          INTO members
+             ( email
+             , nick_name
+             , password
+             , profile_url)
+        VALUES
+             ( #{email}
+             , #{nickName}
+             , #{password}
+             , #{profileUrl})
+    </insert>
+
 
 </mapper>
