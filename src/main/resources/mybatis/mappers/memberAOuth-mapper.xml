@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kosa.kosafinalprojbackend.mybatis.mappers.member.MemberOAuthMapper">
+
+
+    <resultMap id="memberResultMap" type="com.kosa.kosafinalprojbackend.domains.member.oAuth.domain.Member" autoMapping="true">
+        <result property="memberId" column="member_id"/>
+        <result property="nickName" column="nick_name"/>
+        <result property="profileUrl" column="profile_url"/>
+        <result property="providerType" column="social"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <select id="findUserBySocialIdAndType" resultMap="memberResultMap">
+        SELECT * FROM members WHERE email = #{email} AND social = #{providerType}
+    </select>
+
+    <insert id="insertMember" parameterType="com.kosa.kosafinalprojbackend.domains.member.oAuth.domain.Member">
+        INSERT INTO members (email, nick_name, profile_url, social, created_at)
+        VALUES (#{email}, #{nickName}, #{profileUrl}, #{providerType}, #{createdAt})
+    </insert>
+
+</mapper>

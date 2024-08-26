@@ -4,9 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode;
 import com.kosa.kosafinalprojbackend.global.error.exception.CustomBaseException;
 import com.kosa.kosafinalprojbackend.global.error.exception.JwtValidationException;
+import com.kosa.kosafinalprojbackend.global.error.exception.OAuthProviderMissMatchException;
 import com.kosa.kosafinalprojbackend.global.error.exception.ResourceNotFoundException;
 import com.kosa.kosafinalprojbackend.global.error.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.nio.file.AccessDeniedException;
+import java.util.Map;
 
 /**
  * packageName    : com.fourback.runus.global.error.handler
@@ -38,7 +41,12 @@ public class  GlobalExceptionHandler {
         log.error("Response: {}", ErrorResponse.of(ResponseCode.METHOD_NOT_ALLOWED , " [Detail log] : "+e.getMessage()));
         return createErrorResponse(ResponseCode.METHOD_NOT_ALLOWED);
     }
-
+    @ExceptionHandler(OAuthProviderMissMatchException.class)
+    public ResponseEntity<ErrorResponse> handleOAuthProviderMissMatchException(OAuthProviderMissMatchException ex) {
+        // 로그로 에러를 출력
+        log.error("Response: {}", ErrorResponse.of(ResponseCode.ERR_SOCIAL_PROVIDER_MISMATCH), " [Detail log] : " + ex.getMessage());
+        return createErrorResponse(ResponseCode.ERR_SOCIAL_PROVIDER_MISMATCH);
+    }
     @ExceptionHandler(CustomBaseException.class)
     protected ResponseEntity<ErrorResponse> handle(CustomBaseException e){
         log.error("Response: {}", ErrorResponse.of(e.getResponseCode(),  " [Detail Message] : "+e.getMessage()));
