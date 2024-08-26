@@ -24,16 +24,16 @@ public class JwtTokenProvider {
   private final SecretKey accessKey;
   private final SecretKey refreshKey;
 
-  @Value("${ACCESS.EXPIRE_TIME}")
+  @Value("${access.expire_time}")
   private int ACCESS_EXPIRE_TIME;
 
-  @Value("${REFRESH.EXPIRE_TIME}")
+  @Value("${refresh.expire_time}")
   private int REFRESH_EXPIRE_TIME;
 
 
   // secretKey 암호화
-  public JwtTokenProvider(@Value("${ACCESS.SECRET_KEY}") String accessSecretKey,
-                          @Value("${REFRESH.SECRET_KEY}") String refreshSecretKey) {
+  public JwtTokenProvider(@Value("${access.secret_key}") String accessSecretKey,
+                          @Value("${refresh.secret_key}") String refreshSecretKey) {
 
 
     accessKey = new SecretKeySpec(accessSecretKey.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
