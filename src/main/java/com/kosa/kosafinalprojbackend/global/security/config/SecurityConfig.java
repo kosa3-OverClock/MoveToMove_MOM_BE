@@ -55,12 +55,12 @@ public class SecurityConfig {
 
     http.httpBasic(AbstractHttpConfigurer::disable);
 
+
     // 소셜 로그인
-    http.oauth2Login((oauth2) -> oauth2
-        .userInfoEndpoint(
-            (userInfoEndpointConfig) -> userInfoEndpointConfig.userService(customOAuth2UserService)));
-//        .successHandler(oAuth2AuthenticationSuccessHandler)
-//    );
+      http.oauth2Login(oauth2 -> oauth2
+              .userInfoEndpoint(userInfoEndpointConfig ->
+                      userInfoEndpointConfig.userService(customOAuth2UserService))
+      );
 
     return http.build();
   }

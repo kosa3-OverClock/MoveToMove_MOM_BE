@@ -46,7 +46,7 @@ public enum ResponseCode {
 
     // User
     ALREADY_EXIST(HttpStatus.BAD_REQUEST, "D94", "이미 존재하는 사용자입니다."),
-
+    ERR_SOCIAL_PROVIDER_MISMATCH(HttpStatus.BAD_REQUEST, "D95", "Social Domain이 저장된 값과 다릅니다."),
     // Common
     INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST, "D00", "잘못된 구문 요청입니다."),
     AUTHENTICATION_FAILED(HttpStatus.UNAUTHORIZED, "D01", "지정한 리소스에 대한 액세스 권한이 없습니다."),
