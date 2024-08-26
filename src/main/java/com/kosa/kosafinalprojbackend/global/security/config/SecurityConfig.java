@@ -1,5 +1,6 @@
 package com.kosa.kosafinalprojbackend.global.security.config;
 
+import com.kosa.kosafinalprojbackend.domains.member.oAuth.service.CustomOAuth2UserService;
 import com.kosa.kosafinalprojbackend.global.security.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +23,7 @@ public class SecurityConfig {
 
   private final CorsConfigurationSource corsConfigurationSource;
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
+  private final CustomOAuth2UserService customOAuth2UserService;
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -55,9 +56,9 @@ public class SecurityConfig {
     http.httpBasic(AbstractHttpConfigurer::disable);
 
     // 소셜 로그인
-//    http.oauth2Login((oauth2) -> oauth2
-//        .userInfoEndpoint(
-//            (userInfoEndpointConfig) -> userInfoEndpointConfig.userService(customOAuth2UserService))
+    http.oauth2Login((oauth2) -> oauth2
+        .userInfoEndpoint(
+            (userInfoEndpointConfig) -> userInfoEndpointConfig.userService(customOAuth2UserService)));
 //        .successHandler(oAuth2AuthenticationSuccessHandler)
 //    );
 
