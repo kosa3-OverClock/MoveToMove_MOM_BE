@@ -17,5 +17,5 @@ public class Member {
     private String profileUrl;
     private ProviderType providerType;
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDateTime deletedAt;
 }

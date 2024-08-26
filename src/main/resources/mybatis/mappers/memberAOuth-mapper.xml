@@ -6,11 +6,13 @@
 
     <resultMap id="memberResultMap" type="com.kosa.kosafinalprojbackend.domains.member.oAuth.domain.Member" autoMapping="true">
         <result property="memberId" column="member_id"/>
+        <result property="email" column="email"/>
         <result property="nickName" column="nick_name"/>
         <result property="profileUrl" column="profile_url"/>
         <result property="providerType" column="social"/>
         <result property="createdAt" column="created_at"/>
         <result property="updatedAt" column="updated_at"/>
+        <result property="deletedAt" column="deleted_at"/>
     </resultMap>
 
     <select id="findUserBySocialIdAndType" resultMap="memberResultMap">
