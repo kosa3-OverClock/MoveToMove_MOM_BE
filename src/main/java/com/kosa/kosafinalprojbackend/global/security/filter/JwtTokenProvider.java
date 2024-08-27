@@ -33,7 +33,7 @@ public class JwtTokenProvider {
 
   // secretKey 암호화
   public JwtTokenProvider(@Value("${access.secret_key}") String accessSecretKey,
-                          @Value("${refresh.secret_key}") String refreshSecretKey) {
+      @Value("${refresh.secret_key}") String refreshSecretKey) {
 
 
     accessKey = new SecretKeySpec(accessSecretKey.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
@@ -41,14 +41,14 @@ public class JwtTokenProvider {
   }
 
   // Access Token
-  public String createAccessToken(Long id, String email, String authority) {
+  public String createAccessToken(Long id, String email) {
 
     return createToken(id, email, ACCESS_EXPIRE_TIME, accessKey);
   }
 
 
   // Refresh Token
-  public String createRefreshToken(Long id, String email, String authority) {
+  public String createRefreshToken(Long id, String email) {
 
     return createToken(id, email, REFRESH_EXPIRE_TIME, refreshKey);
   }
