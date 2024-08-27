@@ -2,6 +2,36 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.kosa.kosafinalprojbackend.mybatis.mappers.member.MemberMapper">
 
+    <!-- 아이디 기준 정보 조회 -->
+    <select id="findByMemberId" resultType="com.kosa.kosafinalprojbackend.domains.member.model.dto.MemberDto">
+        SELECT member_id
+             , email
+             , nick_name
+             , password
+             , profile_url
+             , social
+             , created_at
+             , deleted_at
+        FROM members
+        WHERE member_id = #{memberId}
+    </select>
+
+
+    <!-- 이메일 기준 정보 조회 -->
+    <select id="findByMemberEmail" resultType="com.kosa.kosafinalprojbackend.domains.member.model.dto.MemberDto">
+        SELECT member_id
+             , email
+             , nick_name
+             , password
+             , profile_url
+             , social
+             , created_at
+             , deleted_at
+          FROM members
+         WHERE email = #{email}
+    </select>
+
+
     <!-- 이메일 여부  -->
     <select id="existsByMemberEmail" parameterType="string" resultType="boolean">
         SELECT EXISTS (SELECT 1
@@ -32,19 +62,5 @@
              , #{password}
              , #{profileUrl})
     </insert>
-
-
-  <select id="findById" resultType="com.kosa.kosafinalprojbackend.domains.member.model.dto.MemberDto">
-    SELECT member_id
-         , email
-         , nick_name
-         , password
-         , profile_url
-         , social
-         , created_at
-         , updated_at
-      FROM members
-     WHERE member_id = #{memberId}
-  </select>
 
 </mapper>
