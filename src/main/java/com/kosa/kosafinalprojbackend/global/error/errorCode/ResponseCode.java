@@ -14,6 +14,9 @@ import org.springframework.http.HttpStatus;
 public enum ResponseCode {
 
     // 사용자
+    LOGIN_SUCCESS(OK, "로그인하셨습니다."),
+    UNABLE_LOGIN(BAD_REQUEST, "아이디 또는 비밀번호가 잘못 되었습니다."),
+
     MEMBER_CREATED(CREATED, "회원가입이 완료 되었습니다."),
     EXISTS_EMAIL(CONFLICT, "이미 존재하는 이메일입니다."),
     EXISTS_NICKNAME(CONFLICT, "이미 존재하는 닉네임입니다."),

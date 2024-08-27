@@ -33,7 +33,7 @@ public class JwtTokenProvider {
 
   // secretKey 암호화
   public JwtTokenProvider(@Value("${access.secret_key}") String accessSecretKey,
-                          @Value("${refresh.secret_key}") String refreshSecretKey) {
+      @Value("${refresh.secret_key}") String refreshSecretKey) {
 
 
     accessKey = new SecretKeySpec(accessSecretKey.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
