@@ -67,6 +67,7 @@ public class ProjectService {
   }
 
   // 수정
+  @Transactional
   public void updateProject(Long projectId, ProjectForm projectForm,
       CustomUserDetails customUserDetails) {
 
