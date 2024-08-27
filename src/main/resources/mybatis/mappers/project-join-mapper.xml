@@ -2,21 +2,30 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.kosa.kosafinalprojbackend.mybatis.mappers.projectjoin.ProjectJoinMapper">
 
-    <!-- 저장 -->
-    <insert id="insertProjectJoin" parameterType="map">
-        INSERT
-          INTO project_joins
-             ( member_id
-             , project_id
-             , project_leader_YN
-             )
-        VALUES
-      <foreach collection="memberDtoMap" item="value" index="key" separator=",">
-            ( #{key}
-            , #{projectId}
-            , #{value}
-            )
-        </foreach>
-    </insert>
+  <!-- 조회 -->
+  <select id="existsByProjectIdAndMemberId" resultType="boolean">
+    SELECT EXISTS (SELECT 1
+                     FROM project_joins
+                    WHERE project_id = #{projectId}
+                      AND member_id = #{memberId}
+                      AND project_leader_YN = 'Y') AS result
+  </select>
+
+  <!-- 저장 -->
+  <insert id="insertProjectJoin" parameterType="map">
+      INSERT
+        INTO project_joins
+           ( member_id
+           , project_id
+           , project_leader_YN
+           )
+      VALUES
+    <foreach collection="memberDtoMap" item="value" index="key" separator=",">
+          ( #{key}
+          , #{projectId}
+          , #{value}
+          )
+      </foreach>
+  </insert>
 
 </mapper>

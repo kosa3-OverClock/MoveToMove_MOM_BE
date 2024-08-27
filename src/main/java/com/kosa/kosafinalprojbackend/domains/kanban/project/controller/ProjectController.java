@@ -29,7 +29,7 @@ public class ProjectController {
     // 저장
     @PostMapping
     public ResponseEntity<ResponseCode> insertProject(@RequestBody ProjectForm projectForm,
-        @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+                                                      @AuthenticationPrincipal CustomUserDetails customUserDetails) {
 
         return ResponseEntity.ok(ResponseCode.PROJECT_CREATE
             .withData(projectService.insertProject(projectForm, customUserDetails)));
@@ -38,8 +38,12 @@ public class ProjectController {
 
     // 수정
     @PutMapping("/{project-id}")
-    public ResponseEntity<ProjectDto> updateProject(@RequestBody ProjectDto project) {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<ResponseCode> updateProject(@PathVariable("project-id") Long projectId,
+                                                    @RequestBody ProjectForm projectForm,
+                                                    @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+
+        projectService.updateProject(projectId, projectForm, customUserDetails);
+        return ResponseEntity.ok(ResponseCode.PROJECT_MODIFY);
     }
 
 
@@ -48,7 +52,6 @@ public class ProjectController {
     public ResponseEntity<ResponseCode> deleteProject(@PathVariable("project-id") String projectId) {
 
         projectService.deleteProject(projectId);
-
         return ResponseEntity.ok().build();
     }
 

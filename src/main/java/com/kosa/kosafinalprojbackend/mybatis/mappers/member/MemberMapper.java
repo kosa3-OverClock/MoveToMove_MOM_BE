@@ -21,4 +21,10 @@ public interface MemberMapper {
     
     // 회원가입
     void insertMember(SignUpForm signUpForm);
+
+    // 조회 (memberId 기준)
+    MemberDto findById(Long memberId);
+
+    // 조회 (memberId 존재여부)
+    boolean existsByMemberId(Long memberId);
 }
