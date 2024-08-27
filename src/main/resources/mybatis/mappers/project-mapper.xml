@@ -2,30 +2,38 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.kosa.kosafinalprojbackend.mybatis.mappers.project.ProjectMapper">
 
-    <!-- 저장 -->
-    <insert id="insertProject" parameterType="com.kosa.kosafinalprojbackend.domains.kanban.project.model.form.ProjectForm">
-        INSERT
-          INTO projects ( project_name
-                        , project_description
-                        , start_at
-                        , end_at
-                        )
-                VALUES ( #{projectName}
-                       , #{projectDescription}
-                       , #{startAt}
-                       , #{endAt}
-                       )
+  <!-- 조회 (projectId 존재 유무)  -->
+  <select id="existsByProjectId" resultType="boolean">
+    SELECT EXISTS (SELECT 1
+                     FROM projects
+                    WHERE project_id = #{projectId}) AS result
+  </select>
 
-        <!-- 방금 삽입된 row의 ID 가져오기 -->
-      <selectKey keyProperty="projectId" resultType="long" order="AFTER">
-        SELECT project_id
-          FROM ( SELECT project_id
-                   FROM projects
-                  WHERE project_name = #{projectName}
-               ORDER BY created_at DESC
-                  LIMIT 1
-               ) AS projectId
-      </selectKey>
-    </insert>
+  <!-- 저장 -->
+  <insert id="insertProject" parameterType="com.kosa.kosafinalprojbackend.domains.kanban.project.model.form.ProjectForm"
+    useGeneratedKeys="true" keyProperty="projectId">
+    INSERT
+      INTO projects
+         ( project_name
+         , project_description
+         , start_at
+         , end_at
+         )
+  VALUES ( #{projectName}
+         , #{projectDescription}
+         , #{startAt}
+         , #{endAt}
+         )
+  </insert>
+
+  <!-- 수정 -->
+  <update id="updateProject">
+    UPDATE projects
+       SET project_name = #{projectForm.projectName}
+         , project_description = #{projectForm.projectDescription}
+         , start_at = #{projectForm.startAt}
+         , end_at = #{projectForm.endAt}
+     WHERE project_id = #{projectId}
+  </update>
 
 </mapper>

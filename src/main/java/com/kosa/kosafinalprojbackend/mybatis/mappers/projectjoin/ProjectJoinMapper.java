@@ -12,4 +12,8 @@ public interface ProjectJoinMapper {
     // 저장
     void insertProjectJoin(@Param("memberDtoMap") Map<Long, ProjectLeaderYN> memberDtoMap,
         @Param("projectId") Long projectId);
+
+    // 조회 (해당 프로젝트의 팀장 여부 조회)
+    boolean existsByProjectIdAndMemberId(@Param("projectId") Long projectId,
+        @Param("memberId") Long memberId);
 }

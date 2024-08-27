@@ -47,20 +47,26 @@
                         WHERE nick_name = #{nickName}) AS result
     </select>
 
+  <!-- 아이디 여부 -->
+  <select id="existsByMemberId" parameterType="long" resultType="boolean">
+    SELECT EXISTS (SELECT 1
+                   FROM members
+                   WHERE member_id = #{memberId}) AS result
+  </select>
 
-    <!-- 회원가입 -->
-    <insert id="insertMember" parameterType="com.kosa.kosafinalprojbackend.domains.member.model.form.SignUpForm">
-        INSERT
-          INTO members
-             ( email
-             , nick_name
-             , password
-             , profile_url)
-        VALUES
-             ( #{email}
-             , #{nickName}
-             , #{password}
-             , #{profileUrl})
-    </insert>
+  <!-- 회원가입 -->
+  <insert id="insertMember" parameterType="com.kosa.kosafinalprojbackend.domains.member.model.form.SignUpForm">
+      INSERT
+        INTO members
+           ( email
+           , nick_name
+           , password
+           , profile_url)
+      VALUES
+           ( #{email}
+           , #{nickName}
+           , #{password}
+           , #{profileUrl})
+  </insert>
 
 </mapper>

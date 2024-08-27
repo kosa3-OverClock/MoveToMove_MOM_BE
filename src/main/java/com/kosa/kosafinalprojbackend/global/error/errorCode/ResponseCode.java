@@ -31,8 +31,16 @@ public enum ResponseCode {
     OAUTH2_LOGIN_CANCELLED(FORBIDDEN, "사용자가 로그인 요청을 취소했습니다."),
     OAUTH2_INVALID_CLIENT_REGISTRATION(HttpStatus.BAD_REQUEST,"Invalid OAuth2 Client Registration ID. 유효하지 않은 소셜 로그인 시도입니다."),
     // 프로젝트
-    PROJECT_CREATE(CREATED, "프로젝트가 생성되었습니다.")
+    PROJECT_CREATE(CREATED, "프로젝트가 생성되었습니다."),
+    NO_PROJECT_LEADER(NOT_FOUND, "프로젝트 팀장이 아닙니다."),
+    PROJECT_MODIFY(OK, "프로젝트가 정보가 수정되었습니다."),
+
+
+    // 공통
+    NOT_FOUND_ID(NOT_FOUND, "존재하지 않는 아이디입니다."),
+
     ;
+
 
 
     private final HttpStatus status;
