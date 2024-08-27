@@ -41,14 +41,14 @@ public class JwtTokenProvider {
   }
 
   // Access Token
-  public String createAccessToken(Long id, String email, String authority) {
+  public String createAccessToken(Long id, String email) {
 
     return createToken(id, email, ACCESS_EXPIRE_TIME, accessKey);
   }
 
 
   // Refresh Token
-  public String createRefreshToken(Long id, String email, String authority) {
+  public String createRefreshToken(Long id, String email) {
 
     return createToken(id, email, REFRESH_EXPIRE_TIME, refreshKey);
   }

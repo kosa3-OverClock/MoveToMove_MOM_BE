@@ -50,7 +50,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         log.info("email = {}", userInfo.getEmail());
 
         Member savedMember = mapper.findUserBySocialIdAndType(userInfo.getEmail(),providerType);
-        log.info("savedMember = {}", savedMember);
+        log.info("savedMember = {}", savedMember.toString());
         if (savedMember != null) {
             if (providerType != savedMember.getProviderType()) {
                 throw new OAuthProviderMissMatchException(
@@ -59,7 +59,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             }
         } else {
             savedMember = creatUserEntity(userInfo, providerType);
-//            mapper.insertMember(savedMember);
+            mapper.insertMember(savedMember);
         }
 
         return new UserPrincipal(savedMember, user.getAttributes());

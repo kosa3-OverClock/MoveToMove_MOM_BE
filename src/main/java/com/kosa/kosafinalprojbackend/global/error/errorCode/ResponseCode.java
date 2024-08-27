@@ -21,8 +21,12 @@ public enum ResponseCode {
 
     // 소셜 로그인
     ERR_SOCIAL_PROVIDER_MISMATCH(HttpStatus.BAD_REQUEST, "Social Domain이 저장된 값과 다릅니다."),
-
-
+    OAUTH2_AUTHENTICATION_ERROR(UNAUTHORIZED, "OAuth2 인증 중 오류가 발생했습니다."),
+    OAUTH2_PROVIDER_ERROR(SERVICE_UNAVAILABLE, "OAuth2 공급자와 통신하는 중에 오류가 발생했습니다."),
+    OAUTH2_TOKEN_EXPIRED(UNAUTHORIZED, "OAuth2 액세스 토큰이 만료되었습니다."),
+    OAUTH2_INVALID_GRANT(UNAUTHORIZED, "유효하지 않은 인증 코드입니다."),
+    OAUTH2_LOGIN_CANCELLED(FORBIDDEN, "사용자가 로그인 요청을 취소했습니다."),
+    OAUTH2_INVALID_CLIENT_REGISTRATION(HttpStatus.BAD_REQUEST,"Invalid OAuth2 Client Registration ID. 유효하지 않은 소셜 로그인 시도입니다."),
     // 프로젝트
     PROJECT_CREATE(CREATED, "프로젝트가 생성되었습니다.")
     ;
