@@ -22,6 +22,10 @@ public enum ResponseCode {
     EXISTS_NICKNAME(CONFLICT, "이미 존재하는 닉네임입니다."),
     JSON_PARSE_ERROR(BAD_REQUEST, "데이터를 처리하는 중에 오류가 발생했습니다."),
 
+    MEMBER_MODIFY_SUCCESS(OK, "회원정보를 수정했습니다."),
+
+    NOT_FOUND_MEMBER(NOT_FOUND, "회원정보를 찾을 수 없습니다."),
+
     // 소셜 로그인
     ERR_SOCIAL_PROVIDER_MISMATCH(HttpStatus.BAD_REQUEST, "Social Domain이 저장된 값과 다릅니다."),
     OAUTH2_AUTHENTICATION_ERROR(UNAUTHORIZED, "OAuth2 인증 중 오류가 발생했습니다."),

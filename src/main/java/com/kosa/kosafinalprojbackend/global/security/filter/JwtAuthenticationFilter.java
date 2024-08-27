@@ -30,7 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   @Override
   protected boolean shouldNotFilter(HttpServletRequest request) {
 
-    String[] api = {"/**" };
+    String[] api = {"/api/members/login", "/api/members/sign-up", "/oauth2/authorization/google", "/oauth2/authorization/kakao"};
 
     String path = request.getRequestURI();
 
