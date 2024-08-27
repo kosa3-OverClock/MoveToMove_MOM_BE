@@ -3,19 +3,18 @@ package com.kosa.kosafinalprojbackend.domains.member.controller;
 import com.kosa.kosafinalprojbackend.domains.member.model.form.LoginForm;
 import com.kosa.kosafinalprojbackend.domains.member.service.MemberService;
 import com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode;
+import com.kosa.kosafinalprojbackend.global.security.model.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.LOGIN_SUCCESS;
-import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.MEMBER_CREATED;
+import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.*;
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 
 @Controller
 @RequiredArgsConstructor
@@ -28,7 +27,7 @@ public class MemberController {
   @PostMapping("/login")
   public ResponseEntity<ResponseCode> memberLogin(@RequestBody LoginForm signInForm) {
 
-    return ResponseEntity.status(CREATED)
+    return ResponseEntity.status(OK)
         .body(LOGIN_SUCCESS.withData(memberService.memberLogin(signInForm)));
   }
 
@@ -40,5 +39,17 @@ public class MemberController {
 
     return ResponseEntity.status(CREATED)
         .body(MEMBER_CREATED.withData(memberService.memberSignUp(signUpFormJson, multipartFile)));
+  }
+
+  // 회원 정보 수정
+  @PutMapping(value = "/info", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+  public ResponseEntity<ResponseCode> memberInfoChange(
+      @RequestPart(value = "form") String signUpFormJson,
+      @RequestPart(value = "file", required = false) MultipartFile multipartFile,
+      @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+
+    return ResponseEntity.status(OK)
+        .body(MEMBER_MODIFY_SUCCESS.withData(
+            memberService.memberInfoChange(signUpFormJson, multipartFile, customUserDetails.getId())));
   }
 }

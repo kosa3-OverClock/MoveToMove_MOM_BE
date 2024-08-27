@@ -7,7 +7,6 @@ import io.jsonwebtoken.security.SignatureException;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
-import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -112,8 +111,8 @@ public class JwtTokenProvider {
 
     Claims claims = parseClaims(token, isAccessToken);
 
-    Long id = Long.parseLong(Objects.requireNonNull(claims).getId());
-    String email = Objects.requireNonNull(claims).getSubject();
+    Long id = Long.parseLong(claims.get("id").toString());
+    String email = claims.get("email").toString();
 
     CustomUserDetails principal =
         new CustomUserDetails(id, email, "", null);

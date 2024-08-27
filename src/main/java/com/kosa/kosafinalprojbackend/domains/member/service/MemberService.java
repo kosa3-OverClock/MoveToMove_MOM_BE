@@ -13,6 +13,7 @@ import com.kosa.kosafinalprojbackend.mybatis.mappers.member.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.*;
@@ -88,5 +89,51 @@ public class MemberService {
     memberMapper.insertMember(signUpForm);
 
     return signUpForm.getEmail();
+  }
+
+  // 회원 정보 수정
+  @Transactional
+  public String memberInfoChange(
+      String signUpFormJson, MultipartFile multipartFile, Long memberId) {
+
+    // 회원정보 조회
+    MemberDto memberDto = memberMapper.findByMemberId(memberId);
+    if (memberDto == null) {
+      throw new CustomBaseException(NOT_FOUND_MEMBER);
+    }
+
+    SignUpForm signUpForm;
+    // json 문자열을 SignUpForm 객체로 변환
+    try {
+      signUpForm = objectMapper.readValue(signUpFormJson, SignUpForm.class);
+    } catch (JsonProcessingException e) {
+      throw new CustomBaseException(JSON_PARSE_ERROR);
+    }
+
+    // S3 확인 후 이미지 변경 데이터 생성
+    String imageUrl = memberDto.getProfileUrl();
+    String existingFileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+    boolean s3ImageFlag = s3Service.existsFile(existingFileName);
+
+    // 수정 이미지가 있으면 (수정 or 저장) 없으면 삭제
+    if (multipartFile != null && !multipartFile.isEmpty()) {
+      // s3에 이미지가 있므면 수정 없다면 저장
+      if (s3ImageFlag) {
+        signUpForm.setProfileUrl(s3Service.updateFile(multipartFile, existingFileName));
+      } else {
+        signUpForm.setProfileUrl(s3Service.uploadFile(multipartFile));
+      }
+    } else {
+      // s3에 이미지가 있으면 s3 Url 삭제
+      if (s3ImageFlag) {
+        signUpForm.setProfileUrl(s3Service.deleteFile(existingFileName));
+      }
+    }
+
+    signUpForm.setPassword(passwordEncoder.encode(signUpForm.getPassword()));
+
+    memberMapper.updateMemberInfo(memberId, signUpForm);
+
+    return memberDto.getEmail();
   }
 }
