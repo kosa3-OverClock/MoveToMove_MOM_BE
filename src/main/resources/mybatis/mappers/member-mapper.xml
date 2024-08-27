@@ -69,4 +69,16 @@
            , #{profileUrl})
   </insert>
 
+
+    <!-- 회원 정보 수정  -->
+    <update id="updateMemberInfo">
+        UPDATE members
+           SET nick_name    = #{signUpForm.nickName}
+          , password        = #{signUpForm.password}
+          , profile_url     = (CASE WHEN #{signUpForm.profileUrl} = ''
+                                    THEN NULL
+                                    ELSE #{signUpForm.profileUrl}
+                               END)
+      WHERE MEMBER_ID       = #{memberId}
+    </update>
 </mapper>
