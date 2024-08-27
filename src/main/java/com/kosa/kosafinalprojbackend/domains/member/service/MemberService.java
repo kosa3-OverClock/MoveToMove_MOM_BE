@@ -1,28 +1,56 @@
 package com.kosa.kosafinalprojbackend.domains.member.service;
 
-import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.EXISTS_EMAIL;
-import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.EXISTS_NICKNAME;
-import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.JSON_PARSE_ERROR;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kosa.kosafinalprojbackend.domains.member.model.dto.MemberDto;
+import com.kosa.kosafinalprojbackend.domains.member.model.form.LoginForm;
 import com.kosa.kosafinalprojbackend.domains.member.model.form.SignUpForm;
 import com.kosa.kosafinalprojbackend.global.amazon.service.S3Service;
 import com.kosa.kosafinalprojbackend.global.error.exception.CustomBaseException;
+import com.kosa.kosafinalprojbackend.global.redis.service.RedisService;
+import com.kosa.kosafinalprojbackend.global.security.filter.JwtTokenProvider;
 import com.kosa.kosafinalprojbackend.mybatis.mappers.member.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.*;
+
 @Service
 @RequiredArgsConstructor
 public class MemberService {
 
-  public final S3Service s3Service;
-  public final MemberMapper memberMapper;
+  private final S3Service s3Service;
+  private final RedisService redisService;
+  private final MemberMapper memberMapper;
   private final ObjectMapper objectMapper;
-  public final PasswordEncoder passwordEncoder;
+  private final PasswordEncoder passwordEncoder;
+  private final JwtTokenProvider jwtTokenProvider;
+
+  // 로그인
+  public String memberLogin(LoginForm signInForm) {
+
+    // 아이디 확인
+    MemberDto memberDto = memberMapper.findByMemberEmail(signInForm.getEmail());
+    if (memberDto == null) {
+      throw new CustomBaseException(UNABLE_LOGIN);
+    }
+
+    // 비밀번호 확인
+    if (!passwordEncoder.matches(signInForm.getPassword(), memberDto.getPassword())) {
+      throw new CustomBaseException(UNABLE_LOGIN);
+    }
+
+    // refresh token 생성
+    String refreshToken =
+        jwtTokenProvider.createRefreshToken(memberDto.getMemberId(), memberDto.getEmail());
+
+    // Redis에 refresh token 저장
+    redisService.saveRefreshToken(memberDto.getMemberId(), refreshToken);
+
+    return jwtTokenProvider.createAccessToken(memberDto.getMemberId(), memberDto.getEmail());
+  }
 
   // 회원가입
   public String memberSignUp(String signUpFormJson, MultipartFile multipartFile) {
