@@ -9,6 +9,7 @@ import com.kosa.kosafinalprojbackend.global.amazon.service.S3Service;
 import com.kosa.kosafinalprojbackend.global.error.exception.CustomBaseException;
 import com.kosa.kosafinalprojbackend.global.redis.service.RedisService;
 import com.kosa.kosafinalprojbackend.global.security.filter.JwtTokenProvider;
+import com.kosa.kosafinalprojbackend.global.security.model.CustomUserDetails;
 import com.kosa.kosafinalprojbackend.mybatis.mappers.member.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -135,5 +136,19 @@ public class MemberService {
     memberMapper.updateMemberInfo(memberId, signUpForm);
 
     return memberDto.getEmail();
+  }
+
+  // 회원 탈퇴
+  public void memberQuit(CustomUserDetails customUserDetails) {
+    // 삭제여부 확인
+    MemberDto findMember = memberMapper.findByMemberId(customUserDetails.getId());
+    Long memberId = findMember.getMemberId();
+    // TODO: 차후 삭제 여부에 따른 에러 처리가 필요하나 ?
+    // if(findMember.getDeletedAt() != null) {}
+
+    // redis에 저장된 refresh 토큰 삭제
+    redisService.deleteRefreshToken(memberId);
+    // DB에 저장된 회원 delete_at 값 생성 (access 토큰은 프론트 처리)
+    memberMapper.memberQuit(memberId);
   }
 }

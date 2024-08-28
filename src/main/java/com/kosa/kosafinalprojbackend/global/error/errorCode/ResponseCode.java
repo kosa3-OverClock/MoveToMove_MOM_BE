@@ -23,8 +23,8 @@ public enum ResponseCode {
     JSON_PARSE_ERROR(BAD_REQUEST, "데이터를 처리하는 중에 오류가 발생했습니다."),
 
     MEMBER_MODIFY_SUCCESS(OK, "회원정보를 수정했습니다."),
-
     NOT_FOUND_MEMBER(NOT_FOUND, "회원정보를 찾을 수 없습니다."),
+    MEMBER_DELETE(OK, "회원 탈퇴 처리되었습니다."),
 
     // 소셜 로그인
     ERR_SOCIAL_PROVIDER_MISMATCH(HttpStatus.BAD_REQUEST, "Social Domain이 저장된 값과 다릅니다."),
