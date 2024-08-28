@@ -1,5 +1,9 @@
 package com.kosa.kosafinalprojbackend.global.security.filter;
 
+import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.NOT_FIND_TOKEN;
+
+import com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode;
+import com.kosa.kosafinalprojbackend.global.error.exception.CustomBaseException;
 import com.kosa.kosafinalprojbackend.global.security.model.CustomUserDetails;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.SignatureException;
@@ -29,7 +33,6 @@ public class JwtTokenProvider {
   @Value("${refresh.expire_time}")
   private int REFRESH_EXPIRE_TIME;
 
-
   // secretKey 암호화
   public JwtTokenProvider(@Value("${access.secret_key}") String accessSecretKey,
       @Value("${refresh.secret_key}") String refreshSecretKey) {
@@ -44,7 +47,6 @@ public class JwtTokenProvider {
 
     return createToken(id, email, ACCESS_EXPIRE_TIME, accessKey);
   }
-
 
   // Refresh Token
   public String createRefreshToken(Long id, String email) {
@@ -119,5 +121,15 @@ public class JwtTokenProvider {
 
     // Spring Security 에서 사용자를 인증하는 데 사용
     return new UsernamePasswordAuthenticationToken(principal, null, null);
+  }
+
+  // 토큰 사용자 확인
+  public Long getMemberByToken(String token, boolean isAccessToken) {
+
+    try {
+      return Long.parseLong(parseClaims(token, isAccessToken).get("id").toString());
+    } catch (Exception ex) {
+      throw new CustomBaseException(NOT_FIND_TOKEN);
+    }
   }
 }
