@@ -81,4 +81,11 @@
                                END)
       WHERE MEMBER_ID       = #{memberId}
     </update>
+
+    <!-- 회원 탈퇴 -->
+    <update id="memberQuit" parameterType="Long">
+        update members
+        set deleted_at = NOW()
+        where member_id = #{memberId}
+    /</update>
 </mapper>
