@@ -28,5 +28,7 @@ public class CustomLogoutHandler implements LogoutHandler {
         // Authentication 에서 userId를 가지고 와서 레디스에 저장된 토큰 삭제
         CustomUserDetails userPrincipal = (CustomUserDetails) authentication.getPrincipal();
         redisService.deleteRefreshToken(userPrincipal.getId());
+
+        // TODO: 쿠키에 저장된 refreshToken 삭제
     }
 }
