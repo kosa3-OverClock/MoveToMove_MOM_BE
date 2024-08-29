@@ -63,4 +63,12 @@ public class MemberController {
         .body(MEMBER_MODIFY_SUCCESS.withData(
             memberService.memberInfoChange(signUpFormJson, multipartFile, customUserDetails.getId())));
   }
+
+  // 회원 탈퇴
+  @PutMapping("/quit")
+  public ResponseEntity<ResponseCode> memberDelete(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+
+    memberService.memberQuit(customUserDetails);
+    return ResponseEntity.ok(ResponseCode.MEMBER_DELETE);
+  }
 }

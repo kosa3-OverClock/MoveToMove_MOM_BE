@@ -44,7 +44,7 @@ public class CustomOAuth2AuthenticationSuccessHandler extends SimpleUrlAuthentic
         log.info("Generated refresh token = {}", refreshToken);
         // Redis에 JWT 토큰 저장
         redisService.saveRefreshToken(loginUser.getMemberId(), refreshToken);
-        // 응답 설정
+        // TODO: 프론트 서버로 응답 설정 ( response에 담아서, 쿼리파라미터에 담아서 토큰 전송 )
 
     }
 }
