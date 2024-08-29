@@ -36,4 +36,28 @@
      WHERE project_id = #{projectId}
   </update>
 
+
+  <select id="selectKanbanCardByProject" parameterType="Long" resultType="com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectInCardDto">
+    SELECT pr.project_id
+         , pr.project_name
+         , kco.kanban_column_id
+         , kco.kanban_column_name
+         , kco.column_seq
+         , kca.kanban_card_id
+         , kca.title
+         , kca.content
+         , kca.card_seq
+         , kca.priority
+         , kca.task_size
+         , kca.start_at
+         , kca.end_at
+         , kca.created_at
+      FROM projects             pr
+INNER JOIN kanban_columns       kco
+        ON kco.project_id       = pr.project_id
+INNER JOIN kanban_cards         kca
+        ON kca.kanban_column_id = kco.kanban_column_id
+     WHERE pr.project_id        = #{projectId}
+  </select>
+
 </mapper>

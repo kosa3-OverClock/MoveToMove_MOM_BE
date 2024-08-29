@@ -1,6 +1,7 @@
 package com.kosa.kosafinalprojbackend.domains.kanban.project.controller;
 
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectDto;
+import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectInCardDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.form.ProjectForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.service.ProjectService;
 import com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode;
@@ -10,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/projects")
@@ -55,4 +58,13 @@ public class ProjectController {
         return ResponseEntity.ok().build();
     }
 
+
+    // 칸반 카드 조회 (프로젝트 기준)
+    @GetMapping("/{project-id}/kanban-cards")
+    public ResponseEntity<List<ProjectInCardDto>> selectKanbanCardByProject(
+        @PathVariable("project-id") Long projectId) {
+
+        return new ResponseEntity<>(
+            projectService.selectKanbanCardByProject(projectId), HttpStatus.CREATED);
+    }
 }
