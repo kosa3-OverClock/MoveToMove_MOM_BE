@@ -1,6 +1,13 @@
 package com.kosa.kosafinalprojbackend.global.error.errorCode;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -49,8 +56,7 @@ public enum ResponseCode {
     // 공통
     NOT_FOUND_ID(NOT_FOUND, "존재하지 않는 아이디입니다."),
 
-    ;
-
+    YES_PROJECT_LEADER(CONFLICT, "프로젝트 중 팀장인 프로젝트가 있습니다.");
 
 
     private final HttpStatus status;

@@ -16,5 +16,5 @@ public interface KanbanColumnMapper {
   List<KanbanColumnInCardDto> selectKanbanCardByKanbanColumn(Long kanbanColumnId);
 
   // 칸반 컬럼 저장
-  void insertKanbanColumns(Map<String, Object> params);
+  void insertKanbanColumns(Long projectId, Map<String, Object> params);
 }
