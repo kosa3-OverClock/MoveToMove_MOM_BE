@@ -1,7 +1,10 @@
 package com.kosa.kosafinalprojbackend.mybatis.mappers.project;
 
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectDto;
+import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectInCardDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.form.ProjectForm;
+
+import java.util.List;
 import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -21,4 +24,8 @@ public interface ProjectMapper {
     // 수정
     void updateProject(@Param("projectId") Long projectId,
         @Param("projectForm") ProjectForm projectForm);
+
+
+    // 칸반 카드 조회 (프로젝트 기준)
+    List<ProjectInCardDto> selectKanbanCardByProject(Long projectId);
 }

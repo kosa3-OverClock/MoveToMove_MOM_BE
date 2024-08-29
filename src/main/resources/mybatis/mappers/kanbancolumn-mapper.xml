@@ -2,6 +2,33 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.kosa.kosafinalprojbackend.mybatis.mappers.kanbancolumn.KanbanColumnMapper">
 
+  <!-- 칸반 컬럼 존재 여부 -->
+  <select id="existsByKanbanColumn" parameterType="Long" resultType="boolean">
+    SELECT EXISTS (SELECT 1
+                     FROM kanban_columns
+                    WHERE kanban_column_id = #{kanbanColumnId}) AS result
+  </select>
+
+  <!-- 칸반 카드 조회 (칸반 컬럼 기준) -->
+  <select id="selectKanbanCardByKanbanColumn" parameterType="Long" resultType="com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.KanbanColumnInCardDto">
+    SELECT kco.kanban_column_id
+         , kco.kanban_column_name
+         , kco.column_seq
+         , kca.kanban_card_id
+         , kca.title
+         , kca.content
+         , kca.card_seq
+         , kca.priority
+         , kca.task_size
+         , kca.start_at
+         , kca.end_at
+         , kca.created_at
+      FROM kanban_columns       kco
+INNER JOIN kanban_cards         kca
+        ON kca.kanban_column_id = kco.kanban_column_id
+     WHERE kco.kanban_column_id = #{kanbanColumnId}
+  </select>
+
   <!-- 저장 -->
   <insert id="insertKanbanColumns" parameterType="map">
     INSERT INTO kanban_columns (project_id, kanban_column_name)
@@ -33,3 +60,4 @@
     WHERE kanban_column_id = #{kanbanColumnId}
   </delete>
 </mapper>
+

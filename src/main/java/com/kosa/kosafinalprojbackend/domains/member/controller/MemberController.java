@@ -4,6 +4,7 @@ import com.kosa.kosafinalprojbackend.domains.member.model.form.LoginForm;
 import com.kosa.kosafinalprojbackend.domains.member.service.MemberService;
 import com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode;
 import com.kosa.kosafinalprojbackend.global.security.model.CustomUserDetails;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,10 +26,11 @@ public class MemberController {
 
   // 로그인
   @PostMapping("/login")
-  public ResponseEntity<ResponseCode> memberLogin(@RequestBody LoginForm signInForm) {
+  public ResponseEntity<ResponseCode> memberLogin(
+      @RequestBody LoginForm signInForm, HttpServletResponse response) {
 
     return ResponseEntity.status(OK)
-        .body(LOGIN_SUCCESS.withData(memberService.memberLogin(signInForm)));
+        .body(LOGIN_SUCCESS.withData(memberService.memberLogin(signInForm, response)));
   }
 
   // 회원가입
@@ -39,6 +41,15 @@ public class MemberController {
 
     return ResponseEntity.status(CREATED)
         .body(MEMBER_CREATED.withData(memberService.memberSignUp(signUpFormJson, multipartFile)));
+  }
+
+  // Refresh Token 확인
+  @PostMapping("/checks/refresh-token")
+  public ResponseEntity<ResponseCode> checkRefreshToken(
+      @CookieValue(value = "refreshToken", required = false) String refreshToken) {
+
+    return ResponseEntity.status(OK)
+        .body(ISSUE_ACCESS_TOKEN.withData(memberService.checkRefreshToken(refreshToken)));
   }
 
   // 회원 정보 수정
