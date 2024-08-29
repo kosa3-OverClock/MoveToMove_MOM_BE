@@ -38,4 +38,26 @@ INNER JOIN kanban_cards         kca
     </foreach>
   </insert>
 
+  <!-- 칸반 컬럼 조회 -->
+  <select id="selectKanbanColumns" parameterType="Long" resultType="com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.ColumnDto">
+    SELECT kanban_column_id, kanban_column_name, column_seq
+    FROM kanban_columns
+    WHERE project_id = #{projectId}
+    AND deleted_at IS NULL
+  </select>
+
+
+  <!-- 조회 (kanban_column 존재 여부) -->
+  <select id="existsKanbanColumns" parameterType="Long" resultType="boolean">
+    SELECT COUNT(*)
+    FROM kanban_columns
+    WHERE kanban_column_id = #{kanbanColumnId}
+  </select>
+
+  <!-- 칸반 컬럼 삭제 -->
+  <delete id="deleteKanbanColumns" parameterType="Long">
+    UPDATE kanban_columns SET deleted_at = Now()
+    WHERE kanban_column_id = #{kanbanColumnId}
+  </delete>
 </mapper>
+

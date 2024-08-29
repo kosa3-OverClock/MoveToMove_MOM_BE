@@ -42,6 +42,10 @@ public enum ResponseCode {
     PROJECT_CREATE(CREATED, "프로젝트가 생성되었습니다."),
     NO_PROJECT_LEADER(NOT_FOUND, "프로젝트 팀장이 아닙니다."),
     PROJECT_MODIFY(OK, "프로젝트가 정보가 수정되었습니다."),
+    NOT_FOUND_PROJECT(NOT_FOUND,"프로젝트 정보를 찾을 수 없습니다."),
+    // 컬럼
+    NOT_FOUND_COLUMN(NOT_FOUND, "칸반 컬럼이 존재하지 않습니다."),
+    COLUMN_DELETE(OK,"칸반 컬럼이 삭제되었습니다."),
 
     // 칸반 컬럼
     NOT_FOUND_KANBAN_COLUMN(NOT_FOUND, "존재하지 않는 칸반 컬럼입니다."),
