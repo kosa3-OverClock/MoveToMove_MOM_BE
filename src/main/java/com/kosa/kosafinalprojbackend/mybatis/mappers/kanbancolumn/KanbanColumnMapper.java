@@ -27,7 +27,7 @@ public interface KanbanColumnMapper {
                             @Param("memberList") List<Long> memberList);
 
   // 칸반 컬럼 저장
-  void insertKanbanColumns(Map<String, Object> params);
+  void insertKanbanColumns(Long projectId, Map<String, Object> params);
 
   // 칸반 컬럼 조회
   List<ColumnDto> selectKanbanColumns(Long projectId);

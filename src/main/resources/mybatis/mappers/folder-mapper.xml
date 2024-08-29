@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kosa.kosafinalprojbackend.mybatis.mappers.folder.FolderMapper">
+
+  <!-- 조회 (특정 사용자의 모든 폴더 조회) -->
+  <select id="selectUserAllFolder">
+    SELECT folder_id
+         , member_id
+         , parent_folder_id
+         , folder_name
+         , created_at
+      FROM folders
+     WHERE member_id = #{memberId}
+       AND parent_folder_id IS NULL
+       AND deleted_at IS NULL
+  </select>
+
+  <!-- 조회 (특정 사용자의 모든 폴더 조회) -->
+  <select id="existsByFolderId" resultType="boolean">
+    SELECT EXISTS (SELECT 1
+                     FROM folders
+                    WHERE folder_id = #{folderId}) AS result
+  </select>
+
+  <!-- 저장 -->
+  <insert id="insertFolder">
+    INSERT
+      INTO folders
+         ( member_id
+         , folder_name
+         )
+  VALUES ( memberId
+         , folderForm.folderName
+         )
+  </insert>
+
+  <!-- 수정 -->
+  <update id="updateFolder">
+    UPDATE folders
+    SET folder_name = #{folderName},
+    parent_folder_id =
+    <choose>
+      <when test="parentFolderId != null">
+        #{parentFolderId}
+      </when>
+      <otherwise>
+        NULL
+      </otherwise>
+    </choose>
+    WHERE folder_id = #{folderId}
+    AND member_id = #{memberId}
+  </update>
+
+  <!-- 프로젝트 팀장 여부 조회 (폴더부터 조회) -->
+  <select id="selectProjectLeaderYN" resultType="com.kosa.kosafinalprojbackend.domains.folder.model.dto.ProjectLeaderByFolderIdDto">
+    SELECT pj.project_id
+         , pj.project_leader_YN
+      FROM folders          f1
+ LEFT JOIN folders          f2
+        ON f2.folder_id     = f1.parent_folder_id
+INNER JOIN folder_projects  fp
+        ON fp.folder_id     = f1.folder_id
+INNER JOIN project_joins    pj
+        ON fp.project_id    = pj.project_id
+       AND pj.member_id     = #{memberId}
+       AND f1.folder_id     = #{folderId}) AS result
+  </select>
+
+</mapper>
