@@ -46,7 +46,7 @@ public enum ResponseCode {
     // 컬럼
     NOT_FOUND_COLUMN(NOT_FOUND, "칸반 컬럼이 존재하지 않습니다."),
     COLUMN_DELETE(OK,"칸반 컬럼이 삭제되었습니다."),
-
+    KANBAN_COLUMN_UPDATE(OK,"컬럼이 수정 완료 되었습니다."),
     // 칸반 컬럼
     NOT_FOUND_KANBAN_COLUMN(NOT_FOUND, "존재하지 않는 칸반 컬럼입니다."),
 

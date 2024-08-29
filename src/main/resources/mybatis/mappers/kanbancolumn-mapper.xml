@@ -81,6 +81,19 @@ INNER JOIN kanban_cards         kca
     </foreach>
   </insert>
 
+  <!-- 칸반 컬럼 저장, 수정 -->
+    <insert id="upsertKanbanColumns" parameterType="List">
+        INSERT INTO kanban_columns (kanban_column_id, kanban_column_name, column_seq, project_id)
+        VALUES
+        <foreach collection="list" item="column" separator=",">
+            (#{column.kanbanColumnId}, #{column.kanbanColumnName}, #{column.columnSeq}, #{column.projectId})
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        kanban_column_name = VALUES(kanban_column_name),
+        column_seq = VALUES(column_seq),
+        updated_at = CURRENT_TIMESTAMP
+    </insert>
+
   <!-- 칸반 컬럼 조회 -->
   <select id="selectKanbanColumns" parameterType="Long" resultType="com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.ColumnDto">
     SELECT kanban_column_id, kanban_column_name, column_seq
