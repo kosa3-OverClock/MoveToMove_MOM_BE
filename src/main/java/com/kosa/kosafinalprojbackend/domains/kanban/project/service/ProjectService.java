@@ -1,5 +1,6 @@
 package com.kosa.kosafinalprojbackend.domains.kanban.project.service;
 
+import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectInCardDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.enums.ProjectLeaderYN;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.form.ProjectForm;
 import com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode;
@@ -18,6 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.NOT_FOUND_ID;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -35,7 +38,7 @@ public class ProjectService {
 
     // 유저 아이디 확인
     if (!memberMapper.existsByMemberId(customUserDetails.getId())) {
-      throw new CustomBaseException(ResponseCode.NOT_FOUND_ID);
+      throw new CustomBaseException(NOT_FOUND_ID);
     }
 
     // 프로젝트 저장
@@ -73,7 +76,7 @@ public class ProjectService {
 
     // 유저 아이디 확인
     if (!memberMapper.existsByMemberId(customUserDetails.getId())) {
-      throw new CustomBaseException(ResponseCode.NOT_FOUND_ID);
+      throw new CustomBaseException(NOT_FOUND_ID);
     }
 
     // 프로젝트 팀장인지 확인
@@ -83,7 +86,7 @@ public class ProjectService {
 
     // 프로젝트 아이디 확인
     if (!projectMapper.existsByProjectId(projectId)) {
-      throw new CustomBaseException(ResponseCode.NOT_FOUND_ID);
+      throw new CustomBaseException(NOT_FOUND_ID);
     }
 
     // 프로젝트 정보 업데이트
@@ -108,5 +111,17 @@ public class ProjectService {
     // TODO: 프로젝트 팀 채팅 삭제
 
     // 프로젝트 삭제
+  }
+
+
+  // 칸반 카드 조회 (프로젝트 기준)
+  public List<ProjectInCardDto> selectKanbanCardByProject(Long projectId) {
+
+    // 프로젝트 존재 여부 확인
+    if (!projectMapper.existsByProjectId(projectId)) {
+      throw new CustomBaseException(NOT_FOUND_ID);
+    }
+
+    return projectMapper.selectKanbanCardByProject(projectId);
   }
 }
