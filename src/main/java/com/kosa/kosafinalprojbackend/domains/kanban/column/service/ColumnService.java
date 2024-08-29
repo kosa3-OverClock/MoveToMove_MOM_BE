@@ -1,6 +1,7 @@
 package com.kosa.kosafinalprojbackend.domains.kanban.column.service;
 
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.ColumnDto;
+import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanColumnForm;
 import com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode;
 import com.kosa.kosafinalprojbackend.global.error.exception.CustomBaseException;
 import com.kosa.kosafinalprojbackend.mybatis.mappers.kanbancolumn.KanbanColumnMapper;
@@ -8,6 +9,7 @@ import com.kosa.kosafinalprojbackend.mybatis.mappers.project.ProjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -32,7 +34,13 @@ public class ColumnService {
         return kanbanColumnMapper.selectKanbanColumns(projectId);
     }
 
+    // 칸반 컬럼 순서 수정, 새로운 컬럼 추가
+    public void upsertColumn(List<KanbanColumnForm> kanbanColumnForm) {
+        kanbanColumnMapper.upsertKanbanColumns(kanbanColumnForm);
+    }
+
     // 칸반 컬럼 삭제
+    @Transactional
     public void deleteColumn(Long columnId) {
         // TODO:  칸반 컬럼에 다른 칸반 카드가 존재하는지 확인
 

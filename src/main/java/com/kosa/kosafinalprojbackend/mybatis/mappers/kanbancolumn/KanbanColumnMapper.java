@@ -6,6 +6,7 @@ import java.util.Map;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.ColumnDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.KanbanColumnInCardDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanCardForm;
+import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanColumnForm;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -28,6 +29,9 @@ public interface KanbanColumnMapper {
 
   // 칸반 컬럼 저장
   void insertKanbanColumns(Long projectId, Map<String, Object> params);
+
+  // 칸반 컬럼 저장, 수정
+  void upsertKanbanColumns(List<KanbanColumnForm> kanbanColumnForms);
 
   // 칸반 컬럼 조회
   List<ColumnDto> selectKanbanColumns(Long projectId);
