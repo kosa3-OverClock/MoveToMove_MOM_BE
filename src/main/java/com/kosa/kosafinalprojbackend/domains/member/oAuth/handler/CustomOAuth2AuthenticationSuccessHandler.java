@@ -2,6 +2,7 @@ package com.kosa.kosafinalprojbackend.domains.member.oAuth.handler;
 
 import com.kosa.kosafinalprojbackend.domains.member.oAuth.domain.Member;
 import com.kosa.kosafinalprojbackend.domains.member.oAuth.dto.info.UserPrincipal;
+import com.kosa.kosafinalprojbackend.global.redis.service.RedisService;
 import com.kosa.kosafinalprojbackend.global.security.filter.JwtTokenProvider;
 import com.kosa.kosafinalprojbackend.mybatis.mappers.member.MemberOAuthMapper;
 import jakarta.servlet.ServletException;
@@ -9,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -21,7 +23,9 @@ import java.io.IOException;
 public class CustomOAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtTokenProvider jwtTokenProvider;
-
+    private final RedisService redisService;
+    @Value("${frontend.server.url}")
+    private String frontendServerUrl;
     /*
     *   소셜 아이디로 로그인에 성공했을 경우 jwt를 생성하고 레디스에 토큰을 저장 후 프론트 서버로 토큰을 전달하는 메서드
     * */
@@ -39,9 +43,8 @@ public class CustomOAuth2AuthenticationSuccessHandler extends SimpleUrlAuthentic
         log.info("Generated access token = {}", accessToken);
         log.info("Generated refresh token = {}", refreshToken);
         // Redis에 JWT 토큰 저장
-
-        // 응답 설정
-
+        redisService.saveRefreshToken(loginUser.getMemberId(), refreshToken);
+        // TODO: 프론트 서버로 응답 설정 ( response에 담아서, 쿼리파라미터에 담아서 토큰 전송 )
 
     }
 }

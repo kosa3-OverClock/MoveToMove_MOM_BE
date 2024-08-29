@@ -1,5 +1,7 @@
 package com.kosa.kosafinalprojbackend.global.security.config;
 
+import com.kosa.kosafinalprojbackend.domains.member.controller.CustomLogoutHandler;
+import com.kosa.kosafinalprojbackend.domains.member.controller.CustomLogoutSuccessHandler;
 import com.kosa.kosafinalprojbackend.domains.member.oAuth.handler.CustomOAuth2AuthenticationFailureHandler;
 import com.kosa.kosafinalprojbackend.domains.member.oAuth.handler.CustomOAuth2AuthenticationSuccessHandler;
 import com.kosa.kosafinalprojbackend.domains.member.oAuth.service.CustomOAuth2UserService;
@@ -28,6 +30,8 @@ public class SecurityConfig {
   private final CustomOAuth2UserService customOAuth2UserService;
   private final CustomOAuth2AuthenticationSuccessHandler customOAuth2AuthenticationSuccessHandler;
   private final CustomOAuth2AuthenticationFailureHandler customOAuth2AuthenticationFailureHandler;
+  private final CustomLogoutHandler customLogoutHandler;
+  private final CustomLogoutSuccessHandler customLogoutSuccessHandler;
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -48,7 +52,13 @@ public class SecurityConfig {
                 .requestMatchers("/**").permitAll()
                 .anyRequest().permitAll()
         )
-        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .logout(logout -> logout
+                    .logoutUrl("/api/logout")
+                    .addLogoutHandler(customLogoutHandler)
+                    .logoutSuccessHandler(customLogoutSuccessHandler)
+                    .permitAll()
+            );
 
     // 일반 로그인
 //    http.formLogin(httpSecurityFormLoginConfigurer -> {

@@ -9,8 +9,12 @@ import com.kosa.kosafinalprojbackend.global.amazon.service.S3Service;
 import com.kosa.kosafinalprojbackend.global.error.exception.CustomBaseException;
 import com.kosa.kosafinalprojbackend.global.redis.service.RedisService;
 import com.kosa.kosafinalprojbackend.global.security.filter.JwtTokenProvider;
+import com.kosa.kosafinalprojbackend.global.security.model.CustomUserDetails;
 import com.kosa.kosafinalprojbackend.mybatis.mappers.member.MemberMapper;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,8 +33,11 @@ public class MemberService {
   private final PasswordEncoder passwordEncoder;
   private final JwtTokenProvider jwtTokenProvider;
 
+  @Value("${refresh.expire_time}")
+  private int REFRESH_EXPIRE_TIME;
+
   // 로그인
-  public String memberLogin(LoginForm signInForm) {
+  public String memberLogin(LoginForm signInForm, HttpServletResponse response) {
 
     // 아이디 확인
     MemberDto memberDto = memberMapper.findByMemberEmail(signInForm.getEmail());
@@ -49,6 +56,14 @@ public class MemberService {
 
     // Redis에 refresh token 저장
     redisService.saveRefreshToken(memberDto.getMemberId(), refreshToken);
+
+    // refresh token 쿠키에 저장
+    Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+    refreshTokenCookie.setHttpOnly(true);   // 스크립트에서 접근 불가
+    refreshTokenCookie.setSecure(false);    // HTTPS를 사용하는 경우에 사용
+    refreshTokenCookie.setPath("/");        // 쿠키 경로 설정
+    refreshTokenCookie.setMaxAge(REFRESH_EXPIRE_TIME / 1000); // 시간 설정
+    response.addCookie(refreshTokenCookie);
 
     return jwtTokenProvider.createAccessToken(memberDto.getMemberId(), memberDto.getEmail());
   }
@@ -89,6 +104,25 @@ public class MemberService {
     memberMapper.insertMember(signUpForm);
 
     return signUpForm.getEmail();
+  }
+
+  // Refresh Token 확인
+  public String checkRefreshToken(String token) {
+
+    // refresh Token 으로 사용자 찾기
+    Long memberId = jwtTokenProvider.getMemberByToken(token, false);
+
+    // redis refreshToken
+    String redisRefreshToken = redisService.selectRefreshToken(memberId);
+    Long redisMemberId = jwtTokenProvider.getMemberByToken(redisRefreshToken, false);
+
+    // 토큰 비교
+    if (token.equals(redisRefreshToken) && memberId.equals(redisMemberId)) {
+      MemberDto memberDto = memberMapper.findByMemberId(memberId);
+      return jwtTokenProvider.createAccessToken(memberId, memberDto.getEmail());
+    } else {
+      throw new CustomBaseException(NOT_FIND_TOKEN);
+    }
   }
 
   // 회원 정보 수정
@@ -135,5 +169,19 @@ public class MemberService {
     memberMapper.updateMemberInfo(memberId, signUpForm);
 
     return memberDto.getEmail();
+  }
+
+  // 회원 탈퇴
+  public void memberQuit(CustomUserDetails customUserDetails) {
+    // 삭제여부 확인
+    MemberDto findMember = memberMapper.findByMemberId(customUserDetails.getId());
+    Long memberId = findMember.getMemberId();
+    // TODO: 차후 삭제 여부에 따른 에러 처리가 필요하나 ?
+    // if(findMember.getDeletedAt() != null) {}
+
+    // redis에 저장된 refresh 토큰 삭제
+    redisService.deleteRefreshToken(memberId);
+    // DB에 저장된 회원 delete_at 값 생성 (access 토큰은 프론트 처리)
+    memberMapper.memberQuit(memberId);
   }
 }
