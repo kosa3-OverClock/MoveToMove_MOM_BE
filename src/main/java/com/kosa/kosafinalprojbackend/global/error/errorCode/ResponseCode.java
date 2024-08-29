@@ -50,6 +50,9 @@ public enum ResponseCode {
     // 칸반 컬럼
     NOT_FOUND_KANBAN_COLUMN(NOT_FOUND, "존재하지 않는 칸반 컬럼입니다."),
 
+    // 칸반 카드
+    KANBAN_CARD_CREATED(CREATED ,"칸반 카드가 생성 되었습니다."),
+
     // 공통
     NOT_FOUND_ID(NOT_FOUND, "존재하지 않는 아이디입니다."),
 

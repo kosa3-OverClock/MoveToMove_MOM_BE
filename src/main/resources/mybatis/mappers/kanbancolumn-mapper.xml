@@ -29,6 +29,49 @@ INNER JOIN kanban_cards         kca
      WHERE kco.kanban_column_id = #{kanbanColumnId}
   </select>
 
+  <!-- 칸반 카드 저장 -->
+  <insert id="insertKanbanCard" useGeneratedKeys="true" keyProperty="kanbanCardForm.kanbanCardId">
+
+    INSERT
+      INTO kanban_cards
+         ( kanban_column_id
+         , title
+         , content
+         , card_seq
+         , priority
+         , task_size
+         , start_at
+         , end_at
+         )
+    VALUES
+         ( #{kanbanColumnId}
+         , #{kanbanCardForm.title}
+         , #{kanbanCardForm.content}
+         , 0
+         , #{kanbanCardForm.priority}
+         , #{kanbanCardForm.taskSize}
+         , #{kanbanCardForm.startAt}
+         , #{kanbanCardForm.endAt}
+         )
+  </insert>
+
+  <!-- 칸반 카드 담당자 저장 -->
+  <insert id="insertKanbanCardWork" parameterType="List">
+    INSERT
+      INTO kanban_works
+         ( kanban_card_id
+         , member_id
+         )
+    VALUES
+      <foreach collection="memberList" item="memberId" separator=",">
+         ( #{kanbanCardId}
+         , #{memberId}
+         )
+      </foreach>
+  </insert>
+
+
+
   <!-- 저장 -->
   <insert id="insertKanbanColumns" parameterType="map">
     INSERT INTO kanban_columns (project_id, kanban_column_name)
