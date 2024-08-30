@@ -32,7 +32,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     String[] api = {
         "/api/members/login", "/api/members/sign-up",
-        "/oauth2/authorization/google", "/oauth2/authorization/kakao"
+        "/oauth2/authorization/google", "/oauth2/authorization/kakao",
+            "/**"
     };
 
     String path = request.getRequestURI();

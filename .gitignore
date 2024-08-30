@@ -38,3 +38,4 @@ out/
 
 ### submodule
 src/main/resources/application*.yml
+src/main/java/com/kosa/kosafinalprojbackend/global/security/filter/JwtAuthenticationFilter.java
