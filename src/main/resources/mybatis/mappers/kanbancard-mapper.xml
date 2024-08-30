@@ -9,6 +9,19 @@
                     WHERE kanban_card_id = #{kanbanCardId}) AS result
   </select>
 
+  <!-- 칸반 카드 담당자 조회 -->
+  <select id="selectKanbanCardMember" parameterType="Long" resultType="com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardMemberDto">
+    SELECT kw.member_id
+         , me.email
+         , me.nick_name
+         , me.profile_url
+      FROM kanban_works         kw
+INNER JOIN members              me
+        ON me.member_id         = kw.member_id
+     WHERE kw.kanban_card_id    = #{kanbanCardId}
+       AND me.deleted_at        IS NULL
+  </select>
+
  <!-- 칸반 카드 담당자 삭제 -->
  <delete id="deleteKanbanCardMember" parameterType="Long">
     DELETE
