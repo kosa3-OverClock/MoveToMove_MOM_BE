@@ -1,6 +1,7 @@
 package com.kosa.kosafinalprojbackend.domains.kanban.card.controller;
 
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CardUpdateForm;
+import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CardUpdateMemberForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.service.CardService;
 import com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode;
 import com.kosa.kosafinalprojbackend.global.security.model.CustomUserDetails;
@@ -21,15 +22,27 @@ public class CardController {
 
   private final CardService kanbanCardService;
 
+  // 칸반 카드 사용자 수정
+  @PatchMapping("/{kanban-card-id}/members")
+  public ResponseEntity<ResponseCode> updateKanbanCardMember(
+      @AuthenticationPrincipal CustomUserDetails customUserDetails,
+      @PathVariable("kanban-card-id") Long kanbanCardId,
+      @RequestBody CardUpdateMemberForm cardUpdateMemberForm
+  ) {
+
+    kanbanCardService.updateKanbanCardMember(customUserDetails.getId(), kanbanCardId, cardUpdateMemberForm);
+
+    return ResponseEntity.status(OK).body(KANBAN_CARD_MODIFY_SUCCESS);
+  }
 
   // 칸반 카드 수정
   @PatchMapping("/{kanban-card-id}")
   public ResponseEntity<ResponseCode> updateKanbanCard(
       @AuthenticationPrincipal CustomUserDetails customUserDetails,
       @PathVariable("kanban-card-id") Long kanbanCardId,
-      @RequestBody CardUpdateForm kanbanCardTitleForm) {
+      @RequestBody CardUpdateForm cardUpdateForm) {
 
-    kanbanCardService.updateKanbanCard(customUserDetails.getId(), kanbanCardId, kanbanCardTitleForm);
+    kanbanCardService.updateKanbanCard(customUserDetails.getId(), kanbanCardId, cardUpdateForm);
 
     return ResponseEntity.status(OK).body(KANBAN_CARD_MODIFY_SUCCESS);
   }
