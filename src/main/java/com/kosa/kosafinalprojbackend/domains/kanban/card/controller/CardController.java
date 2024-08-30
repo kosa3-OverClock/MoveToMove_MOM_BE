@@ -1,10 +1,12 @@
 package com.kosa.kosafinalprojbackend.domains.kanban.card.controller;
 
+import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardMemberDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CardUpdateForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CardUpdateMemberForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.service.CardService;
 import com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode;
 import com.kosa.kosafinalprojbackend.global.security.model.CustomUserDetails;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,13 +24,12 @@ public class CardController {
 
   private final CardService kanbanCardService;
 
-  // 칸반 카드 사용자 수정
+  // 칸반 카드 담당자 수정
   @PatchMapping("/{kanban-card-id}/members")
   public ResponseEntity<ResponseCode> updateKanbanCardMember(
       @AuthenticationPrincipal CustomUserDetails customUserDetails,
       @PathVariable("kanban-card-id") Long kanbanCardId,
-      @RequestBody CardUpdateMemberForm cardUpdateMemberForm
-  ) {
+      @RequestBody CardUpdateMemberForm cardUpdateMemberForm) {
 
     kanbanCardService.updateKanbanCardMember(customUserDetails.getId(), kanbanCardId, cardUpdateMemberForm);
 

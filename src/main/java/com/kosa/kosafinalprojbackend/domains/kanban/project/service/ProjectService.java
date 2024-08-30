@@ -1,6 +1,7 @@
 package com.kosa.kosafinalprojbackend.domains.kanban.project.service;
 
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectInCardDto;
+import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectMemberDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.enums.ProjectLeaderYN;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.form.ProjectForm;
 import com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode;
@@ -106,6 +107,22 @@ public class ProjectService {
     // 프로젝트 삭제
   }
 
+
+  // 프로젝트 참여자 조회
+  public List<ProjectMemberDto> selectProjectMember(Long memberId, Long projectId) {
+
+    // 유저 아이디 확인
+    if (!memberMapper.existsByMemberId(memberId)) {
+      throw new CustomBaseException(NOT_FOUND_ID);
+    }
+
+    // 프로젝트 존재 여부 확인
+    if (!projectMapper.existsByProjectId(projectId)) {
+      throw new CustomBaseException(NOT_FOUND_ID);
+    }
+
+    return projectMapper.selectProjectMember(projectId);
+  }
 
   // 칸반 카드 조회 (프로젝트 기준)
   public List<ProjectInCardDto> selectKanbanCardByProject(Long projectId) {
