@@ -9,6 +9,21 @@
                     WHERE project_id = #{projectId}) AS result
   </select>
 
+  <!-- 프로젝트 참여자 조회 -->
+  <select id="selectProjectMember" parameterType="Long" resultType="com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectMemberDto">
+    SELECT me.member_id
+         , me.email
+         , me.nick_name
+         , me.profile_url
+      FROM projects      pr
+INNER JOIN project_joins pj
+        ON pj.project_id = pr.project_id
+INNER JOIN members       me
+        ON me.member_id  = pj.member_id
+     WHERE pr.project_id = #{projectId}
+       AND me.deleted_at IS NULL
+  </select>
+
   <!-- 저장 -->
   <insert id="insertProject" parameterType="com.kosa.kosafinalprojbackend.domains.kanban.project.model.form.ProjectForm"
     useGeneratedKeys="true" keyProperty="projectId">
@@ -36,7 +51,7 @@
      WHERE project_id = #{projectId}
   </update>
 
-
+ <!-- 칸반 카드 조회 (프로젝트 기준) -->
   <select id="selectKanbanCardByProject" parameterType="Long" resultType="com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectInCardDto">
     SELECT pr.project_id
          , pr.project_name

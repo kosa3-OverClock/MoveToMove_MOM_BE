@@ -24,16 +24,6 @@ public class CardController {
 
   private final CardService kanbanCardService;
 
-  // 칸반 카드 담당자 조회
-  @GetMapping("/{kanban-card-id}/members")
-  public ResponseEntity<List<CardMemberDto>> selectKanbanCardMember(
-      @AuthenticationPrincipal CustomUserDetails customUserDetails,
-      @PathVariable("kanban-card-id") Long kanbanCardId) {
-
-    return ResponseEntity.ok(
-        kanbanCardService.selectKanbanCardMember(customUserDetails.getId(), kanbanCardId));
-  }
-
   // 칸반 카드 담당자 수정
   @PatchMapping("/{kanban-card-id}/members")
   public ResponseEntity<ResponseCode> updateKanbanCardMember(
