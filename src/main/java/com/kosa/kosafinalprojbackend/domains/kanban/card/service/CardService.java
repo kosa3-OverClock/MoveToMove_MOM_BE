@@ -18,7 +18,7 @@ public class CardService {
   private final MemberMapper memberMapper;
   private final KanbanCardMapper kanbanCardMapper;
 
-  // 칸반 카드 제목 수정
+  // 칸반 카드 수정
   @Transactional
   public void updateKanbanCard(
       Long memberId, Long kanbanCardId, CardUpdateForm kanbanCardTitleForm) {
@@ -34,5 +34,22 @@ public class CardService {
     }
 
     kanbanCardMapper.updateKanbanCard(kanbanCardId, kanbanCardTitleForm);
+  }
+
+  // 칸반 카드 삭제
+  @Transactional
+  public void deleteKanbanCard(Long memberId, Long kanbanCardId) {
+
+    // 유저 아이디 확인
+    if (!memberMapper.existsByMemberId(memberId)) {
+      throw new CustomBaseException(NOT_FOUND_ID);
+    }
+
+    // 칸반 카드 확인
+    if (!kanbanCardMapper.existsByKanbanCardId(kanbanCardId)) {
+      throw new CustomBaseException(NOT_FOUND_KANBAN_CARD);
+    }
+
+    kanbanCardMapper.deleteKanbanCard(kanbanCardId);
   }
 }

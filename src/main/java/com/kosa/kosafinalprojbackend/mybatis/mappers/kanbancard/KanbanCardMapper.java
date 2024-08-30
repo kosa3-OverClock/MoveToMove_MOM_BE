@@ -13,4 +13,7 @@ public interface KanbanCardMapper {
   // 칸반 카드 수정
   void updateKanbanCard(@Param("kanbanCardId") Long kanbanCardId,
                         @Param("cardUpdateForm") CardUpdateForm kanbanCardTitleForm);
+
+  // 칸반 카드 삭제
+  void deleteKanbanCard(@Param("kanbanCardId") Long kanbanCardId);
 }
