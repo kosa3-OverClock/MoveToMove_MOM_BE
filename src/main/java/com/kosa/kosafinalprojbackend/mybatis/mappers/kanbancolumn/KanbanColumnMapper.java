@@ -41,4 +41,11 @@ public interface KanbanColumnMapper {
 
   // 칸반 컬럼 삭제
   void deleteKanbanColumns(Long kanbanColumnId);
+
+  /*
+    칸반 컬럼 순서 변경
+    Seq + 1
+    Seq - 1
+    update 컬럼 순서
+   */
 }

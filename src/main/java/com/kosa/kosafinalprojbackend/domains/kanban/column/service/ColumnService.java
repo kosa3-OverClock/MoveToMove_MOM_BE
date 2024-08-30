@@ -35,20 +35,26 @@ public class ColumnService {
     }
 
     // 칸반 컬럼 순서 수정, 새로운 컬럼 추가
+    @Transactional
     public void upsertColumn(List<KanbanColumnForm> kanbanColumnForm) {
         kanbanColumnMapper.upsertKanbanColumns(kanbanColumnForm);
     }
+
+    //  TODO: 칸반 컬럼 순서 수정
+
 
     // 칸반 컬럼 삭제
     @Transactional
     public void deleteColumn(Long columnId) {
         // TODO:  칸반 컬럼에 다른 칸반 카드가 존재하는지 확인
 
-        // TODO:  칸반 컬럼이 존재하는지 확인
+        // 칸반 컬럼이 존재하는지 확인
         if(kanbanColumnMapper.existsKanbanColumns(columnId)) {
             log.info("존재하지 않는 컬럼입니다 ColumnId={}", columnId);
             throw new CustomBaseException(ResponseCode.NOT_FOUND_COLUMN);
         }
+        // 칸반 컬럼 삭제
+        // TODO: 칸반 컬럼 Sequence 자동 수정되도록
         kanbanColumnMapper.deleteKanbanColumns(columnId);
     }
 }

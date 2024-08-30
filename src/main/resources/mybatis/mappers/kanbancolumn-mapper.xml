@@ -105,9 +105,9 @@ INNER JOIN kanban_cards         kca
 
   <!-- 조회 (kanban_column 존재 여부) -->
   <select id="existsKanbanColumns" parameterType="Long" resultType="boolean">
-    SELECT COUNT(*)
-    FROM kanban_columns
-    WHERE kanban_column_id = #{kanbanColumnId}
+    SELECT EXISTS ( SELECT 1
+                    FROM kanban_columns
+                    WHERE kanban_column_id = #{kanbanColumnId}) AS result
   </select>
 
   <!-- 칸반 컬럼 삭제 -->
