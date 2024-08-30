@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kosa.kosafinalprojbackend.mybatis.mappers.kanbancard.KanbanCardMapper">
+
+  <!-- 칸반 카드 확인 -->
+  <select id="existsByKanbanCardId" parameterType="Long" resultType="boolean">
+    SELECT EXISTS (SELECT 1
+                     FROM kanban_cards
+                    WHERE kanban_card_id = #{kanbanCardId}) AS result
+  </select>
+
+  <!-- 칸반 카드 수정 -->
+  <update id="updateKanbanCard">
+    UPDATE kanban_cards
+    <set>
+      ${cardUpdateForm.updateColumn} = #{cardUpdateForm.updateData},
+      updated_at = NOW()
+    </set>
+     WHERE kanban_card_id = #{kanbanCardId}
+  </update>
+
+  <!-- 칸반 카드 삭제 -->
+  <update id="deleteKanbanCard" parameterType="Long">
+    UPDATE kanban_cards
+       SET deleted_at       = NOW()
+     WHERE kanban_card_id   = #{kanbanCardId}
+  </update>
+</mapper>
+

@@ -59,6 +59,9 @@ public enum ResponseCode {
 
     // 칸반 카드
     KANBAN_CARD_CREATED(CREATED ,"칸반 카드가 생성 되었습니다."),
+    KANBAN_CARD_MODIFY_SUCCESS(OK, "칸반 카드 정보를 수정했습니다."),
+    KANBAN_CARD_DELETE(OK, "칸반 카드를 삭제하였습니다."),
+    NOT_FOUND_KANBAN_CARD(NOT_FOUND, "존재하지 않는 칸반 카드 입니다."),
 
     // 공통
     NOT_FOUND_ID(NOT_FOUND, "존재하지 않는 아이디입니다."),

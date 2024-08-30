@@ -30,7 +30,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   @Override
   protected boolean shouldNotFilter(HttpServletRequest request) {
 
-    String[] api = {"/api/members/login", "/api/members/sign-up", "/oauth2/authorization/google", "/oauth2/authorization/kakao", "/**"};
+    String[] api = {
+        "/api/members/login", "/api/members/sign-up",
+        "/oauth2/authorization/google", "/oauth2/authorization/kakao"
+    };
 
     String path = request.getRequestURI();
 
@@ -47,7 +50,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
       // 토큰이 없을 경우
       if (!StringUtils.hasText(token)) {
-        // response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         return;
       }
