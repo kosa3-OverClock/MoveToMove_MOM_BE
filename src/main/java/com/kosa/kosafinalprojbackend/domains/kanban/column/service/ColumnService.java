@@ -1,10 +1,13 @@
 package com.kosa.kosafinalprojbackend.domains.kanban.column.service;
 
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.ColumnDto;
+import com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.KanbanColumnInCardDto;
+import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanCardForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanColumnForm;
 import com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode;
 import com.kosa.kosafinalprojbackend.global.error.exception.CustomBaseException;
 import com.kosa.kosafinalprojbackend.mybatis.mappers.kanbancolumn.KanbanColumnMapper;
+import com.kosa.kosafinalprojbackend.mybatis.mappers.member.MemberMapper;
 import com.kosa.kosafinalprojbackend.mybatis.mappers.project.ProjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,11 +16,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.NOT_FOUND_ID;
+import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.NOT_FOUND_KANBAN_COLUMN;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class ColumnService {
 
+    private final MemberMapper memberMapper;
     private final KanbanColumnMapper kanbanColumnMapper;
     private final ProjectMapper projectMapper;
 
@@ -56,5 +63,41 @@ public class ColumnService {
         // 칸반 컬럼 삭제
         // TODO: 칸반 컬럼 Sequence 자동 수정되도록
         kanbanColumnMapper.deleteKanbanColumns(columnId);
+    }
+
+
+    // 칸반 카드 조회 (칸반 컬럼 기준)
+    public List<KanbanColumnInCardDto> selectKanbanCardByKanbanColumn(Long kanbanColumnId) {
+
+        // 칸반 카드 존재 여부 확인
+        if (!kanbanColumnMapper.existsByKanbanColumn(kanbanColumnId)) {
+            throw new CustomBaseException(NOT_FOUND_KANBAN_COLUMN);
+        }
+
+        return kanbanColumnMapper.selectKanbanCardByKanbanColumn(kanbanColumnId);
+    }
+
+    // 칸반 카드 생성
+    @Transactional
+    public Long insertKanbanCard(Long kanbanColumnId, KanbanCardForm kanbanCardForm, Long memberId) {
+
+        // 유저 아이디 확인
+        if (!memberMapper.existsByMemberId(memberId)) {
+            throw new CustomBaseException(NOT_FOUND_ID);
+        }
+
+        // 칸반 카드 존재 여부 확인
+        if(!kanbanColumnMapper.existsByKanbanColumn(kanbanColumnId)) {
+            throw new CustomBaseException(NOT_FOUND_KANBAN_COLUMN);
+        }
+
+        // 칸반 카드 저장
+        kanbanColumnMapper.insertKanbanCard(kanbanColumnId, kanbanCardForm);
+
+        // 칸반 카드 담당자 저장
+        kanbanColumnMapper.insertKanbanCardWork(
+            kanbanCardForm.getKanbanCardId(), kanbanCardForm.getMemberList());
+
+        return kanbanCardForm.getKanbanCardId();
     }
 }

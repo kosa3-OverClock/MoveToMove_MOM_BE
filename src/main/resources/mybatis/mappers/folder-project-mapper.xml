@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kosa.kosafinalprojbackend.mybatis.mappers.forderproject.FolderProjectMapper">
+
+  <!-- 조회 (특정 사용자의 모든 폴더 조회) -->
+  <select id="selectUserAllFolder">
+    SELECT folder_id
+         , member_id
+         , parent_folder_id
+         , folder_name
+         , created_at
+      FROM folders
+     WHERE member_id = #{memberId}
+       AND parent_folder_id IS NULL
+  </select>
+
+  <!-- 조회 (특정 폴더의 모든 프로젝트 조회) -->
+  <select id="selectFolderAllProjects" resultType="com.kosa.kosafinalprojbackend.domains.folder.model.dto.ProjectAndJoinDto">
+    SELECT p.project_id
+         , p.project_name
+         , p.project_description
+         , p.start_at
+         , p.end_at
+         , p.created_at
+         , p.deleted_at
+         , pj.project_leader_YN
+      FROM folder_projects  fp
+INNER JOIN projects         p
+        ON fp.project_id    = p.project_id
+       AND p.deleted_at     IS NULL
+INNER JOIN project_joins    pj
+        ON p.project_id     = pj.project_id
+       AND pj.member_id     = #{memberId}
+     WHERE fp.polder_id     = #{folderId}
+  </select>
+</mapper>
