@@ -18,5 +18,12 @@
     </set>
      WHERE kanban_card_id = #{kanbanCardId}
   </update>
+
+  <!-- 칸반 카드 삭제 -->
+  <update id="deleteKanbanCard" parameterType="Long">
+    UPDATE kanban_cards
+       SET deleted_at       = NOW()
+     WHERE kanban_card_id   = #{kanbanCardId}
+  </update>
 </mapper>
 

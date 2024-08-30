@@ -58,6 +58,8 @@ INNER JOIN kanban_columns       kco
 INNER JOIN kanban_cards         kca
         ON kca.kanban_column_id = kco.kanban_column_id
      WHERE pr.project_id        = #{projectId}
+       AND kco.deleted_at       IS NULL
+       AND kca.deleted_at       IS NULL
   </select>
 
 </mapper>
