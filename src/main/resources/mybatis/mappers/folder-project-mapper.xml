@@ -31,6 +31,6 @@ INNER JOIN projects         p
 INNER JOIN project_joins    pj
         ON p.project_id     = pj.project_id
        AND pj.member_id     = #{memberId}
-     WHERE fp.polder_id     = #{folderId}
+     WHERE fp.folder_id     = #{folderId}
   </select>
 </mapper>
