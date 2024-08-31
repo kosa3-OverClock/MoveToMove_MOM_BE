@@ -1,7 +1,7 @@
 package com.kosa.kosafinalprojbackend.mybatis.mappers.projectjoin;
 
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.enums.ProjectLeaderYN;
-import com.kosa.kosafinalprojbackend.domains.member.model.dto.MemberDto;
+import java.util.List;
 import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -17,4 +17,7 @@ public interface ProjectJoinMapper {
   boolean existsByProjectIdAndMemberId(@Param("projectId") Long projectId,
       @Param("memberId") Long memberId);
 
+  // 폴더 삭제 시 프로젝트_조인 삭제
+  void deleteProjectJoinsByProjectIds(@Param("memberId") Long memberId,
+      @Param("projectList") List<Long> projectList);
 }
