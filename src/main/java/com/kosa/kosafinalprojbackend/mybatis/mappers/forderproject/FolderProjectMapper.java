@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface FolderProjectMapper {
 
-  // 조회 (특정 사용자의 모든 폴더 조회)
+  // 조회 (특정 폴더의 모든 프로젝트 조회)
   List<ProjectDto> selectFolderAllProjects(@Param("folderId") Long folderId,
       @Param("memberId") Long memberId);
 
