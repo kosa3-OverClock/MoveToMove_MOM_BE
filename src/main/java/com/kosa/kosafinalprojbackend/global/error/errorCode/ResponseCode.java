@@ -32,6 +32,12 @@ public enum ResponseCode {
     NOT_FOUND_MEMBER(NOT_FOUND, "회원정보를 찾을 수 없습니다."),
     MEMBER_DELETE(OK, "회원 탈퇴 처리되었습니다."),
 
+    // 비밀번호 찾기
+    SEND_AUTHENTICATION_CODE(OK, "인증번호 발송"),
+    VERIFY_SUCCESS(OK, "인증되었습니다."),
+    VERIFY_FAILED(BAD_REQUEST, "인증 실패했습니다."),
+    UPDATE_PASSWORD_SUCCESS(OK, "비밀번호가 변경되었습니다."),
+
 
     // 토큰
     NOT_FIND_TOKEN(BAD_REQUEST,"토큰이 유효하지 않습니다."),

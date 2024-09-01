@@ -16,4 +16,10 @@ public class MemberDto {
     private String social;
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;
+
+
+    // 비밀번호 변경
+    public void updatePassword(String password) {
+        this.password = password;
+    }
 }
