@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kosa.kosafinalprojbackend.mybatis.mappers.project.ProjectMapper">
+
+  <!-- 조회 (projectId 존재 유무)  -->
+  <select id="existsByProjectId" resultType="boolean">
+    SELECT EXISTS (SELECT 1
+                     FROM projects
+                    WHERE project_id = #{projectId}) AS result
+  </select>
+
+  <!-- 프로젝트 참여자 조회 -->
+  <select id="selectProjectMember" parameterType="Long" resultType="com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectMemberDto">
+    SELECT me.member_id
+         , me.email
+         , me.nick_name
+         , me.profile_url
+      FROM projects      pr
+INNER JOIN project_joins pj
+        ON pj.project_id = pr.project_id
+INNER JOIN members       me
+        ON me.member_id  = pj.member_id
+     WHERE pr.project_id = #{projectId}
+       AND me.deleted_at IS NULL
+  </select>
+
+  <!-- 저장 -->
+  <insert id="insertProject" parameterType="com.kosa.kosafinalprojbackend.domains.kanban.project.model.form.ProjectForm"
+    useGeneratedKeys="true" keyProperty="projectId">
+    INSERT
+      INTO projects
+         ( project_name
+         , project_description
+         , start_at
+         , end_at
+         )
+  VALUES ( #{projectName}
+         , #{projectDescription}
+         , #{startAt}
+         , #{endAt}
+         )
+  </insert>
+
+  <!-- 수정 -->
+  <update id="updateProject">
+    UPDATE projects
+       SET project_name = #{projectForm.projectName}
+         , project_description = #{projectForm.projectDescription}
+         , start_at = #{projectForm.startAt}
+         , end_at = #{projectForm.endAt}
+     WHERE project_id = #{projectId}
+  </update>
+
+ <!-- 칸반 카드 조회 (프로젝트 기준) -->
+  <select id="selectKanbanCardByProject" parameterType="Long" resultType="com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectInCardDto">
+    SELECT pr.project_id
+         , pr.project_name
+         , kco.kanban_column_id
+         , kco.kanban_column_name
+         , kco.column_seq
+         , kca.kanban_card_id
+         , kca.title
+         , kca.content
+         , kca.card_seq
+         , kca.priority
+         , kca.task_size
+         , kca.start_at
+         , kca.end_at
+         , kca.created_at
+      FROM projects             pr
+INNER JOIN kanban_columns       kco
+        ON kco.project_id       = pr.project_id
+INNER JOIN kanban_cards         kca
+        ON kca.kanban_column_id = kco.kanban_column_id
+     WHERE pr.project_id        = #{projectId}
+       AND kco.deleted_at       IS NULL
+       AND kca.deleted_at       IS NULL
+  </select>
+
+</mapper>

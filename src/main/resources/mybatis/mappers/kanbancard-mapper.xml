@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kosa.kosafinalprojbackend.mybatis.mappers.kanbancard.KanbanCardMapper">
+
+  <!-- 칸반 카드 확인 -->
+  <select id="existsByKanbanCardId" parameterType="Long" resultType="boolean">
+    SELECT EXISTS (SELECT 1
+                     FROM kanban_cards
+                    WHERE kanban_card_id = #{kanbanCardId}) AS result
+  </select>
+
+  <!-- 칸반 카드 상세 조회 -->
+  <select id="selectKanbanCard" parameterType="Long" resultType="com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardDetailDto">
+    SELECT kco.kanban_column_id
+         , kco.kanban_column_name
+         , kco.column_seq
+         , kca.kanban_card_id
+         , kca.title
+         , kca.content
+         , kca.card_seq
+         , kca.priority
+         , kca.task_size
+         , kca.start_at
+         , kca.end_at
+         , kca.created_at
+      FROM kanban_cards         kca
+INNER JOIN kanban_columns       kco
+        ON kco.kanban_column_id = kca.kanban_column_id
+     WHERE kca.kanban_card_id = #{kanbanCardId}
+       AND kco.deleted_at       IS NULL
+       AND kca.deleted_at       IS NULL
+  </select>
+
+  <!-- 칸반 카드 담당자 조회 -->
+  <select id="selectKanbanCardMember" parameterType="Long" resultType="com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardMemberDto">
+    SELECT kw.member_id
+         , me.email
+         , me.nick_name
+         , me.profile_url
+      FROM kanban_works         kw
+INNER JOIN members              me
+        ON me.member_id         = kw.member_id
+     WHERE kw.kanban_card_id    = #{kanbanCardId}
+       AND me.deleted_at        IS NULL
+  </select>
+
+ <!-- 칸반 카드 담당자 삭제 -->
+ <delete id="deleteKanbanCardMember" parameterType="Long">
+    DELETE
+      FROM kanban_works
+     WHERE kanban_card_id = #{kanbanCardId}
+ </delete>
+
+  <!-- 칸반 카드 담당자 저장 -->
+  <delete id="insertKanbanCardMember" parameterType="Long">
+    INSERT
+      INTO kanban_works
+         ( kanban_card_id
+         , member_id
+         )
+    VALUES
+      <foreach collection="memberList" item="memberId" separator=",">
+         ( #{kanbanCardId}
+         , #{memberId}
+         )
+      </foreach>
+  </delete>
+
+  <!-- 칸반 카드 수정 -->
+  <update id="updateKanbanCard">
+    UPDATE kanban_cards
+    <set>
+      ${cardUpdateForm.updateColumn} = #{cardUpdateForm.updateData},
+      updated_at = NOW()
+    </set>
+     WHERE kanban_card_id = #{kanbanCardId}
+  </update>
+
+  <!-- 칸반 카드 삭제 -->
+  <update id="deleteKanbanCard" parameterType="Long">
+    UPDATE kanban_cards
+       SET deleted_at       = NOW()
+     WHERE kanban_card_id   = #{kanbanCardId}
+  </update>
+</mapper>
+

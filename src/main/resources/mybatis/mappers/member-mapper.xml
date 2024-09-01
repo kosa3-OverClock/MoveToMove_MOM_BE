@@ -2,11 +2,90 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.kosa.kosafinalprojbackend.mybatis.mappers.member.MemberMapper">
 
-    <select id="existsByEmail" resultType="boolean">
-        SELECT EXISTS (SELECT 1
-                         FROM members
-                        WHERE email = #{email}
-                      ) AS result
+    <!-- 아이디 기준 정보 조회 -->
+    <select id="findByMemberId" resultType="com.kosa.kosafinalprojbackend.domains.member.model.dto.MemberDto">
+        SELECT member_id
+             , email
+             , nick_name
+             , password
+             , profile_url
+             , social
+             , created_at
+             , deleted_at
+        FROM members
+        WHERE member_id = #{memberId}
     </select>
 
+
+    <!-- 이메일 기준 정보 조회 -->
+    <select id="findByMemberEmail" resultType="com.kosa.kosafinalprojbackend.domains.member.model.dto.MemberDto">
+        SELECT member_id
+             , email
+             , nick_name
+             , password
+             , profile_url
+             , social
+             , created_at
+             , deleted_at
+          FROM members
+         WHERE email = #{email}
+    </select>
+
+
+    <!-- 이메일 여부  -->
+    <select id="existsByMemberEmail" parameterType="string" resultType="boolean">
+        SELECT EXISTS (SELECT 1
+                         FROM members
+                        WHERE email = #{email}) AS result
+    </select>
+
+
+    <!-- 닉네임 여부 -->
+    <select id="existsByMemberNickName" parameterType="string" resultType="boolean">
+        SELECT EXISTS (SELECT 1
+                         FROM members
+                        WHERE nick_name = #{nickName}) AS result
+    </select>
+
+  <!-- 아이디 여부 -->
+  <select id="existsByMemberId" parameterType="long" resultType="boolean">
+    SELECT EXISTS (SELECT 1
+                   FROM members
+                   WHERE member_id = #{memberId}) AS result
+  </select>
+
+  <!-- 회원가입 -->
+  <insert id="insertMember" parameterType="com.kosa.kosafinalprojbackend.domains.member.model.form.SignUpForm">
+      INSERT
+        INTO members
+           ( email
+           , nick_name
+           , password
+           , profile_url)
+      VALUES
+           ( #{email}
+           , #{nickName}
+           , #{password}
+           , #{profileUrl})
+  </insert>
+
+
+    <!-- 회원 정보 수정  -->
+    <update id="updateMemberInfo">
+        UPDATE members
+           SET nick_name    = #{signUpForm.nickName}
+          , password        = #{signUpForm.password}
+          , profile_url     = (CASE WHEN #{signUpForm.profileUrl} = ''
+                                    THEN NULL
+                                    ELSE #{signUpForm.profileUrl}
+                               END)
+      WHERE MEMBER_ID       = #{memberId}
+    </update>
+
+    <!-- 회원 탈퇴 -->
+    <update id="memberQuit" parameterType="Long">
+        update members
+        set deleted_at = NOW()
+        where member_id = #{memberId}
+    /</update>
 </mapper>

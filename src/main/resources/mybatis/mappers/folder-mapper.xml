@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kosa.kosafinalprojbackend.mybatis.mappers.folder.FolderMapper">
+
+  <!-- 조회 (특정 사용자의 모든 폴더 조회) -->
+  <select id="selectUserAllFolder">
+    SELECT folder_id
+         , member_id
+         , parent_folder_id
+         , folder_name
+         , depth
+         , seq
+         , created_at
+      FROM folders
+     WHERE member_id = #{memberId}
+       AND parent_folder_id IS NULL
+       AND deleted_at IS NULL
+  ORDER BY seq
+  </select>
+
+  <!-- 조회 (folderId 존재하는지 조회) -->
+  <select id="existsByFolderId" resultType="boolean">
+    SELECT EXISTS (SELECT 1
+                     FROM folders
+                    WHERE folder_id     = #{folderId}
+                      AND deleted_at    IS NULL) AS result
+  </select>
+
+  <!-- 최대 depth 조회 -->
+  <select id="selectMaxDepth" resultType="int">
+    SELECT COALESCE(MAX(depth), 0)
+      FROM folders
+     WHERE member_id        = #{memberId}
+       AND parent_folder_id IS NULL
+  </select>
+
+  <!-- 최대 seq 조회 -->
+  <select id="selectMaxSeq" resultType="int">
+    SELECT COALESCE(MAX(seq), 0)
+      FROM folders
+     WHERE member_id        = #{memberId}
+       AND parent_folder_id IS NULL
+  </select>
+
+  <!-- 저장 -->
+  <insert id="insertFolder" useGeneratedKeys="true" keyProperty="folderForm.folderId">
+    INSERT
+      INTO folders
+         ( member_id
+         , folder_name
+         , depth
+         , seq
+         )
+  VALUES ( #{memberId}
+         , #{folderForm.folderName}
+         , #{folderForm.depth}
+         , #{folderForm.seq}
+         )
+  </insert>
+
+  <!-- 수정 (폴더명) -->
+  <update id="updateFolderName">
+    UPDATE folders
+       SET folder_name = #{folderForm.folderName}
+     WHERE folder_id = #{folderId}
+       AND member_id = #{memberId}
+  </update>
+
+  <!-- 프로젝트 팀장 여부 조회 (폴더부터 조회) -->
+  <select id="selectProjectLeaderYN" resultType="com.kosa.kosafinalprojbackend.domains.folder.model.dto.ProjectLeaderByFolderIdDto">
+    SELECT pj.project_id
+         , pj.project_leader_YN
+      FROM project_joins        pj
+INNER JOIN folder_projects      fp
+        ON pj.project_id        = fp.project_id
+INNER JOIN folders              f
+        ON fp.folder_id         = f.folder_id
+ LEFT JOIN folders              pf
+        ON f.parent_folder_id   = pf.folder_id
+     WHERE (f.folder_id = #{folderId} OR pf.folder_id = #{folderId})
+       AND pj.member_id = #{memberId}
+  </select>
+
+  <!-- 조회 (폴더들 존재 여부 조회 리스트) -->
+  <select id="selectExistingFolderIds" parameterType="list" resultType="long">
+    SELECT folder_id
+      FROM folders
+     WHERE member_id        = #{memberId}
+       AND folder_id IN
+        <foreach item="id" collection="folderIds" open="(" separator="," close=")">
+          #{id}
+        </foreach>
+  </select>
+
+  <!-- 수정 (폴더 옮기기) -->
+  <update id="updateFolderMoves" parameterType="list">
+    <foreach collection="folderMoveFormList" item="folder" open="" close="" separator=";">
+      UPDATE folders
+         SET parent_folder_id = #{folder.parentFolderId}
+           , depth = #{folder.depth}
+           , seq = #{folder.seq}
+       WHERE folder_id = #{folder.folderId}
+         AND member_id = #{memberId}
+    </foreach>
+  </update>
+
+  <!-- 폴더 삭제 update -->
+  <update id="deleteFolder">
+    UPDATE folders
+       SET deleted_at   = CURRENT_TIMESTAMP
+     WHERE folder_id    = #{folderId}
+  </update>
+
+
+  <!-- 하위 폴더 조회 -->
+  <select id="selectFolderAllChildFolders">
+    SELECT folder_id
+         , member_id
+         , parent_folder_id
+         , folder_name
+         , depth
+         , seq
+         , created_at
+      FROM folders
+     WHERE member_id = #{memberId}
+       AND parent_folder_id = #{parentFolderId}
+       AND deleted_at IS NULL
+  </select>
+
+</mapper>
