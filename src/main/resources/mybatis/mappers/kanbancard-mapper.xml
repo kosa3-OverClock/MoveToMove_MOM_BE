@@ -9,6 +9,28 @@
                     WHERE kanban_card_id = #{kanbanCardId}) AS result
   </select>
 
+  <!-- 칸반 카드 상세 조회 -->
+  <select id="selectKanbanCard" parameterType="Long" resultType="com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardDetailDto">
+    SELECT kco.kanban_column_id
+         , kco.kanban_column_name
+         , kco.column_seq
+         , kca.kanban_card_id
+         , kca.title
+         , kca.content
+         , kca.card_seq
+         , kca.priority
+         , kca.task_size
+         , kca.start_at
+         , kca.end_at
+         , kca.created_at
+      FROM kanban_cards         kca
+INNER JOIN kanban_columns       kco
+        ON kco.kanban_column_id = kca.kanban_column_id
+     WHERE kca.kanban_card_id = #{kanbanCardId}
+       AND kco.deleted_at       IS NULL
+       AND kca.deleted_at       IS NULL
+  </select>
+
   <!-- 칸반 카드 담당자 조회 -->
   <select id="selectKanbanCardMember" parameterType="Long" resultType="com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardMemberDto">
     SELECT kw.member_id

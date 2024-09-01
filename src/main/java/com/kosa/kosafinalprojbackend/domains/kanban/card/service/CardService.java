@@ -1,5 +1,6 @@
 package com.kosa.kosafinalprojbackend.domains.kanban.card.service;
 
+import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardDetailDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardMemberDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CardUpdateForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CardUpdateMemberForm;
@@ -20,6 +21,30 @@ public class CardService {
 
   private final MemberMapper memberMapper;
   private final KanbanCardMapper kanbanCardMapper;
+
+  // 칸반 카드 상세 조회
+  public CardDetailDto selectKanbanCardDetail(Long memberId, Long kanbanCardId) {
+
+    // 유저 아이디 확인
+    if (!memberMapper.existsByMemberId(memberId)) {
+      throw new CustomBaseException(NOT_FOUND_ID);
+    }
+
+    // 칸반 카드 확인
+    if (!kanbanCardMapper.existsByKanbanCardId(kanbanCardId)) {
+      throw new CustomBaseException(NOT_FOUND_KANBAN_CARD);
+    }
+
+    // 칸반 카드 정보 조회
+    CardDetailDto cardDetailDto = kanbanCardMapper.selectKanbanCard(kanbanCardId);
+
+    // 칸반 카드 담당자 조회
+    List<CardMemberDto> cardMemberList = kanbanCardMapper.selectKanbanCardMember(kanbanCardId);
+    cardDetailDto.setCardMemberList(cardMemberList);
+
+    return cardDetailDto;
+  }
+
 
   // 칸반 카드 담당자 수정
   @Transactional
