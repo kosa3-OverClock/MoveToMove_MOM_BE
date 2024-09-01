@@ -28,4 +28,15 @@
       </foreach>
   </insert>
 
+  <!-- 폴더 기준 프로젝트_조인 삭제 -->
+  <delete id="deleteProjectJoinsByProjectIds">
+    DELETE
+      FROM project_joins
+     WHERE member_id    = #{memberId}
+       AND project_id   IN
+        <foreach item="projectId" collection="projectList" open="(" separator="," close=")">
+          #{projectId}
+        </foreach>
+  </delete>
+
 </mapper>

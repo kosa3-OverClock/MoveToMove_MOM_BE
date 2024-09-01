@@ -32,9 +32,17 @@ public enum ResponseCode {
     NOT_FOUND_MEMBER(NOT_FOUND, "회원정보를 찾을 수 없습니다."),
     MEMBER_DELETE(OK, "회원 탈퇴 처리되었습니다."),
 
+    // 비밀번호 찾기
+    SEND_AUTHENTICATION_CODE(OK, "인증번호 발송"),
+    VERIFY_SUCCESS(OK, "인증되었습니다."),
+    VERIFY_FAILED(BAD_REQUEST, "인증 실패했습니다."),
+    UPDATE_PASSWORD_SUCCESS(OK, "비밀번호가 변경되었습니다."),
+
+
     // 토큰
     NOT_FIND_TOKEN(BAD_REQUEST,"토큰이 유효하지 않습니다."),
     ISSUE_ACCESS_TOKEN(OK, "토큰 발급"),
+
 
     // 소셜 로그인
     ERR_SOCIAL_PROVIDER_MISMATCH(BAD_REQUEST, "Social Domain이 저장된 값과 다릅니다."),
@@ -45,11 +53,22 @@ public enum ResponseCode {
     OAUTH2_LOGIN_CANCELLED(FORBIDDEN, "사용자가 로그인 요청을 취소했습니다."),
     OAUTH2_INVALID_CLIENT_REGISTRATION(HttpStatus.BAD_REQUEST,"Invalid OAuth2 Client Registration ID. 유효하지 않은 소셜 로그인 시도입니다."),
 
+
     // 프로젝트
     PROJECT_CREATE(CREATED, "프로젝트가 생성되었습니다."),
     NO_PROJECT_LEADER(NOT_FOUND, "프로젝트 팀장이 아닙니다."),
     PROJECT_MODIFY(OK, "프로젝트가 정보가 수정되었습니다."),
     NOT_FOUND_PROJECT(NOT_FOUND,"프로젝트 정보를 찾을 수 없습니다."),
+    YES_PROJECT_LEADER(CONFLICT, "프로젝트 중 팀장인 프로젝트가 있습니다."),
+
+
+    // 폴더
+    FOLDER_CREATED(CREATED, "폴더가 생성되었습니다."),
+    FOLDER_MODIFY_NAME(OK, "폴더명이 수정되었습니다."),
+    FOLDER_MODIFY_MOVE(OK, "폴더가 이동되었습니다."),
+    FOLDER_DELETED(OK, "폴더가 삭제되었습니다."),
+
+
     // 컬럼
     NOT_FOUND_COLUMN(NOT_FOUND, "칸반 컬럼이 존재하지 않습니다."),
     COLUMN_DELETE(OK,"칸반 컬럼이 삭제되었습니다."),
@@ -57,16 +76,20 @@ public enum ResponseCode {
     // 칸반 컬럼
     NOT_FOUND_KANBAN_COLUMN(NOT_FOUND, "존재하지 않는 칸반 컬럼입니다."),
 
+
     // 칸반 카드
     KANBAN_CARD_CREATED(CREATED ,"칸반 카드가 생성 되었습니다."),
     KANBAN_CARD_MODIFY_SUCCESS(OK, "칸반 카드 정보를 수정했습니다."),
     KANBAN_CARD_DELETE(OK, "칸반 카드를 삭제하였습니다."),
     NOT_FOUND_KANBAN_CARD(NOT_FOUND, "존재하지 않는 칸반 카드 입니다."),
 
+
     // 공통
     NOT_FOUND_ID(NOT_FOUND, "존재하지 않는 아이디입니다."),
 
-    YES_PROJECT_LEADER(CONFLICT, "프로젝트 중 팀장인 프로젝트가 있습니다.");
+
+    ;
+
 
 
     private final HttpStatus status;

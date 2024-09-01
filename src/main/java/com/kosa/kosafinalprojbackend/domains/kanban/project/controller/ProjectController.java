@@ -2,6 +2,7 @@ package com.kosa.kosafinalprojbackend.domains.kanban.project.controller;
 
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectInCardDto;
+import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectMemberDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.form.ProjectForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.service.ProjectService;
 import com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode;
@@ -58,6 +59,15 @@ public class ProjectController {
         return ResponseEntity.ok().build();
     }
 
+    // 프로젝트 참여자 조회
+    @GetMapping("/{project-id}/members")
+    public ResponseEntity<List<ProjectMemberDto>> selectProjectMember(
+        @AuthenticationPrincipal CustomUserDetails customUserDetails,
+        @PathVariable("project-id") Long projectId) {
+
+        return ResponseEntity.ok(
+            projectService.selectProjectMember(customUserDetails.getId(), projectId));
+    }
 
     // 칸반 카드 조회 (프로젝트 기준)
     @GetMapping("/{project-id}/kanban-cards")
