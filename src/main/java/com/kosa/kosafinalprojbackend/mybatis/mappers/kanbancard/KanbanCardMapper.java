@@ -1,5 +1,6 @@
 package com.kosa.kosafinalprojbackend.mybatis.mappers.kanbancard;
 
+import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardDetailDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardMemberDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CardUpdateForm;
 import org.apache.ibatis.annotations.Mapper;
@@ -12,6 +13,9 @@ public interface KanbanCardMapper {
 
   // 칸반 카드 확인
   boolean existsByKanbanCardId(Long kanbanCardId);
+
+  // 칸반 카드 정보 조회
+  CardDetailDto selectKanbanCard(Long kanbanCardId);
 
   // 칸반 카드 담당자 조회
   List<CardMemberDto> selectKanbanCardMember(Long kanbanCardId);
