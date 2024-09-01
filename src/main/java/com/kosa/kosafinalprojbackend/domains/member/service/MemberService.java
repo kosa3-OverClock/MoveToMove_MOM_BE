@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kosa.kosafinalprojbackend.domains.member.model.dto.MemberDto;
 import com.kosa.kosafinalprojbackend.domains.member.model.form.LoginForm;
+import com.kosa.kosafinalprojbackend.domains.member.model.form.AuthenticationCodeForm;
+import com.kosa.kosafinalprojbackend.domains.member.model.form.ResetPasswordForm;
 import com.kosa.kosafinalprojbackend.domains.member.model.form.SignUpForm;
 import com.kosa.kosafinalprojbackend.global.amazon.service.S3Service;
 import com.kosa.kosafinalprojbackend.global.error.exception.CustomBaseException;
@@ -11,8 +13,11 @@ import com.kosa.kosafinalprojbackend.global.redis.service.RedisService;
 import com.kosa.kosafinalprojbackend.global.security.filter.JwtTokenProvider;
 import com.kosa.kosafinalprojbackend.global.security.model.CustomUserDetails;
 import com.kosa.kosafinalprojbackend.mybatis.mappers.member.MemberMapper;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,8 +38,11 @@ public class MemberService {
   private final PasswordEncoder passwordEncoder;
   private final JwtTokenProvider jwtTokenProvider;
 
+  private final EmailService emailService;
+
   @Value("${refresh.expire_time}")
   private int REFRESH_EXPIRE_TIME;
+
 
   // 로그인
   public String memberLogin(LoginForm signInForm, HttpServletResponse response) {
@@ -184,4 +192,56 @@ public class MemberService {
     // DB에 저장된 회원 delete_at 값 생성 (access 토큰은 프론트 처리)
     memberMapper.memberQuit(memberId);
   }
+
+
+  // 인증번호 발송
+  public Map<String, Object> sendAuthenticationCode(AuthenticationCodeForm authenticationCodeForm)
+      throws MessagingException {
+    String email = authenticationCodeForm.getEmail();
+
+    // 메일 확인
+    if(!memberMapper.existsByMemberEmail(email)) {
+      throw new CustomBaseException(NOT_FOUND_MEMBER);
+    }
+    
+    // 메일 보내기 (+ 인증 코드 받아오기)
+    String code = emailService.sendVerificationCode(email);
+
+    // Redis에 인증번호와 만료시간 저장
+    String expiresIn = redisService.saveVerificationCode(email, code);
+
+    // map 으로 return
+    Map<String, Object> result = new HashMap<>();
+    result.put("email", email);
+    result.put("code", code);
+    result.put("expiresIn", expiresIn);
+
+    return result;
+  }
+
+
+  // 인증 코드 확인
+  public boolean verifyCode(String email, String code) {
+    String storedCode = redisService.getVerificationCode(email);
+    return storedCode != null && storedCode.equals(code);
+  }
+
+
+  // 비밀번호 변경
+  public boolean memberPasswordReset(ResetPasswordForm resetPasswordForm) {
+
+    if(verifyCode(resetPasswordForm.getEmail(), resetPasswordForm.getCode())) {
+      MemberDto memberDto = memberMapper.findByMemberEmail(resetPasswordForm.getEmail());
+
+      memberDto.updatePassword(passwordEncoder.encode(resetPasswordForm.getNewPassword()));
+
+      // 인증코드 제거
+      redisService.deleteVerificationCode(resetPasswordForm.getEmail());
+
+      return true;
+    }
+
+    return false;
+  }
+
 }
