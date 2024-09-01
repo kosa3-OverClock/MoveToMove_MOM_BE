@@ -4,12 +4,14 @@ import com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.ColumnDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.KanbanColumnInCardDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanCardForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanColumnForm;
+import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanColumnMoveRequest;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.service.ColumnService;
 import com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode;
 import com.kosa.kosafinalprojbackend.global.security.model.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,8 +48,17 @@ public class ColumnController {
     }
 
     // 칸반 컬럼 순서 수정
+    @PatchMapping("{kanban-column-id}")
+    @SendTo("topic/kanban-column")
+    public ColumnDto moveColumn(
+            @PathVariable("kanban-column-id") Long kanbanColumnId,
+            @RequestBody KanbanColumnMoveRequest kanbanColumnMoveRequest) {
 
+        // TODO: 칸반 컬럼 이동 로직 처리
 
+        // TODO: 칸반 보드의 새로운 상태 반환
+        return null;
+    }
 
     // 칸반 카드 조회 (칸반 컬럼 기준)
     @GetMapping("/{kanban-column-id}/kanban-cards")
