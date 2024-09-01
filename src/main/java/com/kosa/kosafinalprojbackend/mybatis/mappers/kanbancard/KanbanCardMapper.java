@@ -2,6 +2,7 @@ package com.kosa.kosafinalprojbackend.mybatis.mappers.kanbancard;
 
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardDetailDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardMemberDto;
+import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CardLocationForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CardUpdateForm;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -30,6 +31,18 @@ public interface KanbanCardMapper {
   // 칸반 카드 수정
   void updateKanbanCard(@Param("kanbanCardId") Long kanbanCardId,
                         @Param("cardUpdateForm") CardUpdateForm kanCardUpdateForm);
+
+  // 칸반 카드 위치 수정
+  void updateLocationKanbanCard(@Param("kanbanCardId") Long kanbanCardId,
+                                @Param("cardLocationForm") CardLocationForm cardLocationForm);
+
+  // 컬럼의 카드 순서 변경
+  void updateKanbanCardSeq(@Param("cardLocationForm") CardLocationForm cardLocationForm,
+                           @Param("symbol") boolean symbol);
+
+  // 이전 컬럼 카드 순서 변경
+  void updatePreKanbanCardSeq(@Param("kanbanColumn") Long kanbanColumn,
+                              @Param("orderBy") String orderBy);
 
   // 칸반 카드 삭제
   void deleteKanbanCard(@Param("kanbanCardId") Long kanbanCardId);
