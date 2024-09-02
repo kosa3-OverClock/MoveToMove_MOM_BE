@@ -4,6 +4,7 @@ import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardDetailDt
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardMemberDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CardUpdateForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CardUpdateMemberForm;
+import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CommentForm;
 import com.kosa.kosafinalprojbackend.global.error.exception.CustomBaseException;
 import com.kosa.kosafinalprojbackend.mybatis.mappers.kanbancard.KanbanCardMapper;
 import com.kosa.kosafinalprojbackend.mybatis.mappers.member.MemberMapper;
@@ -98,5 +99,22 @@ public class CardService {
     }
 
     kanbanCardMapper.deleteKanbanCard(kanbanCardId);
+  }
+
+  // 카드 코멘트 저장
+  @Transactional
+  public void insertComment(Long memberId, Long kanbanCardId, CommentForm commentForm) {
+
+    // 유저 아이디 확인
+    if (!memberMapper.existsByMemberId(memberId)) {
+      throw new CustomBaseException(NOT_FOUND_ID);
+    }
+
+    // 칸반 카드 확인
+    if (!kanbanCardMapper.existsByKanbanCardId(kanbanCardId)) {
+      throw new CustomBaseException(NOT_FOUND_KANBAN_CARD);
+    }
+
+    kanbanCardMapper.insertComment(memberId, kanbanCardId, commentForm);
   }
 }

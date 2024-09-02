@@ -3,6 +3,7 @@ package com.kosa.kosafinalprojbackend.domains.kanban.card.controller;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardDetailDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CardUpdateForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CardUpdateMemberForm;
+import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CommentForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.service.CardService;
 import com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode;
 import com.kosa.kosafinalprojbackend.global.security.model.CustomUserDetails;
@@ -12,8 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.KANBAN_CARD_DELETE;
-import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.KANBAN_CARD_MODIFY_SUCCESS;
+import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.*;
 import static org.springframework.http.HttpStatus.OK;
 
 @Controller
@@ -66,5 +66,17 @@ public class CardController {
     kanbanCardService.deleteKanbanCard(customUserDetails.getId(), kanbanCardId);
 
     return ResponseEntity.status(OK).body(KANBAN_CARD_DELETE);
+  }
+
+  // 카드 코멘트 저장
+  @PostMapping("/{kanban-card-id}/comments")
+  public ResponseEntity<ResponseCode> insertComment(
+      @AuthenticationPrincipal CustomUserDetails customUserDetails,
+      @PathVariable("kanban-card-id") Long kanbanCardId,
+      @RequestBody CommentForm commentForm) {
+
+    kanbanCardService.insertComment(customUserDetails.getId(), kanbanCardId, commentForm);
+
+    return ResponseEntity.status(OK).body(COMMENT_CREATE);
   }
 }
