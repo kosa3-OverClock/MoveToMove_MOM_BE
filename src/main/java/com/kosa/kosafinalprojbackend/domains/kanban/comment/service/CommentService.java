@@ -26,11 +26,6 @@ public class CommentService {
       throw new CustomBaseException(NOT_FOUND_ID);
     }
 
-    // 코멘트 확인
-    if (!commentMapper.existsByCommentId(commentId)) {
-      throw new CustomBaseException(NOT_FOUND_COMMENT);
-    }
-
     // 코멘트 작성자 확인
     if (!commentMapper.checkCommentWriter(memberId, commentId)) {
       throw new CustomBaseException(NOT_COMMENT_WRITER);
@@ -46,11 +41,6 @@ public class CommentService {
     // 유저 아이디 확인
     if (!memberMapper.existsByMemberId(memberId)) {
       throw new CustomBaseException(NOT_FOUND_ID);
-    }
-
-    // 코멘트 확인
-    if (!commentMapper.existsByCommentId(commentId)) {
-      throw new CustomBaseException(NOT_FOUND_COMMENT);
     }
 
     // 코멘트 작성자 확인

@@ -85,7 +85,6 @@ public enum ResponseCode {
 
     // 코멘트
     COMMENT_CREATE(CREATED, "코멘트가 생성 되었습니다."),
-    NOT_FOUND_COMMENT(NOT_FOUND, "존재하지 않는 코멘트 입니다."),
     COMMENT_DELETE(OK, "코멘트를 삭제하였습니다."),
     NOT_COMMENT_WRITER(OK, "코멘트 작성자가 아닙니다."),
 
