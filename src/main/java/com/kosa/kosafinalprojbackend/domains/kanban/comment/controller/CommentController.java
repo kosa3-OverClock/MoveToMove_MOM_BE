@@ -8,11 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
+import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.COMMENT_DELETE;
 import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.KANBAN_CARD_MODIFY_SUCCESS;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -33,5 +31,16 @@ public class CommentController {
     commentService.updateComment(customUserDetails.getId(), commentId, commentForm);
 
     return ResponseEntity.status(OK).body(KANBAN_CARD_MODIFY_SUCCESS);
+  }
+
+  // 코멘트 내용 삭제
+  @DeleteMapping("/{comment-id}")
+  public ResponseEntity<ResponseCode> deleteComment(
+      @AuthenticationPrincipal CustomUserDetails customUserDetails,
+      @PathVariable("comment-id") Long commentId) {
+
+    commentService.deleteComment(customUserDetails.getId(), commentId);
+
+    return ResponseEntity.status(OK).body(COMMENT_DELETE);
   }
 }

@@ -10,6 +10,15 @@
                      AND deleted_at IS NULL) AS result
   </select>
 
+  <!-- 코멘트 존재여부 -->
+  <select id="checkCommentWriter" resultType="boolean">
+    SELECT EXISTS(SELECT 1
+                  FROM comment
+                  WHERE comment_id = #{commentId}
+                    AND member_id   = #{memberId}
+                    AND deleted_at IS NULL) AS result
+  </select>
+
   <!-- 코멘트 내용 수정 -->
   <update id="updateComment">
     UPDATE comment
@@ -17,4 +26,11 @@
          , updated_at   = NOW()
      WHERE comment_id   = #{commentId}
   </update>
+
+  <!-- 코멘트 내용 삭제 -->
+  <delete id="deleteComment" parameterType="Long">
+    DELETE
+      FROM comment
+     WHERE comment_id   = #{commentId}
+  </delete>
 </mapper>
