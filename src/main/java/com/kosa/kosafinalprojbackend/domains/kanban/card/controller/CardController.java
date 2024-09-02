@@ -1,6 +1,7 @@
 package com.kosa.kosafinalprojbackend.domains.kanban.card.controller;
 
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardDetailDto;
+import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CardLocationForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CardUpdateForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CardUpdateMemberForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.service.CardService;
@@ -53,6 +54,19 @@ public class CardController {
       @RequestBody CardUpdateForm cardUpdateForm) {
 
     kanbanCardService.updateKanbanCard(customUserDetails.getId(), kanbanCardId, cardUpdateForm);
+
+    return ResponseEntity.status(OK).body(KANBAN_CARD_MODIFY_SUCCESS);
+  }
+
+  // 칸반 카드 위치 수정
+  @PutMapping("/{kanban-card-id}/locations")
+  public ResponseEntity<ResponseCode> updateLocationKanbanCard(
+      @AuthenticationPrincipal CustomUserDetails customUserDetails,
+      @PathVariable("kanban-card-id") Long kanbanCardId,
+      @RequestBody CardLocationForm cardLocationForm) {
+
+    kanbanCardService.updateLocationKanbanCard(
+        customUserDetails.getId(), kanbanCardId, cardLocationForm);
 
     return ResponseEntity.status(OK).body(KANBAN_CARD_MODIFY_SUCCESS);
   }
