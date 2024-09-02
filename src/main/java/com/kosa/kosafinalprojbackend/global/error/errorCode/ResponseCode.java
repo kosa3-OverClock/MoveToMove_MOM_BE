@@ -88,7 +88,7 @@ public enum ResponseCode {
 
     // 공통
     NOT_FOUND_ID(NOT_FOUND, "존재하지 않는 아이디입니다."),
-
+    NOT_FOUND_COMMENT(NOT_FOUND, "존재하지 않는 코멘트 입니다."),
 
     ;
 
