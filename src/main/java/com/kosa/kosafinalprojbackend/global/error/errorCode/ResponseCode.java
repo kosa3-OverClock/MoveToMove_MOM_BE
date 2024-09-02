@@ -82,11 +82,13 @@ public enum ResponseCode {
     KANBAN_CARD_DELETE(OK, "칸반 카드를 삭제하였습니다."),
     NOT_FOUND_KANBAN_CARD(NOT_FOUND, "존재하지 않는 칸반 카드 입니다."),
 
+    // 코멘트
+    COMMENT_CREATE(CREATED, "코멘트가 생성 되었습니다."),
+    COMMENT_DELETE(OK, "코멘트를 삭제하였습니다."),
+    NOT_COMMENT_WRITER(OK, "코멘트 작성자가 아닙니다."),
 
     // 공통
     NOT_FOUND_ID(NOT_FOUND, "존재하지 않는 아이디입니다."),
-
-
     ;
 
 
