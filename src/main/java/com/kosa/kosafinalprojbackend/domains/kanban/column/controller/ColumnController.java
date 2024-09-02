@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.KANBAN_CARD_CREATED;
+import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.KANBAN_COLUMN_UPDATE;
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping("/api/kanban-columns")
@@ -48,16 +50,16 @@ public class ColumnController {
     }
 
     // 칸반 컬럼 순서 수정
-    @PatchMapping("{kanban-column-id}")
+    @PatchMapping("/{kanban-column-id}")
     @SendTo("topic/kanban-column")
-    public ColumnDto moveColumn(
+    public ResponseEntity<ResponseCode> moveColumn(
             @PathVariable("kanban-column-id") Long kanbanColumnId,
             @RequestBody KanbanColumnMoveRequest kanbanColumnMoveRequest) {
 
         // TODO: 칸반 컬럼 이동 로직 처리
-
+        columnService.updateKanbanColumn(kanbanColumnId, kanbanColumnMoveRequest);
         // TODO: 칸반 보드의 새로운 상태 반환
-        return null;
+        return ResponseEntity.status(OK).body(KANBAN_COLUMN_UPDATE);
     }
 
     // 칸반 카드 조회 (칸반 컬럼 기준)

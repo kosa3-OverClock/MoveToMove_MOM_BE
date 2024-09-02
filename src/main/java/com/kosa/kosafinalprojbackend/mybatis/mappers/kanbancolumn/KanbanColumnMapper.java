@@ -42,10 +42,13 @@ public interface KanbanColumnMapper {
   // 칸반 컬럼 삭제
   void deleteKanbanColumns(Long kanbanColumnId);
 
-  /*
-    칸반 컬럼 순서 변경
-    Seq + 1
-    Seq - 1
-    update 컬럼 순서
-   */
+  // 칸반 컬럼 아이디 조회
+  ColumnDto findByColumnId(Long columnId);
+
+  // 컬럼 목록의 순서를 업데이트 (Batch Update)
+  void updateColumnSeqBatch(@Param("columns") List<ColumnDto> columns);
+
+
+  // 삭제된 컬럼 이후의 컬럼들 seq 업데이트
+  void updateColumnSeqAfterDelete(@Param("projectId") Long projectId, @Param("deletedColumnSeq") int deletedColumnSeq);
 }

@@ -96,13 +96,24 @@ INNER JOIN kanban_cards         kca
         updated_at = CURRENT_TIMESTAMP
     </insert>
 
-  <!-- 칸반 컬럼 조회 -->
+  <!-- 칸반 컬럼 리스트 조회(프로젝트ID 기준)  -->
   <select id="selectKanbanColumns" parameterType="Long" resultType="com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.ColumnDto">
     SELECT kanban_column_id, kanban_column_name, column_seq
     FROM kanban_columns
     WHERE project_id = #{projectId}
     AND deleted_at IS NULL
+    ORDER BY column_seq
   </select>
+
+  <!-- 칸반 컬럼 순서 수정(수정된 순서에 따라 seq 수정) -->
+    <update id="updateColumnSeqBatch" parameterType="list">
+        <foreach collection="columns" item="column" separator=";">
+            UPDATE kanban_columns
+            SET column_seq = #{column.columnSeq}
+            WHERE kanban_column_id = #{column.kanbanColumnId}
+        </foreach>
+    </update>
+
 
 
   <!-- 조회 (kanban_column 존재 여부) -->
@@ -113,9 +124,27 @@ INNER JOIN kanban_cards         kca
   </select>
 
   <!-- 칸반 컬럼 삭제 -->
-  <delete id="deleteKanbanColumns" parameterType="Long">
+  <update id="deleteKanbanColumns" parameterType="Long">
     UPDATE kanban_columns SET deleted_at = Now()
     WHERE kanban_column_id = #{kanbanColumnId}
-  </delete>
+  </update>
+
+    <!-- 칸반 컬럼 순서(seq) 업데이트 -->
+    <update id="updateColumnSeqAfterDelete" parameterType="map">
+        UPDATE kanban_columns
+        SET column_seq = column_seq - 1
+        WHERE project_id = #{projectId}
+          AND column_seq > #{deletedColumnSeq}
+          AND deleted_at IS NULL;
+    </update>
+
+
+    <!-- 칸반 컬럼 조회(컬럼ID 기준) -->
+    <select id="findByColumnId" parameterType="Long" resultType="com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.ColumnDto">
+        SELECT project_id, kanban_column_id, kanban_column_name, column_seq
+        FROM kanban_columns
+        WHERE kanban_column_id = #{columnId}
+        AND deleted_at IS NULL
+    </select>
 </mapper>
 
