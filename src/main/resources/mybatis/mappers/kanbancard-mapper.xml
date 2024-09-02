@@ -123,5 +123,20 @@ INNER JOIN (SELECT kanban_card_id
        SET deleted_at       = NOW()
      WHERE kanban_card_id   = #{kanbanCardId}
   </update>
+
+  <!-- 카드 코멘트 저장 -->
+  <insert id="insertComment">
+    INSERT
+      INTO comment
+         ( kanban_card_id
+         , member_id
+         , content
+         )
+    VALUES
+         ( #{kanbanCardId}
+         , #{memberId}
+         , #{commentForm.content}
+         )
+  </insert>
 </mapper>
 
