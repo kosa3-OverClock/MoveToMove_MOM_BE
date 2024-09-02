@@ -10,7 +10,7 @@
   </select>
 
   <!-- 칸반 카드 상세 조회 -->
-  <select id="selectKanbanCard" parameterType="Long" resultType="com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardDetailDto">
+  <select id="selectKanbanCard" parameterType="Long" resultType="com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.KanbanColumnInCardDto">
     SELECT kco.kanban_column_id
          , kco.kanban_column_name
          , kco.column_seq
@@ -44,12 +44,29 @@ INNER JOIN members              me
        AND me.deleted_at        IS NULL
   </select>
 
- <!-- 칸반 카드 담당자 삭제 -->
- <delete id="deleteKanbanCardMember" parameterType="Long">
+  <!-- 칸반 카드 코멘트 조회 -->
+  <select id="selectKanbanCardComment" parameterType="Long" resultType="com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardCommentDto">
+    SELECT co.comment_id
+         , co.member_id
+         , co.content
+         , co.created_at
+         , me.email
+         , me.nick_name
+         , me.profile_url
+      FROM comment              co
+INNER JOIN members              me
+        ON me.member_id         = co.member_id
+     WHERE co.kanban_card_id    = #{kanbanCardId}
+       AND me.deleted_at        IS NULL
+       AND co.deleted_at        IS NULL
+  </select>
+
+  <!-- 칸반 카드 담당자 삭제 -->
+  <delete id="deleteKanbanCardMember" parameterType="Long">
     DELETE
       FROM kanban_works
      WHERE kanban_card_id = #{kanbanCardId}
- </delete>
+  </delete>
 
   <!-- 칸반 카드 담당자 저장 -->
   <delete id="insertKanbanCardMember" parameterType="Long">

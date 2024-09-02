@@ -1,9 +1,10 @@
 package com.kosa.kosafinalprojbackend.mybatis.mappers.kanbancard;
 
-import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardDetailDto;
+import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardCommentDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardMemberDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CardLocationForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CardUpdateForm;
+import com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.KanbanColumnInCardDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.comment.domian.form.CommentForm;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -17,10 +18,13 @@ public interface KanbanCardMapper {
   boolean existsByKanbanCardId(Long kanbanCardId);
 
   // 칸반 카드 정보 조회
-  CardDetailDto selectKanbanCard(Long kanbanCardId);
+  KanbanColumnInCardDto selectKanbanCard(Long kanbanCardId);
 
   // 칸반 카드 담당자 조회
   List<CardMemberDto> selectKanbanCardMember(Long kanbanCardId);
+
+  // 칸반 카드 코멘트 조회
+  List<CardCommentDto> selectKanbanCardComment(Long kanbanCardId);
 
   // 칸반 카드 담당자 삭제
   void deleteKanbanCardMember(@Param("kanbanCardId") Long kanbanCardId);

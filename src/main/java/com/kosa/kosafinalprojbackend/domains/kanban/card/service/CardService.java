@@ -1,10 +1,12 @@
 package com.kosa.kosafinalprojbackend.domains.kanban.card.service;
 
+import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardCommentDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardDetailDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardMemberDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CardLocationForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CardUpdateForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CardUpdateMemberForm;
+import com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.KanbanColumnInCardDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.comment.domian.form.CommentForm;
 import com.kosa.kosafinalprojbackend.global.error.exception.CustomBaseException;
 import com.kosa.kosafinalprojbackend.mybatis.mappers.kanbancard.KanbanCardMapper;
@@ -39,13 +41,19 @@ public class CardService {
     }
 
     // 칸반 카드 정보 조회
-    CardDetailDto cardDetailDto = kanbanCardMapper.selectKanbanCard(kanbanCardId);
+    KanbanColumnInCardDto kanbanColumnInCardDto = kanbanCardMapper.selectKanbanCard(kanbanCardId);
 
     // 칸반 카드 담당자 조회
     List<CardMemberDto> cardMemberList = kanbanCardMapper.selectKanbanCardMember(kanbanCardId);
-    cardDetailDto.setCardMemberList(cardMemberList);
 
-    return cardDetailDto;
+    // 칸반 코멘트 조회
+    List<CardCommentDto> cardCommentList = kanbanCardMapper.selectKanbanCardComment(kanbanCardId);
+
+    return CardDetailDto.builder()
+        .kanbanColumnInCard(kanbanColumnInCardDto)
+        .cardMemberList(cardMemberList)
+        .cardCommentList(cardCommentList)
+        .build();
   }
 
 
@@ -97,15 +105,15 @@ public class CardService {
     }
 
     // 칸반 카드 정보 조회
-    CardDetailDto cardDetailDto = kanbanCardMapper.selectKanbanCard(kanbanCardId);
+    KanbanColumnInCardDto kanbanColumnInCardDto = kanbanCardMapper.selectKanbanCard(kanbanCardId);
 
     // 칸반 카드 확인
-    if (cardDetailDto == null) {
+    if (kanbanColumnInCardDto == null) {
       throw new CustomBaseException(NOT_FOUND_KANBAN_CARD);
     }
 
     // 컬럼의 카드 순서 변경
-    boolean check = cardDetailDto.getKanbanColumnId().equals(cardLocationForm.getKanbanColumnId());
+    boolean check = kanbanColumnInCardDto.getKanbanColumnId().equals(cardLocationForm.getKanbanColumnId());
     kanbanCardMapper.updateKanbanCardSeq(cardLocationForm, check);
 
     // 위치 수정
@@ -114,11 +122,11 @@ public class CardService {
 
     // 이전 컬럼 카드 순서 변경
     check =
-        cardDetailDto.getKanbanColumnId().equals(cardLocationForm.getKanbanColumnId()) &&
-            cardDetailDto.getCardSeq() < cardLocationForm.getCardSeq();
+        kanbanColumnInCardDto.getKanbanColumnId().equals(cardLocationForm.getKanbanColumnId()) &&
+            kanbanColumnInCardDto.getCardSeq() < cardLocationForm.getCardSeq();
 
     kanbanCardMapper.updatePreKanbanCardSeq(
-        cardDetailDto.getKanbanColumnId(), check ? "ASC" : "DESC");
+        kanbanColumnInCardDto.getKanbanColumnId(), check ? "ASC" : "DESC");
   }
 
   // 칸반 카드 삭제
