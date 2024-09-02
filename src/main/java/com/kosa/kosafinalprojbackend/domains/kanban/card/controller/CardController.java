@@ -4,8 +4,8 @@ import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardDetailDt
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CardLocationForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CardUpdateForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CardUpdateMemberForm;
-import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CommentForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.service.CardService;
+import com.kosa.kosafinalprojbackend.domains.kanban.comment.domian.form.CommentForm;
 import com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode;
 import com.kosa.kosafinalprojbackend.global.security.model.CustomUserDetails;
 import lombok.RequiredArgsConstructor;

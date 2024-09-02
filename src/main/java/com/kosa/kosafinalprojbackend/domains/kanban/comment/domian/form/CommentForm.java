@@ -1,4 +1,4 @@
-package com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form;
+package com.kosa.kosafinalprojbackend.domains.kanban.comment.domian.form;
 
 import lombok.Getter;
 import lombok.Setter;

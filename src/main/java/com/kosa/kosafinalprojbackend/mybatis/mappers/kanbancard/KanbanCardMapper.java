@@ -4,7 +4,7 @@ import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardDetailDt
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardMemberDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CardLocationForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CardUpdateForm;
-import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CommentForm;
+import com.kosa.kosafinalprojbackend.domains.kanban.comment.domian.form.CommentForm;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

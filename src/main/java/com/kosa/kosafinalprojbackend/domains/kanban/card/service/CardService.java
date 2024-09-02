@@ -5,7 +5,7 @@ import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardMemberDt
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CardLocationForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CardUpdateForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CardUpdateMemberForm;
-import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CommentForm;
+import com.kosa.kosafinalprojbackend.domains.kanban.comment.domian.form.CommentForm;
 import com.kosa.kosafinalprojbackend.global.error.exception.CustomBaseException;
 import com.kosa.kosafinalprojbackend.mybatis.mappers.kanbancard.KanbanCardMapper;
 import com.kosa.kosafinalprojbackend.mybatis.mappers.member.MemberMapper;
