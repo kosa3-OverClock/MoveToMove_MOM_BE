@@ -33,16 +33,25 @@ public class MemberService {
 
   private final S3Service s3Service;
   private final RedisService redisService;
+  private final EmailService emailService;
   private final MemberMapper memberMapper;
   private final ObjectMapper objectMapper;
   private final PasswordEncoder passwordEncoder;
   private final JwtTokenProvider jwtTokenProvider;
 
-  private final EmailService emailService;
-
   @Value("${refresh.expire_time}")
   private int REFRESH_EXPIRE_TIME;
 
+  // 회원 조회
+  public MemberDto selectMemberInfo(Long memberId) {
+
+    // 유저 아이디 확인
+    if (!memberMapper.existsByMemberId(memberId)) {
+      throw new CustomBaseException(NOT_FOUND_ID);
+    }
+
+    return memberMapper.findByMemberId(memberId);
+  }
 
   // 로그인
   public String memberLogin(LoginForm signInForm, HttpServletResponse response) {
