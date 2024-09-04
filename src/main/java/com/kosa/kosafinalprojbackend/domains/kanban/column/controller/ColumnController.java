@@ -4,7 +4,7 @@ import com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.ColumnDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.KanbanColumnInCardDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanCardForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanColumnForm;
-import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanColumnMoveRequest;
+import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanColumnMoveRequestFoam;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.service.ColumnService;
 import com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode;
 import com.kosa.kosafinalprojbackend.global.security.model.CustomUserDetails;
@@ -54,10 +54,10 @@ public class ColumnController {
     @SendTo("topic/kanban-column")
     public ResponseEntity<ResponseCode> moveColumn(
             @PathVariable("kanban-column-id") Long kanbanColumnId,
-            @RequestBody KanbanColumnMoveRequest kanbanColumnMoveRequest) {
+            @RequestBody KanbanColumnMoveRequestFoam kanbanColumnMoveRequestFoam) {
 
         // TODO: 칸반 컬럼 이동 로직 처리
-        columnService.updateKanbanColumn(kanbanColumnId, kanbanColumnMoveRequest);
+        columnService.updateKanbanColumn(kanbanColumnId, kanbanColumnMoveRequestFoam);
         // TODO: 칸반 보드의 새로운 상태 반환
         return ResponseEntity.status(OK).body(KANBAN_COLUMN_UPDATE);
     }

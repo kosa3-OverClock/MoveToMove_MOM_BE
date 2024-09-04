@@ -6,6 +6,7 @@ import com.kosa.kosafinalprojbackend.global.redis.service.RedisService;
 import com.kosa.kosafinalprojbackend.global.security.filter.JwtTokenProvider;
 import com.kosa.kosafinalprojbackend.mybatis.mappers.member.MemberOAuthMapper;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,8 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Slf4j
 public class CustomOAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
-
+    @Value("${refresh.expire_time}")
+    private int REFRESH_EXPIRE_TIME;
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisService redisService;
     @Value("${frontend.server.url}")
@@ -45,6 +47,17 @@ public class CustomOAuth2AuthenticationSuccessHandler extends SimpleUrlAuthentic
         // Redis에 JWT 토큰 저장
         redisService.saveRefreshToken(loginUser.getMemberId(), refreshToken);
         // TODO: 프론트 서버로 응답 설정 ( response에 담아서, 쿼리파라미터에 담아서 토큰 전송 )
+        // refresh token 쿠키에 저장
+        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+        refreshTokenCookie.setHttpOnly(true);   // 스크립트에서 접근 불가
+        refreshTokenCookie.setSecure(false);    // HTTPS를 사용하는 경우에 사용
+        refreshTokenCookie.setPath("/");        // 쿠키 경로 설정
+        refreshTokenCookie.setMaxAge(REFRESH_EXPIRE_TIME / 1000); // 시간 설정
+        response.addCookie(refreshTokenCookie);
 
+        // 응답 설정: JSON 형태로 accessToken을 프론트엔드로 전달
+        response.setContentType("application/json");
+        response.setCharacterEncoding("utf-8");
+        response.getWriter().write("{\"accessToken\": \"" + accessToken + "\"}");
     }
 }
