@@ -1,19 +1,12 @@
 package com.kosa.kosafinalprojbackend.global.error.errorCode;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+
+import static org.springframework.http.HttpStatus.*;
 
 @Getter
 @RequiredArgsConstructor
@@ -92,7 +85,6 @@ public enum ResponseCode {
     ;
 
 
-
     private final HttpStatus status;
     private final String message;
     private Object data;
@@ -101,7 +93,6 @@ public enum ResponseCode {
         this.data = data;
         return this;
     }
-
 
     @JsonValue
     public Object toJson() {

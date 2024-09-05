@@ -21,14 +21,15 @@ public interface MemberMapper {
     boolean existsByMemberEmail(String email);
     
     // 닉네임 중복 확인
-    boolean existsByMemberNickName(String nickName);
-    
+    boolean existsByMemberNickName(@Param("nickName") String nickName,
+                                   @Param("memberId") Long memberId);
+
     // 회원가입
     void insertMember(SignUpForm signUpForm);
 
     // 회원 정보 수정
-    void updateMemberInfo(
-        @Param("memberId") Long memberId, @Param("signUpForm") SignUpForm signUpForm);
+    void updateMemberInfo(@Param("memberId") Long memberId,
+                          @Param("signUpForm") SignUpForm signUpForm);
 
     // 회원 탈퇴
     void memberQuit(Long memberId);

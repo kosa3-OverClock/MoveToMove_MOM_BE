@@ -103,7 +103,7 @@ public class MemberService {
     }
 
     // 닉네임 중복 확인
-    if (memberMapper.existsByMemberNickName(signUpForm.getNickName())) {
+    if (memberMapper.existsByMemberNickName(signUpForm.getNickName(), null)) {
       throw new CustomBaseException(EXISTS_NICKNAME);
     }
 
@@ -161,9 +161,17 @@ public class MemberService {
       throw new CustomBaseException(JSON_PARSE_ERROR);
     }
 
+    // 닉네임 중복 확인
+    if (memberMapper.existsByMemberNickName(signUpForm.getNickName(), memberId)) {
+      throw new CustomBaseException(EXISTS_NICKNAME.withData("NICKNAME"));
+    }
+
     // S3 확인 후 이미지 변경 데이터 생성
     String imageUrl = memberDto.getProfileUrl();
-    String existingFileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+    String existingFileName = "";
+    if (imageUrl != null) {
+      existingFileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+    }
     boolean s3ImageFlag = s3Service.existsFile(existingFileName);
 
     // 수정 이미지가 있으면 (수정 or 저장) 없으면 삭제
@@ -174,14 +182,11 @@ public class MemberService {
       } else {
         signUpForm.setProfileUrl(s3Service.uploadFile(multipartFile));
       }
-    } else {
-      // s3에 이미지가 있으면 s3 Url 삭제
-      if (s3ImageFlag) {
-        signUpForm.setProfileUrl(s3Service.deleteFile(existingFileName));
-      }
     }
 
-    signUpForm.setPassword(passwordEncoder.encode(signUpForm.getPassword()));
+    if (!signUpForm.getPassword().isEmpty()) {
+      signUpForm.setPassword(passwordEncoder.encode(signUpForm.getPassword()));
+    }
 
     memberMapper.updateMemberInfo(memberId, signUpForm);
 
