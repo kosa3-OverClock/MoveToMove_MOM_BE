@@ -59,5 +59,9 @@ public class CustomOAuth2AuthenticationSuccessHandler extends SimpleUrlAuthentic
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
         response.getWriter().write("{\"accessToken\": \"" + accessToken + "\"}");
+
+        // 프론트엔드 URL로 리다이렉트
+        String redirectUrl = frontendServerUrl + "/social-login/callback?accessToken=" + accessToken;
+        getRedirectStrategy().sendRedirect(request, response, redirectUrl);
     }
 }
