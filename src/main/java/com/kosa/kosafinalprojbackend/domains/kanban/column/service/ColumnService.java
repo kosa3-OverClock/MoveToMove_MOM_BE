@@ -4,7 +4,7 @@ import com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.ColumnDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.KanbanColumnInCardDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanCardForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanColumnForm;
-import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanColumnMoveRequest;
+import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanColumnMoveRequestFoam;
 import com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode;
 import com.kosa.kosafinalprojbackend.global.error.exception.CustomBaseException;
 import com.kosa.kosafinalprojbackend.mybatis.mappers.kanbancolumn.KanbanColumnMapper;
@@ -50,7 +50,7 @@ public class ColumnService {
 
     //  TODO: 칸반 컬럼 순서 수정
     @Transactional
-    public void updateKanbanColumn(Long kanbanColumnId, KanbanColumnMoveRequest kanbanColumnMoveRequest) {
+    public void updateKanbanColumn(Long kanbanColumnId, KanbanColumnMoveRequestFoam kanbanColumnMoveRequestFoam) {
         // 변경하고자 하는 컬럼 객체
         ColumnDto targetColumn = kanbanColumnMapper.findByColumnId(kanbanColumnId);
         if(targetColumn == null) {
@@ -60,10 +60,10 @@ public class ColumnService {
         }
 
         // 모든 컬럼 목록 조회 (컬럼시퀀스 순으로 조회)
-        List<ColumnDto> allColumn = kanbanColumnMapper.selectKanbanColumns(kanbanColumnMoveRequest.getProjectId());
+        List<ColumnDto> allColumn = kanbanColumnMapper.selectKanbanColumns(kanbanColumnMoveRequestFoam.getProjectId());
         // 현재 컬럼의 위치와 새로운 위치 계산
         int columnPosition = targetColumn.getColumnSeq(); // 현재 컬럼 순서
-        int newColumnPosition = kanbanColumnMoveRequest.getNewPosition();
+        int newColumnPosition = kanbanColumnMoveRequestFoam.getNewPosition();
         if(columnPosition == newColumnPosition) {
             return; // 이동하는 위치와 현재 위치가 동일하기 때문에 이동할 필요 없음.
         }
