@@ -20,8 +20,8 @@
     </select>
 
     <insert id="insertMember" parameterType="com.kosa.kosafinalprojbackend.domains.member.oAuth.domain.Member">
-        INSERT INTO members (email, nick_name, profile_url, social, created_at)
-        VALUES (#{email}, #{nickName}, #{profileUrl}, #{providerType}, #{createdAt})
+        INSERT INTO members (email, nick_name, profile_url, social, created_at, password)
+        VALUES (#{email}, #{nickName}, #{profileUrl}, #{providerType}, #{createdAt}, null)
     </insert>
 
 </mapper>

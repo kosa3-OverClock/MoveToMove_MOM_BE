@@ -10,7 +10,7 @@
   </select>
 
   <!-- 칸반 카드 상세 조회 -->
-  <select id="selectKanbanCard" parameterType="Long" resultType="com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardDetailDto">
+  <select id="selectKanbanCard" parameterType="Long" resultType="com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.KanbanColumnInCardDto">
     SELECT kco.kanban_column_id
          , kco.kanban_column_name
          , kco.column_seq
@@ -44,12 +44,29 @@ INNER JOIN members              me
        AND me.deleted_at        IS NULL
   </select>
 
- <!-- 칸반 카드 담당자 삭제 -->
- <delete id="deleteKanbanCardMember" parameterType="Long">
+  <!-- 칸반 카드 코멘트 조회 -->
+  <select id="selectKanbanCardComment" parameterType="Long" resultType="com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardCommentDto">
+    SELECT co.comment_id
+         , co.member_id
+         , co.content
+         , co.created_at
+         , me.email
+         , me.nick_name
+         , me.profile_url
+      FROM comment              co
+INNER JOIN members              me
+        ON me.member_id         = co.member_id
+     WHERE co.kanban_card_id    = #{kanbanCardId}
+       AND me.deleted_at        IS NULL
+       AND co.deleted_at        IS NULL
+  </select>
+
+  <!-- 칸반 카드 담당자 삭제 -->
+  <delete id="deleteKanbanCardMember" parameterType="Long">
     DELETE
       FROM kanban_works
      WHERE kanban_card_id = #{kanbanCardId}
- </delete>
+  </delete>
 
   <!-- 칸반 카드 담당자 저장 -->
   <delete id="insertKanbanCardMember" parameterType="Long">
@@ -76,11 +93,67 @@ INNER JOIN members              me
      WHERE kanban_card_id = #{kanbanCardId}
   </update>
 
+  <!-- 칸반 카드 위치 수정 -->
+  <update id="updateLocationKanbanCard">
+    UPDATE kanban_cards
+       SET kanban_column_id = #{cardLocationForm.kanbanColumnId}
+         , card_seq         = #{cardLocationForm.cardSeq}
+         , updated_at       = NOW(3)
+     WHERE kanban_card_id   = #{kanbanCardId}
+  </update>
+
+  <!-- 컬럼의 카드 순서 변경 -->
+  <update id="updateKanbanCardSeq">
+    UPDATE kanban_cards
+       SET card_seq         = card_seq + 1
+         , updated_at       = NOW(3)
+     WHERE kanban_column_id = #{cardLocationForm.kanbanColumnId}
+     <choose>
+       <when test="symbol">
+       AND card_seq > #{cardLocationForm.cardSeq}
+       </when>
+       <otherwise>
+       AND card_seq >= #{cardLocationForm.cardSeq}
+       </otherwise>
+     </choose>
+  </update>
+
+  <!-- 이전 컬럼 카드 순서 변경 -->
+  <update id="updatePreKanbanCardSeq">
+    UPDATE kanban_cards     kc
+INNER JOIN (SELECT kanban_card_id
+                 , ROW_NUMBER() OVER (ORDER BY card_seq, updated_at
+                    <choose>
+                      <when test="orderBy == 'ASC'"> ASC </when>
+                      <when test="orderBy == 'DESC'"> DESC </when>
+                    </choose>) new_seq
+              FROM kanban_cards
+             WHERE kanban_column_id = #{kanbanColumn}) kc2
+        ON kc2.kanban_card_id   = kc.kanban_card_id
+       SET kc.card_seq          = kc2.new_seq
+     WHERE kc.kanban_column_id  = #{kanbanColumn}
+  </update>
+
   <!-- 칸반 카드 삭제 -->
   <update id="deleteKanbanCard" parameterType="Long">
     UPDATE kanban_cards
        SET deleted_at       = NOW()
      WHERE kanban_card_id   = #{kanbanCardId}
   </update>
+
+  <!-- 카드 코멘트 저장 -->
+  <insert id="insertComment">
+    INSERT
+      INTO comment
+         ( kanban_card_id
+         , member_id
+         , content
+         )
+    VALUES
+         ( #{kanbanCardId}
+         , #{memberId}
+         , #{commentForm.content}
+         )
+  </insert>
 </mapper>
 

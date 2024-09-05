@@ -41,10 +41,14 @@
 
 
     <!-- 닉네임 여부 -->
-    <select id="existsByMemberNickName" parameterType="string" resultType="boolean">
+    <select id="existsByMemberNickName" resultType="boolean">
         SELECT EXISTS (SELECT 1
                          FROM members
-                        WHERE nick_name = #{nickName}) AS result
+                        WHERE nick_name = #{nickName}
+                          <if test="memberId != null">
+                          AND member_id != #{memberId}
+                          </if>
+                      ) AS result
     </select>
 
   <!-- 아이디 여부 -->
@@ -69,13 +73,14 @@
            , #{profileUrl})
   </insert>
 
-
     <!-- 회원 정보 수정  -->
     <update id="updateMemberInfo">
         UPDATE members
            SET nick_name    = #{signUpForm.nickName}
-          , password        = #{signUpForm.password}
-          , profile_url     = (CASE WHEN #{signUpForm.profileUrl} = ''
+             <if test="signUpForm.password != ''">
+             , password     = #{signUpForm.password}
+             </if>
+             , profile_url  = (CASE WHEN #{signUpForm.profileUrl} = ''
                                     THEN NULL
                                     ELSE #{signUpForm.profileUrl}
                                END)

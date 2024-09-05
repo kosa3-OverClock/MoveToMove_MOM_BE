@@ -5,16 +5,16 @@ import lombok.Getter;
 
 
 @Getter
-public class CustomBaseException extends RuntimeException{
-    private final ResponseCode responseCode;
+public class CustomBaseException extends RuntimeException {
+  private final ResponseCode responseCode;
 
-    public CustomBaseException(String message, ResponseCode responseCode) {
-        super(message);
-        this.responseCode = responseCode;
-    }
+  public CustomBaseException(String message, ResponseCode responseCode) {
+    super(message);
+    this.responseCode = responseCode;
+  }
 
-    public CustomBaseException(ResponseCode responseCode) {
-        super(responseCode.getMessage());
-        this.responseCode = responseCode;
-    }
+  public CustomBaseException(ResponseCode responseCode) {
+    super(responseCode.getMessage());
+    this.responseCode = responseCode;
+  }
 }
