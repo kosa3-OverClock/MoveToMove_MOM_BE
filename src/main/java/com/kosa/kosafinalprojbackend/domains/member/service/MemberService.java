@@ -163,7 +163,7 @@ public class MemberService {
 
     // 닉네임 중복 확인
     if (memberMapper.existsByMemberNickName(signUpForm.getNickName(), memberId)) {
-      throw new CustomBaseException(EXISTS_NICKNAME.withData("NICKNAME"));
+      throw new CustomBaseException(EXISTS_NICKNAME.withData("nickName"));
     }
 
     // S3 확인 후 이미지 변경 데이터 생성
