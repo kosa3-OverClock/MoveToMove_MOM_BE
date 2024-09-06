@@ -4,7 +4,7 @@ import com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.ColumnDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.KanbanColumnInCardDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanCardForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanColumnForm;
-import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanColumnMoveRequestFoam;
+import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanColumnMoveRequestForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.service.ColumnService;
 import com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode;
 import com.kosa.kosafinalprojbackend.global.security.model.CustomUserDetails;
@@ -28,12 +28,7 @@ import static org.springframework.http.HttpStatus.OK;
 public class ColumnController {
 
     private final ColumnService columnService;
-    // 칸반 컬럼 조회
-    @GetMapping("/{project-id}")
-    public ResponseEntity<List<ColumnDto>> getAllColumnsByProjectId(@PathVariable("project-id") Long projectId) {
 
-        return new ResponseEntity<>(columnService.selectColumn(projectId), HttpStatus.OK);
-    }
     // 칸반 컬럼 삭제
     @DeleteMapping("/{kanban-column-id}")
     public ResponseEntity<ResponseCode> deleteColumn(@PathVariable("kanban-column-id") Long kanbanColumnId) {
@@ -54,10 +49,10 @@ public class ColumnController {
     @SendTo("topic/kanban-column")
     public ResponseEntity<ResponseCode> moveColumn(
             @PathVariable("kanban-column-id") Long kanbanColumnId,
-            @RequestBody KanbanColumnMoveRequestFoam kanbanColumnMoveRequestFoam) {
+            @RequestBody KanbanColumnMoveRequestForm kanbanColumnMoveRequestForm) {
 
         // TODO: 칸반 컬럼 이동 로직 처리
-        columnService.updateKanbanColumn(kanbanColumnId, kanbanColumnMoveRequestFoam);
+        columnService.updateKanbanColumn(kanbanColumnId, kanbanColumnMoveRequestForm);
         // TODO: 칸반 보드의 새로운 상태 반환
         return ResponseEntity.status(OK).body(KANBAN_COLUMN_UPDATE);
     }
