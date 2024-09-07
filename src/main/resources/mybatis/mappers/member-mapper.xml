@@ -12,8 +12,9 @@
              , social
              , created_at
              , deleted_at
-        FROM members
-        WHERE member_id = #{memberId}
+          FROM members
+         WHERE member_id = #{memberId}
+           AND deleted_at IS NULL
     </select>
 
 
@@ -29,6 +30,7 @@
              , deleted_at
           FROM members
          WHERE email = #{email}
+           AND deleted_at IS NULL
     </select>
 
 
@@ -36,7 +38,8 @@
     <select id="existsByMemberEmail" parameterType="string" resultType="boolean">
         SELECT EXISTS (SELECT 1
                          FROM members
-                        WHERE email = #{email}) AS result
+                        WHERE email      = #{email}
+                          AND deleted_at IS NULL) AS result
     </select>
 
 
@@ -54,8 +57,9 @@
   <!-- 아이디 여부 -->
   <select id="existsByMemberId" parameterType="long" resultType="boolean">
     SELECT EXISTS (SELECT 1
-                   FROM members
-                   WHERE member_id = #{memberId}) AS result
+                     FROM members
+                    WHERE member_id  = #{memberId}
+                      AND deleted_at IS NULL) AS result
   </select>
 
   <!-- 회원가입 -->
@@ -88,9 +92,9 @@
     </update>
 
     <!-- 회원 탈퇴 -->
-    <update id="memberQuit" parameterType="Long">
+    <update id="memberWithdraw" parameterType="Long">
         update members
         set deleted_at = NOW()
         where member_id = #{memberId}
-    /</update>
+    </update>
 </mapper>

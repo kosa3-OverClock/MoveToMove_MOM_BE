@@ -1,5 +1,7 @@
 package com.kosa.kosafinalprojbackend.domains.kanban.project.controller;
 
+import com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.ColumnDto;
+import com.kosa.kosafinalprojbackend.domains.kanban.column.service.ColumnService;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectInCardDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectMemberDto;
@@ -21,6 +23,7 @@ import java.util.List;
 public class ProjectController {
 
     private final ProjectService projectService;
+    private final ColumnService columnService;
 
 
     // 조회
@@ -76,5 +79,13 @@ public class ProjectController {
 
         return new ResponseEntity<>(
             projectService.selectKanbanCardByProject(projectId), HttpStatus.CREATED);
+    }
+
+    // 칸반 컬럼 조회
+    @GetMapping("/{project-id}/kanban-columns")
+    public ResponseEntity<List<ColumnDto>> getAllColumnsByProjectId(
+        @PathVariable("project-id") Long projectId) {
+
+        return new ResponseEntity<>(columnService.selectColumn(projectId), HttpStatus.OK);
     }
 }
