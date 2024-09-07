@@ -1,5 +1,7 @@
 package com.kosa.kosafinalprojbackend.domains.kanban.project.service;
 
+import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.NOT_FOUND_ID;
+
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectInCardDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectMemberDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.enums.ProjectLeaderYN;
@@ -15,12 +17,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.NOT_FOUND_ID;
 
 @Slf4j
 @Service
@@ -54,15 +56,21 @@ public class ProjectService {
     // 프로젝트 참여 저장
     projectJoinMapper.insertProjectJoin(projectForm.getMemberDtoMap(), projectId);
 
-    // 칸반 컬럼 기본 3개 저장
-    Map<String, Object> params = new HashMap<>();
-
     // 기본 칸반 컬럼명 리스트
     List<String> columnNames = Arrays.asList("Task", "진행중", "완료");
-    params.put("columns", columnNames);
+
+    // 칸반 컬럼명과 순서를 한꺼번에 처리할 수 있도록 스트림으로 처리
+    List<Map<String, Object>> columns = IntStream.range(0, columnNames.size())
+        .mapToObj(i -> {
+          Map<String, Object> columnData = new HashMap<>();
+          columnData.put("column", columnNames.get(i));
+          columnData.put("order", i + 1);
+          return columnData;
+        })
+        .toList();
 
     // MyBatis 매퍼 호출하여 여러 칸반 컬럼을 한 번에 삽입
-    kanbanColumnMapper.insertKanbanColumns(projectId, params);
+    kanbanColumnMapper.insertKanbanColumns(projectId, columns);
 
     //TODO: 프로젝트 팀 채팅방 넣어야함!!!
 
