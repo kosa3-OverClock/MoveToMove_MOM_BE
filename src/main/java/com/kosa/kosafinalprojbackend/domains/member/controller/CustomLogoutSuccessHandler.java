@@ -26,5 +26,6 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
         response.setContentType("application/json");
         response.getWriter().write("{\"message\": \"Logout successful\"}");
         response.getWriter().flush();
+        //TODO : 쿠키에 존재하는 리프레쉬 토큰 삭제할 수 있는지?
     }
 }

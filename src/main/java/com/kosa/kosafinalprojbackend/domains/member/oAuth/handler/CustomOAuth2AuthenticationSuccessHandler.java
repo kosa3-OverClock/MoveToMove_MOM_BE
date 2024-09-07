@@ -4,7 +4,6 @@ import com.kosa.kosafinalprojbackend.domains.member.oAuth.domain.Member;
 import com.kosa.kosafinalprojbackend.domains.member.oAuth.dto.info.UserPrincipal;
 import com.kosa.kosafinalprojbackend.global.redis.service.RedisService;
 import com.kosa.kosafinalprojbackend.global.security.filter.JwtTokenProvider;
-import com.kosa.kosafinalprojbackend.mybatis.mappers.member.MemberOAuthMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;

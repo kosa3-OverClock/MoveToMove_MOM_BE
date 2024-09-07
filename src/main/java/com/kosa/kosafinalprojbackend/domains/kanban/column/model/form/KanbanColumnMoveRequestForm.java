@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class KanbanColumnMoveRequestFoam {
+public class KanbanColumnMoveRequestForm {
     public Long projectId;
     public int newPosition;
 }
