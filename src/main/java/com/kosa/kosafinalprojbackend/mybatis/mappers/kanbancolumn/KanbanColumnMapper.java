@@ -1,12 +1,11 @@
 package com.kosa.kosafinalprojbackend.mybatis.mappers.kanbancolumn;
 
-import java.util.List;
-import java.util.Map;
-
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.ColumnDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.KanbanColumnInCardDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanCardForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanColumnForm;
+import java.util.List;
+import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -28,7 +27,7 @@ public interface KanbanColumnMapper {
                             @Param("memberList") List<Long> memberList);
 
   // 칸반 컬럼 저장
-  void insertKanbanColumns(Long projectId, Map<String, Object> params);
+  void insertKanbanColumns(@Param("projectId") Long projectId, @Param("columns") List<Map<String, Object>> columns);
 
   // 칸반 컬럼 저장, 수정
   void upsertKanbanColumns(List<KanbanColumnForm> kanbanColumnForms);

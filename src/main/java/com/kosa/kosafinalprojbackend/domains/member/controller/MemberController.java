@@ -87,11 +87,12 @@ public class MemberController {
     }
 
     // 회원 탈퇴
-    @PutMapping("/quit")
-    public ResponseEntity<ResponseCode> memberDelete(
+    @DeleteMapping("/withdraw")
+    public ResponseEntity<ResponseCode> memberWithdraw(HttpServletResponse response,
         @AuthenticationPrincipal CustomUserDetails customUserDetails) {
 
-        memberService.memberQuit(customUserDetails);
+        memberService.memberWithdraw(response, customUserDetails.getId());
+
         return ResponseEntity.ok(ResponseCode.MEMBER_DELETE);
     }
 

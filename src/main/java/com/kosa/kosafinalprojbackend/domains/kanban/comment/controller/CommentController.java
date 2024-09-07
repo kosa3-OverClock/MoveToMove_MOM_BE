@@ -11,7 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.COMMENT_DELETE;
-import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.KANBAN_CARD_MODIFY_SUCCESS;
+import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.COMMENT_MODIFY_SUCCESS;
 import static org.springframework.http.HttpStatus.OK;
 
 @Controller
@@ -30,7 +30,7 @@ public class CommentController {
 
     commentService.updateComment(customUserDetails.getId(), commentId, commentForm);
 
-    return ResponseEntity.status(OK).body(KANBAN_CARD_MODIFY_SUCCESS);
+    return ResponseEntity.status(OK).body(COMMENT_MODIFY_SUCCESS);
   }
 
   // 코멘트 내용 삭제

@@ -75,11 +75,11 @@ INNER JOIN kanban_cards         kca
 
 
   <!-- 저장 -->
-  <insert id="insertKanbanColumns" parameterType="map">
-    INSERT INTO kanban_columns (project_id, kanban_column_name)
+  <insert id="insertKanbanColumns">
+    INSERT INTO kanban_columns (project_id, kanban_column_name, column_seq)
     VALUES
-    <foreach collection="columns" item="column" separator=",">
-      (#{projectId}, #{column})
+    <foreach collection="columns" item="columnData" separator=",">
+      (#{projectId}, #{columnData.column}, #{columnData.order})
     </foreach>
   </insert>
 
@@ -98,7 +98,7 @@ INNER JOIN kanban_cards         kca
 
   <!-- 칸반 컬럼 리스트 조회(프로젝트ID 기준)  -->
   <select id="selectKanbanColumns" parameterType="Long" resultType="com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.ColumnDto">
-    SELECT kanban_column_id, kanban_column_name, column_seq
+    SELECT project_id, kanban_column_id, kanban_column_name, column_seq
     FROM kanban_columns
     WHERE project_id = #{projectId}
     AND deleted_at IS NULL

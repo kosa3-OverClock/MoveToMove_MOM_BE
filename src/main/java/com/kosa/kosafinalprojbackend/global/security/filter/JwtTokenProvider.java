@@ -110,7 +110,6 @@ public class JwtTokenProvider {
 
   // 사용자 인증 및 권한 부여
   public Authentication getAuthentication(String token, boolean isAccessToken) {
-
     Claims claims = parseClaims(token, isAccessToken);
 
     Long id = Long.parseLong(claims.get("id").toString());
