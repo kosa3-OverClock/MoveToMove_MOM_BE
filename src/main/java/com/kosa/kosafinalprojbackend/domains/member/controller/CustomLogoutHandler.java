@@ -3,6 +3,7 @@ package com.kosa.kosafinalprojbackend.domains.member.controller;
 import com.kosa.kosafinalprojbackend.global.redis.service.RedisService;
 import com.kosa.kosafinalprojbackend.global.security.filter.JwtTokenProvider;
 import com.kosa.kosafinalprojbackend.global.security.model.CustomUserDetails;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,12 @@ public class CustomLogoutHandler implements LogoutHandler {
         CustomUserDetails userPrincipal = (CustomUserDetails) authentication.getPrincipal();
         redisService.deleteRefreshToken(userPrincipal.getId());
 
-        // TODO: 쿠키에 저장된 refreshToken 삭제
+        // 쿠키 refresh 토큰 삭제
+        Cookie refreshTokenCookie = new Cookie("refreshToken", null);
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(false);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(0);
+        response.addCookie(refreshTokenCookie);
     }
 }
