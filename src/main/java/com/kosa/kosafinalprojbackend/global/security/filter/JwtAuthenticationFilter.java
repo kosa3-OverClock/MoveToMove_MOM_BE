@@ -32,6 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     String[] api = {
         "/api/members/login", "/api/members/sign-up", "/api/members/password/**/**",
+        "/api/members/checks/refresh-token",
         "/oauth2/authorization/google", "/oauth2/authorization/kakao",
         "/swagger-ui/**", "/v3/**",
         "/actuator/**",
