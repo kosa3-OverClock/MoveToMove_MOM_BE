@@ -4,7 +4,7 @@ import com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.ColumnDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.KanbanColumnInCardDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanCardForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanColumnForm;
-import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanColumnMoveRequestFoam;
+import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanColumnMoveRequestForm;
 import com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode;
 import com.kosa.kosafinalprojbackend.global.error.exception.CustomBaseException;
 import com.kosa.kosafinalprojbackend.mybatis.mappers.kanbancolumn.KanbanColumnMapper;
@@ -48,9 +48,8 @@ public class ColumnService {
         kanbanColumnMapper.upsertKanbanColumns(kanbanColumnForm);
     }
 
-    //  TODO: 칸반 컬럼 순서 수정
     @Transactional
-    public void updateKanbanColumn(Long kanbanColumnId, KanbanColumnMoveRequestFoam kanbanColumnMoveRequestFoam) {
+    public void updateKanbanColumn(Long kanbanColumnId, KanbanColumnMoveRequestForm kanbanColumnMoveRequestFoam) {
         // 변경하고자 하는 컬럼 객체
         ColumnDto targetColumn = kanbanColumnMapper.findByColumnId(kanbanColumnId);
         if(targetColumn == null) {

@@ -194,17 +194,27 @@ public class MemberService {
   }
 
   // 회원 탈퇴
-  public void memberQuit(CustomUserDetails customUserDetails) {
-    // 삭제여부 확인
-    MemberDto findMember = memberMapper.findByMemberId(customUserDetails.getId());
-    Long memberId = findMember.getMemberId();
-    // TODO: 차후 삭제 여부에 따른 에러 처리가 필요하나 ?
-    // if(findMember.getDeletedAt() != null) {}
+  @Transactional
+  public void memberWithdraw(HttpServletResponse response, Long memberId) {
+
+    // 유저 아이디 확인
+    if (!memberMapper.existsByMemberId(memberId)) {
+      throw new CustomBaseException(NOT_FOUND_ID);
+    }
+
+    // 쿠키 refresh 토큰 삭제
+    Cookie refreshTokenCookie = new Cookie("refreshToken", null);
+    refreshTokenCookie.setHttpOnly(true);
+    refreshTokenCookie.setSecure(false);
+    refreshTokenCookie.setPath("/");
+    refreshTokenCookie.setMaxAge(0);
+    response.addCookie(refreshTokenCookie);
 
     // redis에 저장된 refresh 토큰 삭제
     redisService.deleteRefreshToken(memberId);
+
     // DB에 저장된 회원 delete_at 값 생성 (access 토큰은 프론트 처리)
-    memberMapper.memberQuit(memberId);
+    memberMapper.memberWithdraw(memberId);
   }
 
 

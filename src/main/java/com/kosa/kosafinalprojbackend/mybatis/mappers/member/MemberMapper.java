@@ -32,5 +32,5 @@ public interface MemberMapper {
                           @Param("signUpForm") SignUpForm signUpForm);
 
     // 회원 탈퇴
-    void memberQuit(Long memberId);
+    void memberWithdraw(Long memberId);
 }
