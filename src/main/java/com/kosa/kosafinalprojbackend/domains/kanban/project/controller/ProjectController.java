@@ -1,6 +1,7 @@
 package com.kosa.kosafinalprojbackend.domains.kanban.project.controller;
 
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.ColumnDto;
+
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanColumnForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.service.ColumnService;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectDto;
@@ -84,9 +85,9 @@ public class ProjectController {
 
     // 칸반 컬럼 조회
     @GetMapping("/{project-id}/kanban-columns")
-    public ResponseEntity<List<ColumnDto>> getAllColumnsByProjectId(@PathVariable("project-id") Long projectId) {
+    public ResponseEntity<List<ColumnDto>> getAllColumnsByProjectId(
+        @PathVariable("project-id") Long projectId) {
 
         return new ResponseEntity<>(columnService.selectColumn(projectId), HttpStatus.OK);
     }
-
 }
