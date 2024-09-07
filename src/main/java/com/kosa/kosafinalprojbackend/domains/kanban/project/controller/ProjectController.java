@@ -1,6 +1,8 @@
 package com.kosa.kosafinalprojbackend.domains.kanban.project.controller;
 
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.ColumnDto;
+
+import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanColumnForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.service.ColumnService;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectInCardDto;

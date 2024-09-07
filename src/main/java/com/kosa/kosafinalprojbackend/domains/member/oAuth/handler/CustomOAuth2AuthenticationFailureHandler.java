@@ -8,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -18,6 +19,10 @@ import java.io.IOException;
 @Component
 @Slf4j
 public class CustomOAuth2AuthenticationFailureHandler implements AuthenticationFailureHandler {
+
+    @Value("${frontend.server.url}")
+    private String frontendServerUrl;
+
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         log.error("소셜 로그인 exception 내용: {}", exception.getMessage());
@@ -33,6 +38,13 @@ public class CustomOAuth2AuthenticationFailureHandler implements AuthenticationF
 
         // 에러 메시지를 JSON으로 변환하여 응답에 씁니다.
         response.getWriter().write(new ObjectMapper().writeValueAsString(errorResponse));
+
+        // TODO: front 서버로 리다에릭트 해야함.
+        // 프론트엔드 서버로 리다이렉트 URL을 생성합니다.
+        String redirectUrl = String.format("%s/login?error=%s", frontendServerUrl, responseCode.getStatus());
+
+        // 프론트 서버로 리다이렉트 합니다.
+        response.sendRedirect(redirectUrl);
     }
 
     private ResponseCode determineResponseCode(AuthenticationException exception) {
