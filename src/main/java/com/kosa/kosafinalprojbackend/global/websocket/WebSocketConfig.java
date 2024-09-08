@@ -15,8 +15,12 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-    @Value("${cors.front_server}")
-    private String frontServerCors;
+    @Value("${cors.front_server_local}")
+    private String frontServerCorsLocal;
+
+    @Value("${cors.front_server_vercel}")
+    private String frontServerCorsVercel;
+
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
@@ -29,7 +33,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws") // 클라이언트가 연결할 WebSocket 엔드포인트
-            .setAllowedOrigins(frontServerCors) // CORS 설정
+            .setAllowedOrigins(frontServerCorsLocal) // CORS 설정
+            .setAllowedOrigins(frontServerCorsVercel) // CORS 설정
             .withSockJS()
             .setHeartbeatTime(15000); // SockJS 지원
     }
