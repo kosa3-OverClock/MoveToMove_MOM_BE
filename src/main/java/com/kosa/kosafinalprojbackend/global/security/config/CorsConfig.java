@@ -11,15 +11,18 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 public class CorsConfig {
 
-  @Value("${cors.front_server}")
-  private String frontServerCors;
+  @Value("${cors.front_server_local}")
+  private String frontServerCorsLocal;
 
+  @Value("${cors.front_server_vercel}")
+  private String frontServerCorsVercel;
 
   @Bean
   @Primary
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.addAllowedOriginPattern(frontServerCors);
+    configuration.addAllowedOriginPattern(frontServerCorsLocal);
+    configuration.addAllowedOriginPattern(frontServerCorsVercel);
     configuration.addAllowedMethod("*");
     configuration.addAllowedHeader("*");
     configuration.setAllowCredentials(true);
