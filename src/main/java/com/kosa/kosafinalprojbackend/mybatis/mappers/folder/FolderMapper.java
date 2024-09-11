@@ -1,6 +1,8 @@
 package com.kosa.kosafinalprojbackend.mybatis.mappers.folder;
 
 import com.kosa.kosafinalprojbackend.domains.folder.model.dto.FolderDto;
+import com.kosa.kosafinalprojbackend.domains.folder.model.dto.FolderSubFolderProjectDto;
+import com.kosa.kosafinalprojbackend.domains.folder.model.dto.NotIncludedProjectDto;
 import com.kosa.kosafinalprojbackend.domains.folder.model.dto.ProjectLeaderByFolderIdDto;
 import com.kosa.kosafinalprojbackend.domains.folder.model.form.FolderForm;
 import com.kosa.kosafinalprojbackend.domains.folder.model.form.FolderMoveForm;
@@ -59,4 +61,11 @@ public interface FolderMapper {
     // 하위 폴더 조회
     List<FolderDto> selectFolderAllChildFolders(@Param("parentFolderId") Long parentFolderId,
         @Param("memberId") Long memberId);
+
+
+    // 사용자의 전체 폴더 조회 (상위, 하위, 속한 프로젝트)
+    List<FolderSubFolderProjectDto> getFolderHierarchy(Long memberId);
+
+    // 폴더에 속하지 않은 사용자의 참여 프로젝트 조회
+    List<NotIncludedProjectDto> getUnassignedProjects(Long memberId);
 }
