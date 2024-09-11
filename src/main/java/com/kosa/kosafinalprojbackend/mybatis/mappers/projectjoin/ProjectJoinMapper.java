@@ -1,5 +1,6 @@
 package com.kosa.kosafinalprojbackend.mybatis.mappers.projectjoin;
 
+import com.kosa.kosafinalprojbackend.domains.folder.model.dto.NotIncludedProjectDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.enums.ProjectLeaderYN;
 import java.util.List;
 import java.util.Map;
@@ -20,4 +21,8 @@ public interface ProjectJoinMapper {
   // 폴더 삭제 시 프로젝트_조인 삭제
   void deleteProjectJoinsByProjectIds(@Param("memberId") Long memberId,
       @Param("projectList") List<Long> projectList);
+
+  
+  // 조회 (프로젝트 아이디, 프로젝트 명, 팀장 여부)
+  List<NotIncludedProjectDto> getProjectsByIds(List<Long> projectIds);
 }

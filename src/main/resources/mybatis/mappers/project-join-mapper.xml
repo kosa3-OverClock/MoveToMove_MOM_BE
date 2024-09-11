@@ -39,4 +39,20 @@
         </foreach>
   </delete>
 
+
+
+  <!-- 조회 (프로젝트 아이디, 프로젝트 명, 팀장 여부) -->
+  <select id="getProjectsByIds" resultType="com.kosa.kosafinalprojbackend.domains.folder.model.dto.NotIncludedProjectDto">
+    SELECT p.project_id id
+         , p.project_name label
+         , pj.project_leader_YN
+      FROM projects p
+ LEFT JOIN project_joins pj
+        ON p.project_id = pj.project_id
+     WHERE p.project_id     IN
+    <foreach item="id" collection="projectIds" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  ORDER BY p.project_name
+  </select>
 </mapper>
