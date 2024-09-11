@@ -130,17 +130,6 @@ INNER JOIN folders              f
 
 
 
-  <!-- FolderDTO의 매핑 정의 -->
-  <resultMap id="FolderResultMap" type="com.kosa.kosafinalprojbackend.domains.folder.model.dto.FolderSubFolderProjectDto">
-    <id property="id" column="id"/>
-    <result property="label" column="label"/>
-    <result property="parentFolderId" column="parent_folder_id"/>
-    <result property="depth" column="depth"/>
-    <result property="seq" column="seq"/>
-    <result property="nodes" column="projectIds" javaType="java.lang.String"/>
-  </resultMap>
-
-
   <!-- 사용자의 전체 폴더 조회 (상위, 하위, 속한 프로젝트) -->
   <select id="getFolderHierarchy" resultType="com.kosa.kosafinalprojbackend.domains.folder.model.dto.FolderSubFolderProjectDto">
     WITH RECURSIVE FolderHierarchy AS
