@@ -141,7 +141,7 @@ INNER JOIN kanban_cards         kca
 
     <!-- 칸반 컬럼 조회(컬럼ID 기준) -->
     <select id="findByColumnId" parameterType="Long" resultType="com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.ColumnDto">
-        SELECT project_id, kanban_column_id, kanban_column_name, column_seq
+        SELECT project_id, kanban_column_id, kanban_column_name, column_seq, kanban_column_name
         FROM kanban_columns
         WHERE kanban_column_id = #{columnId}
         AND deleted_at IS NULL
