@@ -40,6 +40,7 @@ public class FolderService {
 
   // 특정 사용자의 모든 폴더 조회
   public List<FolderSubFolderProjectDto> selectUserAllFolder(CustomUserDetails customUserDetails) {
+    log.info("selectUserAllFolder");
     Long memberId = customUserDetails.getId();
 
     // 유저 존재 확인
@@ -69,11 +70,11 @@ public class FolderService {
       rootFolders.addAll(allProjects.stream()
           .map(project -> FolderSubFolderProjectDto.builder()
               .id(project.getId())
-              .label(project.getLabel())
+              .title(project.getTitle())
               .parentFolderId(null)
               .depth(1) // 최상위 레벨에 프로젝트 추가
               .seq(rootFolders.size() + 1) // seq는 계속 증가시키도록 설정
-              .nodes(new ArrayList<>()) // 하위 프로젝트가 없으므로 빈 리스트 설정
+              .children(new ArrayList<>()) // 하위 프로젝트가 없으므로 빈 리스트 설정
               .build())
           .toList());
     }
@@ -111,7 +112,7 @@ public class FolderService {
     nodes.addAll(projectNodes);  // 현재 폴더에 속한 프로젝트 추가
 
     // 부모 폴더의 nodes 리스트 업데이트
-    parent.setNodes(nodes);  // 폴더와 프로젝트를 모두 nodes에 설정
+    parent.setChildren(nodes);  // 폴더와 프로젝트를 모두 nodes에 설정
   }
 
 

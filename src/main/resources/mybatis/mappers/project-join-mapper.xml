@@ -44,7 +44,7 @@
   <!-- 조회 (프로젝트 아이디, 프로젝트 명, 팀장 여부) -->
   <select id="getProjectsByIds" resultType="com.kosa.kosafinalprojbackend.domains.folder.model.dto.NotIncludedProjectDto">
     SELECT p.project_id id
-         , p.project_name label
+         , p.project_name title
          , pj.project_leader_YN
       FROM projects p
  LEFT JOIN project_joins pj

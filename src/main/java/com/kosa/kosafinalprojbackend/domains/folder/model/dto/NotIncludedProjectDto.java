@@ -12,6 +12,6 @@ import lombok.Setter;
 public class NotIncludedProjectDto {
 
   private Long id;  // projectId 대신 id 사용
-  private String label;  // project_name 대신 label 사용
+  private String title;
   private boolean projectLeaderYN;
 }
