@@ -135,18 +135,19 @@ INNER JOIN folders              f
     WITH RECURSIVE FolderHierarchy AS
     (
       SELECT f.folder_id    id
-           , f.folder_name  label
+           , f.folder_name  title
            , f.parent_folder_id
            , f.depth
            , f.seq
         FROM folders f
        WHERE f.parent_folder_id IS NULL
          AND f.member_id = #{memberId}
+         AND f.deleted_at IS NULL
 
    UNION ALL
 
       SELECT f.folder_id    id
-           , f.folder_name  label
+           , f.folder_name  title
            , f.parent_folder_id
            , f.depth       depth
            , f.seq
@@ -154,9 +155,10 @@ INNER JOIN folders              f
   INNER JOIN FolderHierarchy    fh
           ON f.parent_folder_id = fh.id
        WHERE f.member_id = #{memberId}
+         AND f.deleted_at IS NULL
     )
     SELECT fh.id
-         , fh.label
+         , fh.title
          , fh.parent_folder_id
          , fh.depth
          , fh.seq
@@ -164,6 +166,7 @@ INNER JOIN folders              f
                         FROM projects         p
                    LEFT JOIN project_joins    pj
                           ON p.project_id     = pj.project_id
+                         AND p.deleted_at     IS NULL
                    LEFT JOIN folder_projects   fp
                           ON p.project_id = fp.project_id
                        WHERE pj.member_id     = #{memberId}
@@ -177,13 +180,14 @@ INNER JOIN folders              f
   <!-- 폴더에 속하지 않은 사용자의 참여 프로젝트 조회 -->
   <select id="getUnassignedProjects" resultType="com.kosa.kosafinalprojbackend.domains.folder.model.dto.NotIncludedProjectDto">
     SELECT p.project_id     id
-         , p.project_name   label
+         , p.project_name   title
          , pj.project_leader_YN
       FROM projects         p
  LEFT JOIN project_joins    pj
         ON p.project_id     = pj.project_id
      WHERE pj.member_id     = #{memberId}
        AND p.project_id     NOT IN (SELECT fp.project_id FROM folder_projects fp)
+       AND p.deleted_at     IS NULL
   ORDER BY p.project_name
   </select>
 
