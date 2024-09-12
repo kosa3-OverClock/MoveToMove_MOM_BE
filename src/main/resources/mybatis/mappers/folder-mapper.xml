@@ -167,10 +167,10 @@ INNER JOIN folders              f
                    LEFT JOIN project_joins    pj
                           ON p.project_id     = pj.project_id
                          AND p.deleted_at     IS NULL
-                   LEFT JOIN folder_projects   fp
+                   LEFT JOIN folder_projects fp
                           ON p.project_id = fp.project_id
+                         AND fp.folder_id = fh.id
                        WHERE pj.member_id     = #{memberId}
-                         AND p.project_id     IN (SELECT fp2.project_id FROM folder_projects fp2 WHERE fp2.folder_id = fh.id)
                     ORDER BY p.project_name
             ), null) AS projectIds
       FROM FolderHierarchy fh
