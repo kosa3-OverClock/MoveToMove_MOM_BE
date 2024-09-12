@@ -90,4 +90,12 @@ public class ProjectController {
 
         return new ResponseEntity<>(columnService.selectColumn(projectId), HttpStatus.OK);
     }
+
+    // WebSocket 연결에서 사용 - 사용자가 참여중인 프로젝트 ID 조회
+    @GetMapping("/member/{memberId}")
+    public ResponseEntity<List<Long>> selectMemberById(
+            @PathVariable("memberId") Long memberId) {
+
+        return new ResponseEntity<>(projectService.selectProjectsIdByUserId(memberId), HttpStatus.OK);
+    }
 }
