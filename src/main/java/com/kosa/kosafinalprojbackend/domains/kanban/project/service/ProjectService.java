@@ -142,4 +142,12 @@ public class ProjectService {
 
     return projectMapper.selectKanbanCardByProject(projectId);
   }
+
+  // 유저가 참여한 프로젝트 ID 조회
+  public List<Long> selectProjectsIdByUserId(Long memberId) {
+    if (!memberMapper.existsByMemberId(memberId)) {
+      throw new CustomBaseException(NOT_FOUND_ID);
+    }
+    return projectMapper.selectProjectsIdByUserId(memberId);
+  }
 }

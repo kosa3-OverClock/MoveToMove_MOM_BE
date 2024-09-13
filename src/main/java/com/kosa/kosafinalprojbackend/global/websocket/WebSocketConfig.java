@@ -33,8 +33,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws") // 클라이언트가 연결할 WebSocket 엔드포인트
-            .setAllowedOrigins(frontServerCorsLocal) // CORS 설정
-            .setAllowedOrigins(frontServerCorsVercel) // CORS 설정
+            .setAllowedOrigins(frontServerCorsLocal, frontServerCorsVercel) // CORS 설정
+//            .setAllowedOrigins(frontServerCorsVercel) // CORS 설정
             .withSockJS()
             .setHeartbeatTime(15000); // SockJS 지원
     }
