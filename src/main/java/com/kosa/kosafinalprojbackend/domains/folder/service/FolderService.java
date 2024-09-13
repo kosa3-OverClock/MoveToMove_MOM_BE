@@ -158,7 +158,7 @@ public class FolderService {
 
     // 폴더 생성
     @Transactional
-    public Long insertFolder(FolderForm folderForm, CustomUserDetails customUserDetails) {
+    public FolderSubFolderProjectDto insertFolder(FolderForm folderForm, CustomUserDetails customUserDetails) {
 
         // 유저 존재 확인
         if (!memberMapper.existsByMemberId(customUserDetails.getId())) {
@@ -179,7 +179,20 @@ public class FolderService {
             .build();
 
         folderMapper.insertFolder(folderDto, customUserDetails.getId());
-        return folderDto.getFolderId();
+
+        // 새로운 폴더 객체로 생성해서 return
+        FolderSubFolderProjectDto newFolder =
+            FolderSubFolderProjectDto.builder()
+                .id(folderDto.getFolderId())
+                .title(folderDto.getFolderName())
+                .parentFolderId(folderDto.getParentFolderId())
+                .depth(folderDto.getDepth())
+                .seq(folderDto.getSeq())
+                .projectIds(null)
+                .children(null)
+                .build();
+
+        return newFolder;
     }
 
 
