@@ -15,6 +15,7 @@
          , me.email
          , me.nick_name
          , me.profile_url
+         , pj.project_leader_YN
       FROM projects      pr
 INNER JOIN project_joins pj
         ON pj.project_id = pr.project_id

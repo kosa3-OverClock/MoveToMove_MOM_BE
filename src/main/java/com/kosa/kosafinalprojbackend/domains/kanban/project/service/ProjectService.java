@@ -2,6 +2,8 @@ package com.kosa.kosafinalprojbackend.domains.kanban.project.service;
 
 import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.NOT_FOUND_ID;
 
+import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardMemberDto;
+import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectCardDetailDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectInCardDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectMemberDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.enums.ProjectLeaderYN;
@@ -9,15 +11,16 @@ import com.kosa.kosafinalprojbackend.domains.kanban.project.model.form.ProjectFo
 import com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode;
 import com.kosa.kosafinalprojbackend.global.error.exception.CustomBaseException;
 import com.kosa.kosafinalprojbackend.global.security.model.CustomUserDetails;
+import com.kosa.kosafinalprojbackend.mybatis.mappers.kanbancard.KanbanCardMapper;
 import com.kosa.kosafinalprojbackend.mybatis.mappers.kanbancolumn.KanbanColumnMapper;
 import com.kosa.kosafinalprojbackend.mybatis.mappers.member.MemberMapper;
 import com.kosa.kosafinalprojbackend.mybatis.mappers.project.ProjectMapper;
 import com.kosa.kosafinalprojbackend.mybatis.mappers.projectjoin.ProjectJoinMapper;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +36,7 @@ public class ProjectService {
   private final ProjectJoinMapper projectJoinMapper;
   private final MemberMapper memberMapper;
   private final KanbanColumnMapper kanbanColumnMapper;
+  private final KanbanCardMapper kanbanCardMapper;
 
 
   // 저장
@@ -133,14 +137,33 @@ public class ProjectService {
   }
 
   // 칸반 카드 조회 (프로젝트 기준)
-  public List<ProjectInCardDto> selectKanbanCardByProject(Long projectId) {
+  public List<ProjectCardDetailDto> selectKanbanCardByProject(Long projectId) {
 
     // 프로젝트 존재 여부 확인
     if (!projectMapper.existsByProjectId(projectId)) {
       throw new CustomBaseException(NOT_FOUND_ID);
     }
 
-    return projectMapper.selectKanbanCardByProject(projectId);
+    List<ProjectCardDetailDto> projectCardDetailDtoList = new ArrayList<>();
+
+    // 프로젝트 기준 카드 조회
+    List<ProjectInCardDto> projectInCardDtoList = projectMapper.selectKanbanCardByProject(projectId);
+
+    // 프로젝트 카드 디테일
+    for (ProjectInCardDto projectInCardDto : projectInCardDtoList) {
+
+      // 칸반 카드 담당자 조회
+      List<CardMemberDto> cardMemberList =
+          kanbanCardMapper.selectKanbanCardMember(projectInCardDto.getKanbanCardId());
+
+      projectCardDetailDtoList.add(
+          ProjectCardDetailDto.builder()
+              .projectInCardDto(projectInCardDto)
+              .cardMemberList(cardMemberList)
+              .build());
+    }
+
+    return projectCardDetailDtoList;
   }
 
   // 유저가 참여한 프로젝트 ID 조회
