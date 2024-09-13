@@ -164,10 +164,10 @@ INNER JOIN folders              f
          , fh.seq
          , COALESCE(( SELECT GROUP_CONCAT(p.project_id)
                         FROM projects         p
-                   LEFT JOIN project_joins    pj
+                  INNER JOIN project_joins    pj
                           ON p.project_id     = pj.project_id
                          AND p.deleted_at     IS NULL
-                   LEFT JOIN folder_projects fp
+                  INNER JOIN folder_projects fp
                           ON p.project_id = fp.project_id
                          AND fp.folder_id = fh.id
                        WHERE pj.member_id     = #{memberId}
@@ -181,12 +181,21 @@ INNER JOIN folders              f
   <select id="getUnassignedProjects" resultType="com.kosa.kosafinalprojbackend.domains.folder.model.dto.NotIncludedProjectDto">
     SELECT p.project_id     id
          , p.project_name   title
+         , p.project_description
+         , p.start_at
+         , p.end_at
          , pj.project_leader_YN
+         , p.created_at
+         , p.deleted_at
       FROM projects         p
  LEFT JOIN project_joins    pj
         ON p.project_id     = pj.project_id
      WHERE pj.member_id     = #{memberId}
-       AND p.project_id     NOT IN (SELECT fp.project_id FROM folder_projects fp)
+       AND p.project_id     NOT IN (SELECT fp.project_id
+                                      FROM folder_projects  fp
+                                INNER JOIN folders          f
+                                        ON fp.folder_id     = f.folder_id
+                                       AND f.member_id      = #{memberId})
        AND p.deleted_at     IS NULL
   ORDER BY p.project_name
   </select>
