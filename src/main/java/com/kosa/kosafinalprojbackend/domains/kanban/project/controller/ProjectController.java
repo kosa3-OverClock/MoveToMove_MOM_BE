@@ -2,10 +2,9 @@ package com.kosa.kosafinalprojbackend.domains.kanban.project.controller;
 
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.ColumnDto;
 
-import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanColumnForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.service.ColumnService;
+import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectCardDetailDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectDto;
-import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectInCardDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectMemberDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.form.ProjectForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.service.ProjectService;
@@ -76,7 +75,7 @@ public class ProjectController {
 
     // 칸반 카드 조회 (프로젝트 기준)
     @GetMapping("/{project-id}/kanban-cards")
-    public ResponseEntity<List<ProjectInCardDto>> selectKanbanCardByProject(
+    public ResponseEntity<List<ProjectCardDetailDto>> selectKanbanCardByProject(
         @PathVariable("project-id") Long projectId) {
 
         return new ResponseEntity<>(
