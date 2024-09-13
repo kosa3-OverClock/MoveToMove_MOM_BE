@@ -1,5 +1,6 @@
 package com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto;
 
+import com.kosa.kosafinalprojbackend.domains.kanban.project.model.enums.ProjectLeaderYN;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,4 +12,5 @@ public class ProjectMemberDto {
   private String email;
   private String nickName;
   private String profileUrl;
+  private ProjectLeaderYN projectLeaderYN;
 }
