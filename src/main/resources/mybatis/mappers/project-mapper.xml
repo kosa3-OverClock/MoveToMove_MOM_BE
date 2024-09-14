@@ -76,7 +76,7 @@ INNER JOIN kanban_cards         kca
      WHERE pr.project_id        = #{projectId}
        AND kco.deleted_at       IS NULL
        AND kca.deleted_at       IS NULL
-    ORDER BY kco.column_seq ASC
+    ORDER BY kca.card_seq ASC
   </select>
 
   <select id="selectProjectsIdByUserId" parameterType="Long" resultType="Long">
