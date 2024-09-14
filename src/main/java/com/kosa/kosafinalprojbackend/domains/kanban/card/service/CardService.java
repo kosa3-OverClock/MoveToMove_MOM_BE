@@ -73,7 +73,12 @@ public class CardService {
     }
 
     kanbanCardMapper.deleteKanbanCardMember(kanbanCardId);
-    kanbanCardMapper.insertKanbanCardMember(kanbanCardId, kanbanCardTitleForm.getMemberIds());
+
+    if (kanbanCardTitleForm != null &&
+        kanbanCardTitleForm.getMemberIds() != null &&
+        !kanbanCardTitleForm.getMemberIds().isEmpty()) {
+      kanbanCardMapper.insertKanbanCardMember(kanbanCardId, kanbanCardTitleForm.getMemberIds());
+    }
   }
 
   // 칸반 카드 수정
