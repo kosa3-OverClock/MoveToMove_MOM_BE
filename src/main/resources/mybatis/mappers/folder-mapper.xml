@@ -139,6 +139,7 @@ INNER JOIN folders              f
            , f.parent_folder_id
            , f.depth
            , f.seq
+           , 'folder'     type
         FROM folders f
        WHERE f.parent_folder_id IS NULL
          AND f.member_id = #{memberId}
@@ -151,6 +152,7 @@ INNER JOIN folders              f
            , f.parent_folder_id
            , f.depth       depth
            , f.seq
+           , 'folder'     type
         FROM folders            f
   INNER JOIN FolderHierarchy    fh
           ON f.parent_folder_id = fh.id
@@ -162,6 +164,7 @@ INNER JOIN folders              f
          , fh.parent_folder_id
          , fh.depth
          , fh.seq
+         , fh.type
          , COALESCE(( SELECT GROUP_CONCAT(p.project_id)
                         FROM projects         p
                   INNER JOIN project_joins    pj
@@ -185,6 +188,7 @@ INNER JOIN folders              f
          , p.start_at
          , p.end_at
          , pj.project_leader_YN
+         , 'project'    type
          , p.created_at
          , p.deleted_at
       FROM projects         p
