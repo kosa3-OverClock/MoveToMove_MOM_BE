@@ -18,8 +18,8 @@ public class ProjectInCardDto {
   private String title;
   private String content;
   private Long cardSeq;
-  private String priority;
-  private String taskSize;
+  private Long priority;
+  private Long taskSize;
   private LocalDateTime startAt;
   private LocalDateTime endAt;
   private LocalDateTime createdAt;
