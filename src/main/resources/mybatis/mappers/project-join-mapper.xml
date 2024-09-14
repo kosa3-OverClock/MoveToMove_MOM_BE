@@ -49,6 +49,7 @@
          , p.start_at
          , p.end_at
          , pj.project_leader_YN
+         , 'project'    type
          , p.created_at
          , p.deleted_at
       FROM projects p
