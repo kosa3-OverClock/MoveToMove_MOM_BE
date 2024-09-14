@@ -17,12 +17,14 @@ public class NotIncludedProjectDto implements FolderItem {
     private String title;
     private String projectDescription;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDateTime startAt;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDateTime endAt;
 
     private boolean projectLeaderYN;
+
+    private String type;
 
     private LocalDateTime createdAt;       // 생성일시
     private LocalDateTime deletedAt;       // 삭제일시
