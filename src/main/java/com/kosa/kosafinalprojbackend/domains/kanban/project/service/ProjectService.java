@@ -32,145 +32,166 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ProjectService {
 
-  private final ProjectMapper projectMapper;
-  private final ProjectJoinMapper projectJoinMapper;
-  private final MemberMapper memberMapper;
-  private final KanbanColumnMapper kanbanColumnMapper;
-  private final KanbanCardMapper kanbanCardMapper;
+    private final ProjectMapper projectMapper;
+    private final ProjectJoinMapper projectJoinMapper;
+    private final MemberMapper memberMapper;
+    private final KanbanColumnMapper kanbanColumnMapper;
+    private final KanbanCardMapper kanbanCardMapper;
 
 
-  // 저장
-  @Transactional
-  public Long insertProject(ProjectForm projectForm, CustomUserDetails customUserDetails) {
+    // 저장
+    @Transactional
+    public Long insertProject(ProjectForm projectForm, CustomUserDetails customUserDetails) {
 
-    // 유저 아이디 확인
-    if (!memberMapper.existsByMemberId(customUserDetails.getId())) {
-      throw new CustomBaseException(NOT_FOUND_ID);
+        // 유저 아이디 확인
+        if (!memberMapper.existsByMemberId(customUserDetails.getId())) {
+            throw new CustomBaseException(NOT_FOUND_ID);
+        }
+
+        // 프로젝트 저장
+        projectMapper.insertProject(projectForm);
+        Long projectId = projectForm.getProjectId();
+        log.info("====>>>>>>>>>> projectId: {}", projectId);
+
+        // 프로젝트 생성하는 유저 정보 넣기
+        projectForm.getMemberDtoMap().put(customUserDetails.getId(), ProjectLeaderYN.Y);
+        log.info("====>>>>>>>>>> getMemberDtoMap : {}", projectForm.getMemberDtoMap());
+
+        // 프로젝트 참여 저장
+        projectJoinMapper.insertProjectJoin(projectForm.getMemberDtoMap(), projectId);
+
+        // 기본 칸반 컬럼명 리스트
+        List<String> columnNames = Arrays.asList("Task", "진행중", "완료");
+
+        // 칸반 컬럼명과 순서를 한꺼번에 처리할 수 있도록 스트림으로 처리
+        List<Map<String, Object>> columns = IntStream.range(0, columnNames.size())
+            .mapToObj(i -> {
+                Map<String, Object> columnData = new HashMap<>();
+                columnData.put("column", columnNames.get(i));
+                columnData.put("order", i + 1);
+                return columnData;
+            })
+            .toList();
+
+        // MyBatis 매퍼 호출하여 여러 칸반 컬럼을 한 번에 삽입
+        kanbanColumnMapper.insertKanbanColumns(projectId, columns);
+
+        //TODO: 프로젝트 팀 채팅방 넣어야함!!!
+
+        return projectId;
     }
 
-    // 프로젝트 저장
-    projectMapper.insertProject(projectForm);
-    Long projectId = projectForm.getProjectId();
-    log.info("====>>>>>>>>>> projectId: {}", projectId);
+    // 수정
+    @Transactional
+    public void updateProject(Long projectId, ProjectForm projectForm,
+        CustomUserDetails customUserDetails) {
 
-    // 프로젝트 생성하는 유저 정보 넣기
-    projectForm.getMemberDtoMap().put(customUserDetails.getId(), ProjectLeaderYN.Y);
-    log.info("====>>>>>>>>>> getMemberDtoMap : {}", projectForm.getMemberDtoMap());
+        // 유저 아이디 확인
+        if (!memberMapper.existsByMemberId(customUserDetails.getId())) {
+            throw new CustomBaseException(NOT_FOUND_ID);
+        }
 
-    // 프로젝트 참여 저장
-    projectJoinMapper.insertProjectJoin(projectForm.getMemberDtoMap(), projectId);
+        // 프로젝트 팀장인지 확인
+        if (!projectJoinMapper.existsByProjectIdAndMemberId(projectId, customUserDetails.getId())) {
+            throw new CustomBaseException(ResponseCode.NO_PROJECT_LEADER);
+        }
 
-    // 기본 칸반 컬럼명 리스트
-    List<String> columnNames = Arrays.asList("Task", "진행중", "완료");
+        // 프로젝트 아이디 확인
+        if (!projectMapper.existsByProjectId(projectId)) {
+            throw new CustomBaseException(NOT_FOUND_ID);
+        }
 
-    // 칸반 컬럼명과 순서를 한꺼번에 처리할 수 있도록 스트림으로 처리
-    List<Map<String, Object>> columns = IntStream.range(0, columnNames.size())
-        .mapToObj(i -> {
-          Map<String, Object> columnData = new HashMap<>();
-          columnData.put("column", columnNames.get(i));
-          columnData.put("order", i + 1);
-          return columnData;
-        })
-        .toList();
-
-    // MyBatis 매퍼 호출하여 여러 칸반 컬럼을 한 번에 삽입
-    kanbanColumnMapper.insertKanbanColumns(projectId, columns);
-
-    //TODO: 프로젝트 팀 채팅방 넣어야함!!!
-
-    return projectId;
-  }
-
-  // 수정
-  @Transactional
-  public void updateProject(Long projectId, ProjectForm projectForm,
-      CustomUserDetails customUserDetails) {
-
-    // 유저 아이디 확인
-    if (!memberMapper.existsByMemberId(customUserDetails.getId())) {
-      throw new CustomBaseException(NOT_FOUND_ID);
+        // 프로젝트 정보 업데이트
+        projectMapper.updateProject(projectId, projectForm);
     }
 
-    // 프로젝트 팀장인지 확인
-    if (!projectJoinMapper.existsByProjectIdAndMemberId(projectId, customUserDetails.getId())) {
-      throw new CustomBaseException(ResponseCode.NO_PROJECT_LEADER);
+    // 삭제
+    @Transactional
+    public void deleteProject(Long projectId, ProjectLeaderYN projectLeaderYN,
+        CustomUserDetails customUserDetails) {
+        log.info("====>>>>>>>>>>> deleteProject: {}", projectId);
+
+        if (!memberMapper.existsByMemberId(customUserDetails.getId())) {
+            throw new CustomBaseException(NOT_FOUND_ID);
+        }
+
+        if (!projectMapper.existsByProjectId(projectId)) {
+            throw new CustomBaseException(NOT_FOUND_ID);
+        }
+
+        // 팀장이라면
+        if (projectLeaderYN == ProjectLeaderYN.Y) {
+
+            List<Long> deleteProjectId = List.of(projectId);
+            // project_joins 삭제
+            projectJoinMapper.deleteProjectJoinsByProjectIds(customUserDetails.getId(),
+                deleteProjectId);
+
+            // project update deleted_at
+            projectMapper.deleteProject(projectId);
+
+        } else if (projectLeaderYN == ProjectLeaderYN.N) {
+            // 팀장이 아니라면 project_joins만 삭제
+            List<Long> deleteProjectId = List.of(projectId);
+            // project_joins 삭제
+            projectJoinMapper.deleteProjectJoinsByProjectIds(customUserDetails.getId(),
+                deleteProjectId);
+        }
     }
 
-    // 프로젝트 아이디 확인
-    if (!projectMapper.existsByProjectId(projectId)) {
-      throw new CustomBaseException(NOT_FOUND_ID);
+
+    // 프로젝트 참여자 조회
+    public List<ProjectMemberDto> selectProjectMember(Long memberId, Long projectId) {
+
+        // 유저 아이디 확인
+        if (!memberMapper.existsByMemberId(memberId)) {
+            throw new CustomBaseException(NOT_FOUND_ID);
+        }
+
+        // 프로젝트 존재 여부 확인
+        if (!projectMapper.existsByProjectId(projectId)) {
+            throw new CustomBaseException(NOT_FOUND_ID);
+        }
+
+        return projectMapper.selectProjectMember(projectId);
     }
 
-    // 프로젝트 정보 업데이트
-    projectMapper.updateProject(projectId, projectForm);
-  }
+    // 칸반 카드 조회 (프로젝트 기준)
+    public List<ProjectCardDetailDto> selectKanbanCardByProject(Long projectId) {
 
-  // 삭제
-  @Transactional
-  public void deleteProject(String projectId) {
+        // 프로젝트 존재 여부 확인
+        if (!projectMapper.existsByProjectId(projectId)) {
+            throw new CustomBaseException(NOT_FOUND_ID);
+        }
 
-    // 폴더-프로젝트 삭제 - 물리적 삭제
+        List<ProjectCardDetailDto> projectCardDetailDtoList = new ArrayList<>();
 
-    // 프로젝트 멤버 삭제 - 물리적 삭제
+        // 프로젝트 기준 카드 조회
+        List<ProjectInCardDto> projectInCardDtoList = projectMapper.selectKanbanCardByProject(
+            projectId);
 
-    // 프로젝트 팀 채팅 삭제
-    // TODO: 프로젝트 팀 채팅 삭제
+        // 프로젝트 카드 디테일
+        for (ProjectInCardDto projectInCardDto : projectInCardDtoList) {
 
-    // 프로젝트 삭제
-  }
+            // 칸반 카드 담당자 조회
+            List<CardMemberDto> cardMemberList =
+                kanbanCardMapper.selectKanbanCardMember(projectInCardDto.getKanbanCardId());
 
+            projectCardDetailDtoList.add(
+                ProjectCardDetailDto.builder()
+                    .projectInCardDto(projectInCardDto)
+                    .cardMemberList(cardMemberList)
+                    .build());
+        }
 
-  // 프로젝트 참여자 조회
-  public List<ProjectMemberDto> selectProjectMember(Long memberId, Long projectId) {
-
-    // 유저 아이디 확인
-    if (!memberMapper.existsByMemberId(memberId)) {
-      throw new CustomBaseException(NOT_FOUND_ID);
+        return projectCardDetailDtoList;
     }
 
-    // 프로젝트 존재 여부 확인
-    if (!projectMapper.existsByProjectId(projectId)) {
-      throw new CustomBaseException(NOT_FOUND_ID);
+    // 유저가 참여한 프로젝트 ID 조회
+    public List<Long> selectProjectsIdByUserId(Long memberId) {
+        if (!memberMapper.existsByMemberId(memberId)) {
+            throw new CustomBaseException(NOT_FOUND_ID);
+        }
+        return projectMapper.selectProjectsIdByUserId(memberId);
     }
-
-    return projectMapper.selectProjectMember(projectId);
-  }
-
-  // 칸반 카드 조회 (프로젝트 기준)
-  public List<ProjectCardDetailDto> selectKanbanCardByProject(Long projectId) {
-
-    // 프로젝트 존재 여부 확인
-    if (!projectMapper.existsByProjectId(projectId)) {
-      throw new CustomBaseException(NOT_FOUND_ID);
-    }
-
-    List<ProjectCardDetailDto> projectCardDetailDtoList = new ArrayList<>();
-
-    // 프로젝트 기준 카드 조회
-    List<ProjectInCardDto> projectInCardDtoList = projectMapper.selectKanbanCardByProject(projectId);
-
-    // 프로젝트 카드 디테일
-    for (ProjectInCardDto projectInCardDto : projectInCardDtoList) {
-
-      // 칸반 카드 담당자 조회
-      List<CardMemberDto> cardMemberList =
-          kanbanCardMapper.selectKanbanCardMember(projectInCardDto.getKanbanCardId());
-
-      projectCardDetailDtoList.add(
-          ProjectCardDetailDto.builder()
-              .projectInCardDto(projectInCardDto)
-              .cardMemberList(cardMemberList)
-              .build());
-    }
-
-    return projectCardDetailDtoList;
-  }
-
-  // 유저가 참여한 프로젝트 ID 조회
-  public List<Long> selectProjectsIdByUserId(Long memberId) {
-    if (!memberMapper.existsByMemberId(memberId)) {
-      throw new CustomBaseException(NOT_FOUND_ID);
-    }
-    return projectMapper.selectProjectsIdByUserId(memberId);
-  }
 }

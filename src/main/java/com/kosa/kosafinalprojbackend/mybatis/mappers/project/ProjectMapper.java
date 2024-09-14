@@ -34,4 +34,7 @@ public interface ProjectMapper {
 
     // 유저가 참여한 프로젝트 조회
     List<Long> selectProjectsIdByUserId(Long userId);
+
+    // 삭제(프로젝트 업데이트 (deleted_at))
+    void deleteProject(Long projectId);
 }
