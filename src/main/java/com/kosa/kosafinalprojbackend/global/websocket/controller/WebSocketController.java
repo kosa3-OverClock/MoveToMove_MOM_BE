@@ -1,5 +1,6 @@
 package com.kosa.kosafinalprojbackend.global.websocket.controller;
 
+import com.kosa.kosafinalprojbackend.global.websocket.dto.CardMoveMessage;
 import com.kosa.kosafinalprojbackend.global.websocket.dto.ColumnMoveMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,4 +26,11 @@ public class WebSocketController {
     }
 
     // 추가적인 WebSocket 메시지 처리 메서드를 여기에 추가할 수 있습니다.
+    @MessageMapping("/project/{projectId}/card-move-within-column")
+    @SendTo("/topic/project/{projectId}")  // 특정 프로젝트의 모든 사용자에게 브로드캐스트
+    public CardMoveMessage handleCardMove(@DestinationVariable String projectId, CardMoveMessage message) {
+        return message;
+    }
+
+
 }

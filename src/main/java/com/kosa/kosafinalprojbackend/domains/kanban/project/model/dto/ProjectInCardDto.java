@@ -23,4 +23,5 @@ public class ProjectInCardDto {
   private LocalDateTime startAt;
   private LocalDateTime endAt;
   private LocalDateTime createdAt;
+  private Long kanbanColumnSeq;
 }
