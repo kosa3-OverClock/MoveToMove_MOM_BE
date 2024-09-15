@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -21,6 +22,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Value("${cors.front_server_vercel}")
     private String frontServerCorsVercel;
 
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        WebSocketMessageBrokerConfigurer.super.configureClientInboundChannel(registration);
+    }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
@@ -33,7 +38,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws") // 클라이언트가 연결할 WebSocket 엔드포인트
-            .setAllowedOrigins(frontServerCorsLocal, frontServerCorsVercel) // CORS 설정
+            .setAllowedOrigins(frontServerCorsVercel,frontServerCorsLocal) // CORS 설정
 //            .setAllowedOrigins(frontServerCorsVercel) // CORS 설정
             .withSockJS()
             .setHeartbeatTime(15000); // SockJS 지원

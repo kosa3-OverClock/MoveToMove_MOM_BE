@@ -8,6 +8,5 @@ import lombok.Setter;
 public class DragEventCardMessage {
     private Long projectId;
     private Long cardId;
-    private int oldIndex;
     private int newIndex;
 }
