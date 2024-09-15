@@ -59,6 +59,7 @@ INNER JOIN members              me
      WHERE co.kanban_card_id    = #{kanbanCardId}
        AND me.deleted_at        IS NULL
        AND co.deleted_at        IS NULL
+  ORDER BY co.created_at
   </select>
 
   <!-- 칸반 카드 담당자 삭제 -->
@@ -142,7 +143,8 @@ INNER JOIN (SELECT kanban_card_id
   </update>
 
   <!-- 카드 코멘트 저장 -->
-  <insert id="insertComment">
+  <insert id="insertComment"
+    useGeneratedKeys="true" keyProperty="commentForm.commentId">
     INSERT
       INTO comment
          ( kanban_card_id

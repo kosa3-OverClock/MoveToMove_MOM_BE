@@ -11,6 +11,24 @@
                     AND deleted_at IS NULL) AS result
   </select>
 
+  <!-- 코멘트 조회 (코멘트 아이디) -->
+  <select id="selectCommentById" parameterType="Long" resultType="com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardCommentDto">
+    SELECT co.comment_id
+         , co.member_id
+         , co.content
+         , co.created_at
+         , me.email
+         , me.nick_name
+         , me.profile_url
+      FROM comment              co
+INNER JOIN members              me
+        ON me.member_id         = co.member_id
+     WHERE co.comment_id        = #{commentId}
+       AND me.deleted_at        IS NULL
+       AND co.deleted_at        IS NULL
+  ORDER BY co.created_at
+  </select>
+
   <!-- 코멘트 내용 수정 -->
   <update id="updateComment">
     UPDATE comment
