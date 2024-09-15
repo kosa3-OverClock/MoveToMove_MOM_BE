@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -106,5 +107,15 @@ public class ProjectController {
 
         return new ResponseEntity<>(projectService.selectProjectsIdByUserId(memberId),
             HttpStatus.OK);
+    }
+
+    // 팀장 권한 이전
+    @PatchMapping("/{project-id}/project-join/{tran-member-id}/transfer-leader")
+    public ResponseEntity<Void> updateTransferLeader(@PathVariable("project-id") Long projectId,
+        @PathVariable("tran-member-id") Long tranMemberId,
+        @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+
+        projectService.updateTransferLeader(projectId, tranMemberId, customUserDetails.getId());
+        return ResponseEntity.ok().build();
     }
 }

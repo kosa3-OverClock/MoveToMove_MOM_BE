@@ -61,4 +61,18 @@
     </foreach>
   ORDER BY p.project_name
   </select>
+
+
+  <!--  -->
+  <update id="updateTransferLeader">
+    UPDATE project_joins
+    SET project_leader_YN =
+          (CASE
+            WHEN member_id = #{memberId} THEN 'N'
+            WHEN member_id = #{tranMemberId} THEN 'Y'
+           END)
+    WHERE project_id = #{projectId}
+      AND (member_id = #{memberId} OR member_id = #{tranMemberId})
+  </update>
+
 </mapper>
