@@ -49,6 +49,7 @@ public class SecurityConfig {
         // 요청 권한 설정
         .authorizeHttpRequests(
             authorizeRequests -> authorizeRequests
+                .requestMatchers("/ws/**").permitAll()
                 .requestMatchers("/**").permitAll()
                 .anyRequest().permitAll()
         )
