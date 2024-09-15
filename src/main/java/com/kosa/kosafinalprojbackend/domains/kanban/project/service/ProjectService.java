@@ -142,7 +142,7 @@ public class ProjectService {
 
     // 프로젝트 참여자 조회
     public List<ProjectMemberDto> selectProjectMember(Long memberId, Long projectId) {
-
+        log.info("====>>>>>>>>>>>> selectProjectMember: {}", projectId);
         // 유저 아이디 확인
         if (!memberMapper.existsByMemberId(memberId)) {
             throw new CustomBaseException(NOT_FOUND_ID);
@@ -153,7 +153,7 @@ public class ProjectService {
             throw new CustomBaseException(NOT_FOUND_ID);
         }
 
-        return projectMapper.selectProjectMember(projectId);
+        return projectMapper.selectProjectMember(memberId, projectId);
     }
 
     // 칸반 카드 조회 (프로젝트 기준)
@@ -193,5 +193,26 @@ public class ProjectService {
             throw new CustomBaseException(NOT_FOUND_ID);
         }
         return projectMapper.selectProjectsIdByUserId(memberId);
+    }
+
+
+    // 팀장 권한 이전
+    public void updateTransferLeader(Long projectId, Long tranMemberId, Long memberId) {
+        log.info("====>>>>>>>>>>>> updateTransferLeader");
+
+        if (!memberMapper.existsByMemberId(memberId)) {
+            throw new CustomBaseException(NOT_FOUND_ID);
+        }
+
+        if (!memberMapper.existsByMemberId(tranMemberId)) {
+            throw new CustomBaseException(NOT_FOUND_ID);
+        }
+
+        if (!projectMapper.existsByProjectId(projectId)) {
+            throw new CustomBaseException(NOT_FOUND_ID);
+        }
+
+        // 팀장 권한을 한 번에 업데이트
+        projectJoinMapper.updateTransferLeader(projectId, memberId, tranMemberId);
     }
 }

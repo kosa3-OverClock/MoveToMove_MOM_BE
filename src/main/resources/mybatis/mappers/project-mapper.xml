@@ -23,6 +23,8 @@ INNER JOIN members       me
         ON me.member_id  = pj.member_id
      WHERE pr.project_id = #{projectId}
        AND me.deleted_at IS NULL
+  ORDER BY (CASE WHEN me.member_id = #{memberId} THEN 0 ELSE 1 END)
+         , me.member_id
   </select>
 
   <!-- 저장 -->
