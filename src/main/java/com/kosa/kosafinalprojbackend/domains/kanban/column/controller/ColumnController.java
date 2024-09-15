@@ -51,7 +51,6 @@ public class ColumnController {
 
     // 칸반 컬럼 순서 수정
     @PatchMapping("/{kanban-column-id}")
-    @SendTo("topic/kanban-column")
     public ResponseEntity<ResponseCode> moveColumn(
             @PathVariable("kanban-column-id") Long kanbanColumnId,
             @RequestBody KanbanColumnMoveRequestForm kanbanColumnMoveRequestForm) {
