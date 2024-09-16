@@ -1,7 +1,10 @@
 package com.kosa.kosafinalprojbackend.mybatis.mappers.member;
 
+import com.kosa.kosafinalprojbackend.domains.member.model.dto.AllTaskDto;
 import com.kosa.kosafinalprojbackend.domains.member.model.dto.MemberDto;
+import com.kosa.kosafinalprojbackend.domains.member.model.dto.ProjectByTaskDto;
 import com.kosa.kosafinalprojbackend.domains.member.model.form.SignUpForm;
+import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -33,4 +36,10 @@ public interface MemberMapper {
 
     // 회원 탈퇴
     void memberWithdraw(Long memberId);
+
+    // 마이페이지 - task
+    AllTaskDto selectAllTask(Long memberId);
+
+    // 마이페이지 - 프로젝트별 task
+    List<ProjectByTaskDto> selectProjectByTask(Long memberId);
 }
