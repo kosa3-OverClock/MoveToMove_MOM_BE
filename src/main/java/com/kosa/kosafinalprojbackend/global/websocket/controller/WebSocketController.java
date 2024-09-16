@@ -24,13 +24,17 @@ public class WebSocketController {
         // 메시지를 그대로 브로드캐스트 (로직이 더 필요할 경우 추가)
         return message;
     }
-
-    // 추가적인 WebSocket 메시지 처리 메서드를 여기에 추가할 수 있습니다.
+    // 칸반 카드 이동 - Within Column
     @MessageMapping("/project/{projectId}/card-move-within-column")
     @SendTo("/topic/project/{projectId}")  // 특정 프로젝트의 모든 사용자에게 브로드캐스트
-    public CardMoveMessage handleCardMove(@DestinationVariable String projectId, CardMoveMessage message) {
+    public CardMoveMessage handleCardMoveWithinColumn(@DestinationVariable String projectId, CardMoveMessage message) {
         return message;
     }
 
-
+    // 칸반 카드 이동 - Between Column
+    @MessageMapping("/project/{projectId}/card-move-between-column")
+    @SendTo("/topic/project/{projectId}")
+    public CardMoveMessage handleCardMoveBetweenColumn(@DestinationVariable String projectId, CardMoveMessage message) {
+        return message;
+    }
 }
