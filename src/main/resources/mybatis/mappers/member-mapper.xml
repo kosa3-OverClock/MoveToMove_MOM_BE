@@ -157,4 +157,13 @@
       GROUP BY kco.project_id
              , seq.project_name
   </select>
+
+
+  <!-- 비밀번호 변경 -->
+  <update id="updateMemberPassword">
+    UPDATE members
+       SET password     = #{newPassword}
+     WHERE member_id    = #{memberId}
+  </update>
+
 </mapper>

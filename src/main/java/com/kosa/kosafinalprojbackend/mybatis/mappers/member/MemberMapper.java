@@ -42,4 +42,9 @@ public interface MemberMapper {
 
     // 마이페이지 - 프로젝트별 task
     List<ProjectByTaskDto> selectProjectByTask(Long memberId);
+
+    
+    // 비밀번호 변경
+    void updateMemberPassword(@Param("memberId") Long memberId,
+        @Param("newPassword") String newPassword);
 }
