@@ -2,21 +2,24 @@ package com.kosa.kosafinalprojbackend.domains.member.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kosa.kosafinalprojbackend.domains.member.model.dto.AllTaskDto;
 import com.kosa.kosafinalprojbackend.domains.member.model.dto.MemberDto;
+import com.kosa.kosafinalprojbackend.domains.member.model.dto.ProjectByTaskDto;
 import com.kosa.kosafinalprojbackend.domains.member.model.form.LoginForm;
 import com.kosa.kosafinalprojbackend.domains.member.model.form.AuthenticationCodeForm;
 import com.kosa.kosafinalprojbackend.domains.member.model.form.ResetPasswordForm;
 import com.kosa.kosafinalprojbackend.domains.member.model.form.SignUpForm;
 import com.kosa.kosafinalprojbackend.global.amazon.service.S3Service;
+import com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode;
 import com.kosa.kosafinalprojbackend.global.error.exception.CustomBaseException;
 import com.kosa.kosafinalprojbackend.global.redis.service.RedisService;
 import com.kosa.kosafinalprojbackend.global.security.filter.JwtTokenProvider;
-import com.kosa.kosafinalprojbackend.global.security.model.CustomUserDetails;
 import com.kosa.kosafinalprojbackend.mybatis.mappers.member.MemberMapper;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -217,7 +220,6 @@ public class MemberService {
     memberMapper.memberWithdraw(memberId);
   }
 
-
   // 인증번호 발송
   public Map<String, Object> sendAuthenticationCode(AuthenticationCodeForm authenticationCodeForm)
       throws MessagingException {
@@ -243,13 +245,11 @@ public class MemberService {
     return result;
   }
 
-
   // 인증 코드 확인
   public boolean verifyCode(String email, String code) {
     String storedCode = redisService.getVerificationCode(email);
     return storedCode != null && storedCode.equals(code);
   }
-
 
   // 비밀번호 변경
   public boolean memberPasswordReset(ResetPasswordForm resetPasswordForm) {
@@ -268,4 +268,26 @@ public class MemberService {
     return false;
   }
 
+
+  // 마이페이지 - task
+  public AllTaskDto selectAllTask(Long memberId) {
+
+    // 유저 아이디 확인
+    if (!memberMapper.existsByMemberId(memberId)) {
+      throw new CustomBaseException(NOT_FOUND_ID);
+    }
+
+    return memberMapper.selectAllTask(memberId);
+  }
+
+  // 마이페이지 - 프로젝트별 task
+  public List<ProjectByTaskDto> selectProjectByTask(Long memberId) {
+
+    // 유저 아이디 확인
+    if (!memberMapper.existsByMemberId(memberId)) {
+      throw new CustomBaseException(NOT_FOUND_ID);
+    }
+
+    return memberMapper.selectProjectByTask(memberId);
+  }
 }
