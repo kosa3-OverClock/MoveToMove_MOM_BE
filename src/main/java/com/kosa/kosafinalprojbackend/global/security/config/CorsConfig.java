@@ -17,12 +17,18 @@ public class CorsConfig {
   @Value("${cors.front_server_vercel}")
   private String frontServerCorsVercel;
 
+  @Value("${cors.front_server_distribute}")
+  private String frontServerDistribute;
+
+
+
   @Bean
   @Primary
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
     configuration.addAllowedOriginPattern(frontServerCorsLocal);
     configuration.addAllowedOriginPattern(frontServerCorsVercel);
+    configuration.addAllowedOriginPattern(frontServerDistribute);
     configuration.addAllowedMethod("*");
     configuration.addAllowedHeader("*");
     configuration.setAllowCredentials(true);
