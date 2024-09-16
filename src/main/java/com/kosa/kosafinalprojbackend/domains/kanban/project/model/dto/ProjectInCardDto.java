@@ -9,8 +9,6 @@ import java.time.LocalDateTime;
 @Setter
 public class ProjectInCardDto {
 
-  private Long projectId;
-  private String projectName;
   private Long kanbanColumnId;
   private String kanbanColumnName;
   private Long columnSeq;

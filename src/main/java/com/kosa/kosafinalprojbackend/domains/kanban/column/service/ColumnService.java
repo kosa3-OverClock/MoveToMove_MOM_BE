@@ -5,6 +5,7 @@ import com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.KanbanColum
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanCardForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanColumnForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanColumnMoveRequestForm;
+import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectInCardDto;
 import com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode;
 import com.kosa.kosafinalprojbackend.global.error.exception.CustomBaseException;
 import com.kosa.kosafinalprojbackend.mybatis.mappers.kanbancolumn.KanbanColumnMapper;
@@ -121,10 +122,12 @@ public class ColumnService {
         return kanbanColumnMapper.selectKanbanCardByKanbanColumn(kanbanColumnId);
     }
 
+
     // 칸반 카드 생성
     @Transactional
-    public Long insertKanbanCard(Long kanbanColumnId, KanbanCardForm kanbanCardForm, Long memberId) {
+    public ProjectInCardDto insertKanbanCard(Long kanbanColumnId, KanbanCardForm kanbanCardForm, Long memberId) {
 
+        log.info("칸반 카드 생성====>>>>>>>>>> {} {}", kanbanColumnId, kanbanCardForm.getTitle());
         // 유저 아이디 확인
         if (!memberMapper.existsByMemberId(memberId)) {
             throw new CustomBaseException(NOT_FOUND_ID);
@@ -135,13 +138,15 @@ public class ColumnService {
             throw new CustomBaseException(NOT_FOUND_KANBAN_COLUMN);
         }
 
+        // 카드 MAX_SEQ 조회
+        int cardMaxSeq =
+            kanbanColumnMapper.selectKanbanCardMaxSeqByKanbanColumnId(kanbanColumnId) + 1;
+
         // 칸반 카드 저장
-        kanbanColumnMapper.insertKanbanCard(kanbanColumnId, kanbanCardForm);
+        kanbanColumnMapper.insertKanbanCard(kanbanColumnId, kanbanCardForm, cardMaxSeq);
 
-        // 칸반 카드 담당자 저장
-        kanbanColumnMapper.insertKanbanCardWork(
-            kanbanCardForm.getKanbanCardId(), kanbanCardForm.getMemberList());
-
-        return kanbanCardForm.getKanbanCardId();
+        // 조회 return
+        return kanbanColumnMapper
+            .selectKanbanCardByKanbanCardId(kanbanCardForm.getKanbanCardId());
     }
 }

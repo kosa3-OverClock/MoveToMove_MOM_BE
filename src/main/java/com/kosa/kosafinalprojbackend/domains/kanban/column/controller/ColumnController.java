@@ -70,6 +70,7 @@ public class ColumnController {
             columnService.selectKanbanCardByKanbanColumn(kanbanColumnId), HttpStatus.CREATED);
     }
 
+
     // 칸반 카드 생성
     @PostMapping("/{kanban-column-id}/kanban-cards")
     public ResponseEntity<ResponseCode> insertKanbanCard(
