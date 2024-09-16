@@ -37,7 +37,7 @@ public class RedisService {
   // 인증 코드 저장
   public String saveVerificationCode(String email, String code) {
     String key = "verification:" + email;
-    redisTemplate.opsForValue().set(key, code, Duration.ofMinutes(5));    // 인증 코드 5분 유효
+    redisTemplate.opsForValue().set(key, code, Duration.ofMinutes(2));    // 인증 코드 2분 유효
 
     // 시간 포맷화
     return getFormattedRemainingTime(key);
@@ -47,7 +47,7 @@ public class RedisService {
   // 시간 포맷화
   private String getFormattedRemainingTime(String key) {
     Long seconds = redisTemplate.getExpire(key, TimeUnit.SECONDS);
-    if(seconds != null || seconds <= 0) {
+    if(seconds == null || seconds <= 0) {
       return "00:00";
     }
 
