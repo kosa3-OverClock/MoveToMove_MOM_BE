@@ -221,6 +221,7 @@ public class MemberService {
   }
 
   // 인증번호 발송
+  @Transactional
   public Map<String, Object> sendAuthenticationCode(AuthenticationCodeForm authenticationCodeForm)
       throws MessagingException {
     String email = authenticationCodeForm.getEmail();
@@ -246,18 +247,21 @@ public class MemberService {
   }
 
   // 인증 코드 확인
+  @Transactional
   public boolean verifyCode(String email, String code) {
     String storedCode = redisService.getVerificationCode(email);
     return storedCode != null && storedCode.equals(code);
   }
 
   // 비밀번호 변경
+  @Transactional
   public boolean memberPasswordReset(ResetPasswordForm resetPasswordForm) {
 
     if(verifyCode(resetPasswordForm.getEmail(), resetPasswordForm.getCode())) {
       MemberDto memberDto = memberMapper.findByMemberEmail(resetPasswordForm.getEmail());
 
-      memberDto.updatePassword(passwordEncoder.encode(resetPasswordForm.getNewPassword()));
+      memberMapper.updateMemberPassword(memberDto.getMemberId(),
+          passwordEncoder.encode(resetPasswordForm.getNewPassword()));
 
       // 인증코드 제거
       redisService.deleteVerificationCode(resetPasswordForm.getEmail());
@@ -270,6 +274,7 @@ public class MemberService {
 
 
   // 마이페이지 - task
+  @Transactional
   public AllTaskDto selectAllTask(Long memberId) {
 
     // 유저 아이디 확인
@@ -281,6 +286,7 @@ public class MemberService {
   }
 
   // 마이페이지 - 프로젝트별 task
+  @Transactional
   public List<ProjectByTaskDto> selectProjectByTask(Long memberId) {
 
     // 유저 아이디 확인
