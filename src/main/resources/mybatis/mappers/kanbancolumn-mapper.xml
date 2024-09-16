@@ -38,22 +38,12 @@ INNER JOIN kanban_cards         kca
       INTO kanban_cards
          ( kanban_column_id
          , title
-         , content
          , card_seq
-         , priority
-         , task_size
-         , start_at
-         , end_at
          )
     VALUES
          ( #{kanbanColumnId}
          , #{kanbanCardForm.title}
-         , #{kanbanCardForm.content}
-         , 0
-         , #{kanbanCardForm.priority}
-         , #{kanbanCardForm.taskSize}
-         , #{kanbanCardForm.startAt}
-         , #{kanbanCardForm.endAt}
+         , #{cardMaxSeq}
          )
   </insert>
 
@@ -146,5 +136,37 @@ INNER JOIN kanban_cards         kca
         WHERE kanban_column_id = #{columnId}
         AND deleted_at IS NULL
     </select>
+
+
+
+  <!-- 컬럼 기준 카드의 MAX_SEQ -->
+  <select id="selectKanbanCardMaxSeqByKanbanColumnId" resultType="int">
+    SELECT COALESCE(MAX(card_seq), 0)   maxSeq
+      FROM kanban_cards
+     WHERE kanban_column_id = #{kanbanColumnId}
+       AND deleted_at is null
+  </select>
+
+  <!-- 카드 아이디 기준 컬럼 정보까지 조회 -->
+  <select id="selectKanbanCardByKanbanCardId" parameterType="Long" resultType="com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectInCardDto">
+    SELECT kco.kanban_column_id
+         , kco.kanban_column_name
+         , kco.column_seq
+         , kca.kanban_card_id
+         , kca.title
+         , kca.content
+         , kca.card_seq
+         , kca.priority
+         , kca.task_size
+         , kca.start_at
+         , kca.end_at
+         , kca.created_at
+      FROM kanban_cards         kca
+INNER JOIN kanban_columns       kco
+        ON kca.kanban_column_id = kco.kanban_column_id
+     WHERE kca.kanban_card_id   = #{kanbanCardId}
+       AND kca.deleted_at       IS NULL
+       AND kco.deleted_at       IS NULL
+  </select>
 </mapper>
 
