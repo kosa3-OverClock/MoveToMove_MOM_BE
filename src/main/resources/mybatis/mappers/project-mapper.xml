@@ -15,6 +15,7 @@
          , me.email
          , me.nick_name
          , me.profile_url
+         , pj.project_leader_YN
       FROM projects      pr
 INNER JOIN project_joins pj
         ON pj.project_id = pr.project_id
@@ -22,6 +23,8 @@ INNER JOIN members       me
         ON me.member_id  = pj.member_id
      WHERE pr.project_id = #{projectId}
        AND me.deleted_at IS NULL
+  ORDER BY (CASE WHEN me.member_id = #{memberId} THEN 0 ELSE 1 END)
+         , me.member_id
   </select>
 
   <!-- 저장 -->
@@ -53,9 +56,7 @@ INNER JOIN members       me
 
  <!-- 칸반 카드 조회 (프로젝트 기준) -->
   <select id="selectKanbanCardByProject" parameterType="Long" resultType="com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectInCardDto">
-    SELECT pr.project_id
-         , pr.project_name
-         , kco.kanban_column_id
+    SELECT kco.kanban_column_id
          , kco.kanban_column_name
          , kco.column_seq
          , kca.kanban_card_id
@@ -75,6 +76,21 @@ INNER JOIN kanban_cards         kca
      WHERE pr.project_id        = #{projectId}
        AND kco.deleted_at       IS NULL
        AND kca.deleted_at       IS NULL
+    ORDER BY kca.card_seq ASC
   </select>
+
+  <select id="selectProjectsIdByUserId" parameterType="Long" resultType="Long">
+    SELECT project_id
+      FROM project_joins
+     WHERE member_id = #{userId}
+  </select>
+
+
+  <!-- 프로젝트 삭제 (업데이트) -->
+  <update id="deleteProject">
+    UPDATE projects
+       SET deleted_at = CURRENT_TIMESTAMP
+     WHERE project_id   = #{projectId}
+  </update>
 
 </mapper>

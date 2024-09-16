@@ -9,6 +9,7 @@ import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.form.CardUpdateM
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.KanbanColumnInCardDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.comment.domian.form.CommentForm;
 import com.kosa.kosafinalprojbackend.global.error.exception.CustomBaseException;
+import com.kosa.kosafinalprojbackend.mybatis.mappers.comment.CommentMapper;
 import com.kosa.kosafinalprojbackend.mybatis.mappers.kanbancard.KanbanCardMapper;
 import com.kosa.kosafinalprojbackend.mybatis.mappers.member.MemberMapper;
 import java.util.List;
@@ -26,6 +27,7 @@ public class CardService {
 
   private final MemberMapper memberMapper;
   private final KanbanCardMapper kanbanCardMapper;
+  private final CommentMapper commentMapper;
 
   // 칸반 카드 상세 조회
   public CardDetailDto selectKanbanCardDetail(Long memberId, Long kanbanCardId) {
@@ -73,7 +75,12 @@ public class CardService {
     }
 
     kanbanCardMapper.deleteKanbanCardMember(kanbanCardId);
-    kanbanCardMapper.insertKanbanCardMember(kanbanCardId, kanbanCardTitleForm.getMemberIds());
+
+    if (kanbanCardTitleForm != null &&
+        kanbanCardTitleForm.getMemberIds() != null &&
+        !kanbanCardTitleForm.getMemberIds().isEmpty()) {
+      kanbanCardMapper.insertKanbanCardMember(kanbanCardId, kanbanCardTitleForm.getMemberIds());
+    }
   }
 
   // 칸반 카드 수정
@@ -146,9 +153,8 @@ public class CardService {
     kanbanCardMapper.deleteKanbanCard(kanbanCardId);
   }
 
-  // 카드 코멘트 저장
-  @Transactional
-  public void insertComment(Long memberId, Long kanbanCardId, CommentForm commentForm) {
+  // 카드 코멘트 조회
+  public List<CardCommentDto> selectComment(Long memberId, Long kanbanCardId) {
 
     // 유저 아이디 확인
     if (!memberMapper.existsByMemberId(memberId)) {
@@ -160,6 +166,25 @@ public class CardService {
       throw new CustomBaseException(NOT_FOUND_KANBAN_CARD);
     }
 
+    return kanbanCardMapper.selectKanbanCardComment(kanbanCardId);
+  }
+
+  // 카드 코멘트 저장
+  @Transactional
+  public CardCommentDto insertComment(Long memberId, Long kanbanCardId, CommentForm commentForm) {
+
+    // 유저 아이디 확인
+    if (!memberMapper.existsByMemberId(memberId)) {
+      throw new CustomBaseException(NOT_FOUND_ID);
+    }
+
+    // 칸반 카드 확인
+    if (!kanbanCardMapper.existsByKanbanCardId(kanbanCardId)) {
+      throw new CustomBaseException(NOT_FOUND_KANBAN_CARD);
+    }
     kanbanCardMapper.insertComment(memberId, kanbanCardId, commentForm);
+
+    // 칸반 코멘트 조회
+    return commentMapper.selectCommentById(commentForm.getCommentId());
   }
 }

@@ -3,7 +3,11 @@ package com.kosa.kosafinalprojbackend.domains.folder.service;
 import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.NOT_FOUND_ID;
 
 import com.kosa.kosafinalprojbackend.domains.folder.model.dto.FolderDto;
+import com.kosa.kosafinalprojbackend.domains.folder.model.dto.FolderItem;
+import com.kosa.kosafinalprojbackend.domains.folder.model.dto.FolderSubFolderProjectDto;
+import com.kosa.kosafinalprojbackend.domains.folder.model.dto.NotIncludedProjectDto;
 import com.kosa.kosafinalprojbackend.domains.folder.model.dto.ProjectLeaderByFolderIdDto;
+import com.kosa.kosafinalprojbackend.domains.folder.model.dto.TotalFolderProjectDto;
 import com.kosa.kosafinalprojbackend.domains.folder.model.form.FolderForm;
 import com.kosa.kosafinalprojbackend.domains.folder.model.form.FolderMoveForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectDto;
@@ -15,7 +19,12 @@ import com.kosa.kosafinalprojbackend.mybatis.mappers.folder.FolderMapper;
 import com.kosa.kosafinalprojbackend.mybatis.mappers.forderproject.FolderProjectMapper;
 import com.kosa.kosafinalprojbackend.mybatis.mappers.member.MemberMapper;
 import com.kosa.kosafinalprojbackend.mybatis.mappers.projectjoin.ProjectJoinMapper;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,14 +43,98 @@ public class FolderService {
 
 
     // 특정 사용자의 모든 폴더 조회
-    public List<FolderDto> selectUserAllFolder(CustomUserDetails customUserDetails) {
+    public TotalFolderProjectDto selectUserAllFolder(CustomUserDetails customUserDetails) {
+        log.info("selectUserAllFolder");
+        Long memberId = customUserDetails.getId();
 
         // 유저 존재 확인
-        if (!memberMapper.existsByMemberId(customUserDetails.getId())) {
+        if (!memberMapper.existsByMemberId(memberId)) {
             throw new CustomBaseException(NOT_FOUND_ID);
         }
 
-        return folderMapper.selectUserAllFolder(customUserDetails.getId());
+        // 모든 폴더와 프로젝트 정보 조회 (projects가 이미 포함된 상태)
+        List<FolderSubFolderProjectDto> allFolders = folderMapper.getFolderHierarchy(memberId);
+
+        // 폴더에 포함되지 않은 사용자의 프로젝트 조회
+        List<NotIncludedProjectDto> allProjects = folderMapper.getUnassignedProjects(memberId);
+
+        // 최상위 폴더 찾기
+        List<FolderSubFolderProjectDto> rootFolders = allFolders.stream()
+            .filter(folder -> folder.getParentFolderId() == null)
+            .toList();
+
+        // 각 폴더에 하위 폴더와 프로젝트를 설정
+        for (FolderSubFolderProjectDto rootFolder : rootFolders) {
+            setChildrenAndProjects(rootFolder, allFolders);
+        }
+
+        // 폴더와 프로젝트 데이터를 합칠 리스트
+        List<FolderItem> folderItemList = new ArrayList<>();
+
+        // 먼저 rootFolders를 FolderItem 리스트에 추가
+        folderItemList.addAll(rootFolders.stream()
+            .map(folder -> (FolderItem) folder)  // FolderSubFolderProjectDto는 FolderItem을 구현하므로 형변환
+            .toList());
+
+        // NotIncludedProjectDto를 FolderItem으로 변환하고 folderItemList에 추가
+        folderItemList.addAll(allProjects.stream()
+            .map(project -> (FolderItem) project)  // 각 NotIncludedProjectDto를 FolderItem으로 변환
+            .toList());  // 변환된 객체들을 List로 수집
+
+        return TotalFolderProjectDto.builder()
+            .totalFolderProjects(folderItemList)
+            .build();
+    }
+
+    // 자식 폴더와 프로젝트를 재귀적으로 nodes에 설정
+    private void setChildrenAndProjects(FolderSubFolderProjectDto parent,
+        List<FolderSubFolderProjectDto> allFolders) {
+        // 하위 폴더 찾기
+        List<FolderSubFolderProjectDto> childFolders = allFolders.stream()
+            .filter(folder -> folder.getParentFolderId() != null && folder.getParentFolderId()
+                .equals(parent.getId()))
+            .toList();
+
+        // 현재 폴더에 속한 프로젝트를 nodes에서 직접 가져오기 (프로젝트 ID 문자열이 존재할 경우)
+        List<NotIncludedProjectDto> projectNodes = new ArrayList<>();
+        if (parent.getProjectIds() != null && !parent.getProjectIds().isEmpty()) {
+            // 쉼표로 구분된 프로젝트 ID 문자열을 Long 리스트로 변환
+            List<Long> projectIds = Arrays.stream(parent.getProjectIds().split(","))
+                .map(Long::valueOf)
+                .distinct() // 중복된 프로젝트 ID를 제거
+                .collect(Collectors.toList());
+
+            // 프로젝트 ID 리스트로 프로젝트 정보 조회
+            projectNodes = projectJoinMapper.getProjectsByIds(projectIds);
+        }
+
+        // 자식 폴더에도 재귀적으로 설정
+        for (FolderSubFolderProjectDto child : childFolders) {
+            setChildrenAndProjects(child, allFolders);
+        }
+
+        // 폴더와 프로젝트를 모두 nodes 리스트에 추가
+        List<FolderItem> nodes = new ArrayList<>();
+        nodes.addAll(childFolders);  // 하위 폴더 추가
+        nodes.addAll(projectNodes);  // 현재 폴더에 속한 프로젝트 추가
+
+        // 중복된 프로젝트가 추가되지 않도록 필터링
+        Set<Long> addedProjectIds = new HashSet<>();
+        List<Object> filteredNodes = nodes.stream()
+            .filter(node -> {
+                if (node instanceof NotIncludedProjectDto projectNode) {
+                    // 이미 추가된 프로젝트인지 확인
+                    if (addedProjectIds.contains(projectNode.getId())) {
+                        return false; // 중복된 프로젝트는 제외
+                    }
+                    addedProjectIds.add(projectNode.getId());
+                }
+                return true;
+            })
+            .collect(Collectors.toList());
+
+        // 부모 폴더의 nodes 리스트 업데이트
+        parent.setChildren(filteredNodes);  // 중복을 제거한 폴더와 프로젝트를 nodes에 설정
     }
 
 
@@ -65,7 +158,7 @@ public class FolderService {
 
     // 폴더 생성
     @Transactional
-    public Long insertFolder(FolderForm folderForm, CustomUserDetails customUserDetails) {
+    public FolderSubFolderProjectDto insertFolder(FolderForm folderForm, CustomUserDetails customUserDetails) {
 
         // 유저 존재 확인
         if (!memberMapper.existsByMemberId(customUserDetails.getId())) {
@@ -86,7 +179,20 @@ public class FolderService {
             .build();
 
         folderMapper.insertFolder(folderDto, customUserDetails.getId());
-        return folderDto.getFolderId();
+
+        // 새로운 폴더 객체로 생성해서 return
+        FolderSubFolderProjectDto newFolder =
+            FolderSubFolderProjectDto.builder()
+                .id(folderDto.getFolderId())
+                .title(folderDto.getFolderName())
+                .parentFolderId(folderDto.getParentFolderId())
+                .depth(folderDto.getDepth())
+                .seq(folderDto.getSeq())
+                .projectIds(null)
+                .children(null)
+                .build();
+
+        return newFolder;
     }
 
 
@@ -130,10 +236,12 @@ public class FolderService {
             }
 
             // 폴더 ID 리스트 추출
-            List<Long> folderIds = folderMoveFormList.stream().map(FolderMoveForm::getFolderId).collect(Collectors.toList());
+            List<Long> folderIds = folderMoveFormList.stream().map(FolderMoveForm::getFolderId)
+                .collect(Collectors.toList());
 
             // 존재하는 폴더 ID 리스트를 한 번에 가져오기
-            List<Long> existingFolderIds = folderMapper.selectExistingFolderIds(memberId, folderIds);
+            List<Long> existingFolderIds = folderMapper.selectExistingFolderIds(memberId,
+                folderIds);
 
             // 모든 폴더가 존재하는지 확인
             if (existingFolderIds.size() != folderIds.size()) {

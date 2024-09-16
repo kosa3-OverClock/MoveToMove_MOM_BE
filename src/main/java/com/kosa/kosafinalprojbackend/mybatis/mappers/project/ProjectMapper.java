@@ -27,8 +27,15 @@ public interface ProjectMapper {
         @Param("projectForm") ProjectForm projectForm);
 
     // 프로젝트 참여자 조회
-    List<ProjectMemberDto> selectProjectMember(Long projectId);
+    List<ProjectMemberDto> selectProjectMember(@Param("memberId") Long memberId,
+        @Param("projectId") Long projectId);
 
     // 칸반 카드 조회 (프로젝트 기준)
     List<ProjectInCardDto> selectKanbanCardByProject(Long projectId);
+
+    // 유저가 참여한 프로젝트 조회
+    List<Long> selectProjectsIdByUserId(Long userId);
+
+    // 삭제(프로젝트 업데이트 (deleted_at))
+    void deleteProject(Long projectId);
 }

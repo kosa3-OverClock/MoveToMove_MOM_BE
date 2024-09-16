@@ -7,6 +7,8 @@ import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.
 import static org.springframework.http.HttpStatus.OK;
 
 import com.kosa.kosafinalprojbackend.domains.folder.model.dto.FolderDto;
+import com.kosa.kosafinalprojbackend.domains.folder.model.dto.FolderSubFolderProjectDto;
+import com.kosa.kosafinalprojbackend.domains.folder.model.dto.TotalFolderProjectDto;
 import com.kosa.kosafinalprojbackend.domains.folder.model.form.FolderForm;
 import com.kosa.kosafinalprojbackend.domains.folder.model.form.FolderMoveForm;
 import com.kosa.kosafinalprojbackend.domains.folder.service.FolderService;
@@ -37,7 +39,7 @@ public class FolderController {
 
     // 특정 사용자의 모든 폴더 조회
     @GetMapping
-    public ResponseEntity<List<FolderDto>> selectUserAllFolder(
+    public ResponseEntity<TotalFolderProjectDto> selectUserAllFolder(
         @AuthenticationPrincipal CustomUserDetails customUserDetails) {
 
         return ResponseEntity.ok(folderService.selectUserAllFolder(customUserDetails));

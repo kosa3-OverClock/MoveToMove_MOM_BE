@@ -225,7 +225,7 @@ public class MemberService {
 
     // 메일 확인
     if(!memberMapper.existsByMemberEmail(email)) {
-      throw new CustomBaseException(NOT_FOUND_MEMBER);
+      throw new CustomBaseException(NOT_FOUND_MEMBER.withData("checkEmail"));
     }
     
     // 메일 보내기 (+ 인증 코드 받아오기)
