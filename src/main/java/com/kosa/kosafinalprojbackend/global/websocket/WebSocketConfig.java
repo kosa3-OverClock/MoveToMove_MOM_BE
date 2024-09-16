@@ -22,6 +22,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Value("${cors.front_server_vercel}")
     private String frontServerCorsVercel;
 
+    @Value("${cors.front_server_distribute}")
+    private String frontServerDistribute;
+
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
         WebSocketMessageBrokerConfigurer.super.configureClientInboundChannel(registration);
@@ -38,7 +41,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws") // 클라이언트가 연결할 WebSocket 엔드포인트
-            .setAllowedOrigins(frontServerCorsVercel,frontServerCorsLocal) // CORS 설정
+            .setAllowedOrigins(frontServerCorsVercel, frontServerCorsLocal, frontServerDistribute) // CORS 설정
 //            .setAllowedOrigins(frontServerCorsVercel) // CORS 설정
             .withSockJS()
             .setHeartbeatTime(15000); // SockJS 지원
