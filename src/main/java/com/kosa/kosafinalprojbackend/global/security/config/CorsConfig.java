@@ -22,9 +22,7 @@ public class CorsConfig {
   private String frontServerDistribute;
 
 
-
-
-
+  
   @Bean
   @Primary
   public CorsConfigurationSource corsConfigurationSource() {
