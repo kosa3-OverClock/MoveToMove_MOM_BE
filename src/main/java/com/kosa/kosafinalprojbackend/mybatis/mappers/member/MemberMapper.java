@@ -47,4 +47,8 @@ public interface MemberMapper {
     // 비밀번호 변경
     void updateMemberPassword(@Param("memberId") Long memberId,
         @Param("newPassword") String newPassword);
+
+    
+    // 다른 유저 이메일 조회 % 와일드 카드 사용
+    List<MemberDto> selectMemberByEmail(@Param("searchEmail") String searchEmail);
 }

@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MemberService {
@@ -296,4 +298,17 @@ public class MemberService {
 
     return memberMapper.selectProjectByTask(memberId);
   }
+
+
+  // 다른 유저 이메일로 조회
+  public List<MemberDto> selectMemberByEmail(Long memberId, String searchEmail) {
+
+    log.info("searchEmail: {}", searchEmail);
+    if (!memberMapper.existsByMemberId(memberId)) {
+      throw new CustomBaseException(NOT_FOUND_ID);
+    }
+
+    return memberMapper.selectMemberByEmail(searchEmail);
+  }
+
 }
