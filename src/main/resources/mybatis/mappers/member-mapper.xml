@@ -166,4 +166,20 @@
      WHERE member_id    = #{memberId}
   </update>
 
+
+  <!-- 다른 유저 이메일로 조회 -->
+  <select id="selectMemberByEmail">
+    SELECT member_id
+         , email
+         , nick_name
+         , password
+         , profile_url
+         , social
+         , created_at
+         , deleted_at
+      FROM members
+     WHERE email LIKE CONCAT(#{searchEmail}, '%')
+       AND deleted_at IS NULL
+  </select>
+
 </mapper>

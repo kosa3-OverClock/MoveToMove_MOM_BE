@@ -154,4 +154,14 @@ public class MemberController {
 
         return ResponseEntity.ok(memberService.selectProjectByTask(customUserDetails.getId()));
     }
+
+
+    // 다른 회원정보 조회
+    @GetMapping("/{email}")
+    public ResponseEntity<List<MemberDto>> selectMemberByEmail(
+        @AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable String email) {
+
+        return ResponseEntity.ok(
+            memberService.selectMemberByEmail(customUserDetails.getId(), email));
+    }
 }
