@@ -29,4 +29,9 @@ public interface ProjectJoinMapper {
     // 팀장 권한을 한 번에 업데이트
     void updateTransferLeader(@Param("projectId") Long projectId, @Param("memberId") Long memberId,
         @Param("tranMemberId") Long tranMemberId);
+
+
+    // 프로젝트 내보내기
+    void deleteReleaseMember(@Param("projectId") Long projectId,
+                             @Param("releaseMemberId") Long releaseMemberId);
 }

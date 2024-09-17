@@ -1,5 +1,9 @@
 package com.kosa.kosafinalprojbackend.domains.kanban.project.controller;
 
+import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.KANBAN_CARD_MODIFY_SUCCESS;
+import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.RELEASE_MEMBER;
+import static org.springframework.http.HttpStatus.OK;
+
 import com.kosa.kosafinalprojbackend.domains.folder.model.dto.NotIncludedProjectDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.ColumnDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.service.ColumnService;
@@ -121,5 +125,17 @@ public class ProjectController {
 
         projectService.updateTransferLeader(projectId, tranMemberId, customUserDetails.getId());
         return ResponseEntity.ok().build();
+    }
+
+    // 프로젝트 내보내기
+    @DeleteMapping("/{project-id}/release/{member-id}")
+    public ResponseEntity<ResponseCode> deleteReleaseMember(
+        @PathVariable("project-id") Long projectId,
+        @PathVariable("member-id") Long memberId,
+        @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+
+        projectService.deleteReleaseMember(projectId, memberId, customUserDetails.getId());
+
+        return ResponseEntity.status(OK).body(RELEASE_MEMBER);
     }
 }

@@ -81,6 +81,9 @@ public enum ResponseCode {
     COMMENT_DELETE(OK, "코멘트를 삭제하였습니다."),
     NOT_COMMENT_WRITER(OK, "코멘트 작성자가 아닙니다."),
 
+    // 프로젝트
+    RELEASE_MEMBER(OK, "팀원 내보내기가 완료되었습니다."),
+
     // 공통
     NOT_FOUND_ID(NOT_FOUND, "존재하지 않는 아이디입니다."),
     ;
