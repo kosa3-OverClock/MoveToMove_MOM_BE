@@ -4,6 +4,7 @@ import com.kosa.kosafinalprojbackend.global.websocket.dto.CardMoveMessage;
 import com.kosa.kosafinalprojbackend.global.websocket.dto.column.ColumnAddMessage;
 import com.kosa.kosafinalprojbackend.global.websocket.dto.column.ColumnDeleteMessage;
 import com.kosa.kosafinalprojbackend.global.websocket.dto.column.ColumnMoveMessage;
+import com.kosa.kosafinalprojbackend.global.websocket.dto.project.ProjectUpdateMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -51,6 +52,13 @@ public class WebSocketController {
     @MessageMapping("/project/{projectId}/deleteColumn")
     @SendTo("/topic/project/{projectId}")
     public ColumnDeleteMessage deleteColumn(@DestinationVariable String projectId, ColumnDeleteMessage message) {
+        return message;
+    }
+
+    // 프로젝트 업데이트
+    @MessageMapping("/project/{projectId}/update-project")
+    @SendTo("/topic/project/{projectId}")
+    public ProjectUpdateMessage updateProject(@DestinationVariable String projectId, ProjectUpdateMessage message) {
         return message;
     }
 }
