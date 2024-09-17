@@ -21,8 +21,7 @@ public class CorsConfig {
   @Value("${cors.front_server_distribute}")
   private String frontServerDistribute;
 
-  @Value("${cors.back_server_api}")
-  private String backServerApi;
+
 
 
 
@@ -33,7 +32,6 @@ public class CorsConfig {
     configuration.addAllowedOriginPattern(frontServerCorsLocal);
     configuration.addAllowedOriginPattern(frontServerCorsVercel);
     configuration.addAllowedOriginPattern(frontServerDistribute);
-    configuration.addAllowedOriginPattern(backServerApi);
     configuration.setAllowedMethods(
         Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
     configuration.addAllowedHeader("*");

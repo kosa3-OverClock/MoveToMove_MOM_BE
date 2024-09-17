@@ -1,4 +1,4 @@
-package com.kosa.kosafinalprojbackend.global.websocket.dto;
+package com.kosa.kosafinalprojbackend.global.websocket.dto.column;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
