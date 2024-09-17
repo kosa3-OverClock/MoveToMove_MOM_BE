@@ -1,5 +1,6 @@
 package com.kosa.kosafinalprojbackend.mybatis.mappers.project;
 
+import com.kosa.kosafinalprojbackend.domains.folder.model.dto.NotIncludedProjectDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectInCardDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectMemberDto;
@@ -38,4 +39,8 @@ public interface ProjectMapper {
 
     // 삭제(프로젝트 업데이트 (deleted_at))
     void deleteProject(Long projectId);
+
+
+    // 프로젝트 스토어 기준 조회
+    NotIncludedProjectDto selectProjectByProjectId(Long projectId, Long memberId);
 }
