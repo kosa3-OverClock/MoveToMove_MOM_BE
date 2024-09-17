@@ -231,4 +231,25 @@ public class ProjectService {
 
         return projectMapper.selectProjectByProjectId(projectId, memberId);
     }
+
+    // 프로젝트 내보내기
+    public void deleteReleaseMember(Long projectId, Long releaseMemberId, Long memberId) {
+
+        // 유저 아이디 확인
+        if (!memberMapper.existsByMemberId(memberId)) {
+            throw new CustomBaseException(NOT_FOUND_ID);
+        }
+
+        // 내보낼 아이디 확인
+        if (!memberMapper.existsByMemberId(releaseMemberId)) {
+            throw new CustomBaseException(NOT_FOUND_ID);
+        }
+
+        // 프로젝트 확인
+        if (!projectMapper.existsByProjectId(projectId)) {
+            throw new CustomBaseException(NOT_FOUND_ID);
+        }
+
+        projectJoinMapper.deleteReleaseMember(projectId, releaseMemberId);
+    }
 }

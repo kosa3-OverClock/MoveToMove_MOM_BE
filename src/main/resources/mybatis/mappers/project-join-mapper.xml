@@ -63,7 +63,7 @@
   </select>
 
 
-  <!--  -->
+  <!-- 팀장 권한을 한 번에 업데이트 -->
   <update id="updateTransferLeader">
     UPDATE project_joins
     SET project_leader_YN =
@@ -74,5 +74,14 @@
     WHERE project_id = #{projectId}
       AND (member_id = #{memberId} OR member_id = #{tranMemberId})
   </update>
+
+
+  <!-- 폴더 기준 프로젝트_조인 삭제 -->
+  <delete id="deleteReleaseMember">
+    DELETE
+      FROM project_joins
+     WHERE project_id = #{projectId}
+       AND member_id  = #{releaseMemberId}
+  </delete>
 
 </mapper>
