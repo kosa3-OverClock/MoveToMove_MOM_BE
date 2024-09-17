@@ -1,6 +1,8 @@
 package com.kosa.kosafinalprojbackend.global.websocket.controller;
 
+import com.kosa.kosafinalprojbackend.domains.kanban.column.model.form.KanbanColumnForm;
 import com.kosa.kosafinalprojbackend.global.websocket.dto.CardMoveMessage;
+import com.kosa.kosafinalprojbackend.global.websocket.dto.ColumnAddMessage;
 import com.kosa.kosafinalprojbackend.global.websocket.dto.ColumnMoveMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +37,13 @@ public class WebSocketController {
     @MessageMapping("/project/{projectId}/card-move-between-column")
     @SendTo("/topic/project/{projectId}")
     public CardMoveMessage handleCardMoveBetweenColumn(@DestinationVariable String projectId, CardMoveMessage message) {
+        return message;
+    }
+
+    // 칸반 컬럼 추가 - Add Column
+    @MessageMapping("/project/{projectId}/addColumn")
+    @SendTo("/topic/project/{projectId}")
+    public ColumnAddMessage addColumn(@DestinationVariable String projectId, ColumnAddMessage message) {
         return message;
     }
 }
