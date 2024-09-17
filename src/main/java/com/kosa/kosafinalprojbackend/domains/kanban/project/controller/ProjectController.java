@@ -1,5 +1,6 @@
 package com.kosa.kosafinalprojbackend.domains.kanban.project.controller;
 
+import com.kosa.kosafinalprojbackend.domains.folder.model.dto.NotIncludedProjectDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.model.dto.ColumnDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.column.service.ColumnService;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectCardDetailDto;
@@ -36,9 +37,12 @@ public class ProjectController {
 
     // 조회
     @GetMapping("/{project-id}")
-    public ResponseEntity<ProjectDto> selectProjectById(
-        @PathVariable("project-id") String projectId) {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<NotIncludedProjectDto> selectProjectById(
+        @PathVariable("project-id") Long projectId,
+        @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+
+        return ResponseEntity.ok(
+            projectService.selectProjectByProjectId(projectId, customUserDetails.getId()));
     }
 
 

@@ -2,6 +2,7 @@ package com.kosa.kosafinalprojbackend.domains.kanban.project.service;
 
 import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.NOT_FOUND_ID;
 
+import com.kosa.kosafinalprojbackend.domains.folder.model.dto.NotIncludedProjectDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardMemberDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectCardDetailDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectInCardDto;
@@ -214,5 +215,20 @@ public class ProjectService {
 
         // 팀장 권한을 한 번에 업데이트
         projectJoinMapper.updateTransferLeader(projectId, memberId, tranMemberId);
+    }
+
+
+    // 프로젝트만 조회
+    public NotIncludedProjectDto selectProjectByProjectId(Long projectId, Long memberId) {
+
+        if (!memberMapper.existsByMemberId(memberId)) {
+            throw new CustomBaseException(NOT_FOUND_ID.withData("member"));
+        }
+
+        if(!projectMapper.existsByProjectId(projectId)) {
+            throw new CustomBaseException(NOT_FOUND_ID.withData("project"));
+        }
+
+        return projectMapper.selectProjectByProjectId(projectId, memberId);
     }
 }
