@@ -93,4 +93,25 @@ INNER JOIN kanban_cards         kca
      WHERE project_id   = #{projectId}
   </update>
 
+
+  <!-- 프로젝트 스토어 기준 프로젝트 조회 -->
+  <select id="selectProjectByProjectId" resultType="com.kosa.kosafinalprojbackend.domains.folder.model.dto.NotIncludedProjectDto">
+      SELECT p.project_id     id
+           , p.project_name   title
+           , p.project_description
+           , p.start_at
+           , p.end_at
+           , pj.project_leader_YN
+           , 'project'    type
+           , p.created_at
+           , p.deleted_at
+      FROM projects         p
+INNER JOIN project_joins    pj
+        ON p.project_id     = pj.project_id
+     WHERE pj.member_id     = #{memberId}
+       AND p.project_id     = #{projectId}
+       AND p.deleted_at     IS NULL
+  ORDER BY p.project_name
+  </select>
+
 </mapper>

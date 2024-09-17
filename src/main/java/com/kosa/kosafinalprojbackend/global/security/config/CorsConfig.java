@@ -1,5 +1,6 @@
 package com.kosa.kosafinalprojbackend.global.security.config;
 
+import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +21,9 @@ public class CorsConfig {
   @Value("${cors.front_server_distribute}")
   private String frontServerDistribute;
 
+  @Value("${cors.back_server_api}")
+  private String backServerApi;
+
 
 
   @Bean
@@ -29,7 +33,9 @@ public class CorsConfig {
     configuration.addAllowedOriginPattern(frontServerCorsLocal);
     configuration.addAllowedOriginPattern(frontServerCorsVercel);
     configuration.addAllowedOriginPattern(frontServerDistribute);
-    configuration.addAllowedMethod("*");
+    configuration.addAllowedOriginPattern(backServerApi);
+    configuration.setAllowedMethods(
+        Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
     configuration.addAllowedHeader("*");
     configuration.setAllowCredentials(true);
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
