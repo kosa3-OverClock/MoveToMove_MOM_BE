@@ -119,6 +119,7 @@
                     ON pr.project_id        = pj.project_id
             INNER JOIN kanban_columns       kco
                     ON kco.project_id       = pr.project_id
+                   AND kco.deleted_at       is null
                  WHERE me.member_id         = #{memberId}
               GROUP BY pr.project_id) seq
             ON kco.project_id       = seq.project_id
@@ -149,6 +150,7 @@
                     ON pr.project_id        = pj.project_id
             INNER JOIN kanban_columns       kco
                     ON kco.project_id       = pr.project_id
+                   AND kco.deleted_at       is null
                  WHERE me.member_id         = #{memberId}
               GROUP BY pr.project_id
                      , pr.project_name) seq
