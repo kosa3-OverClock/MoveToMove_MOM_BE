@@ -84,4 +84,19 @@
        AND member_id  = #{releaseMemberId}
   </delete>
 
+
+  <!-- 프로젝트 참여자 저장 -->
+  <insert id="insertProjectJoins" parameterType="list">
+    INSERT INTO project_joins
+    ( member_id
+    , project_id
+    )
+    VALUES
+    <foreach collection="memberList" item="memberDto" separator=",">
+      ( #{memberDto.memberId}
+      , #{projectId}
+      )
+    </foreach>
+  </insert>
+
 </mapper>

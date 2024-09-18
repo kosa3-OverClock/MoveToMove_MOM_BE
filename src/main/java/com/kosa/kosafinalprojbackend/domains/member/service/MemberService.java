@@ -1,16 +1,24 @@
 package com.kosa.kosafinalprojbackend.domains.member.service;
 
+import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.EXISTS_EMAIL;
+import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.EXISTS_NICKNAME;
+import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.JSON_PARSE_ERROR;
+import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.NOT_FIND_TOKEN;
+import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.NOT_FOUND_ID;
+import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.NOT_FOUND_MEMBER;
+import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.UNABLE_LOGIN;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kosa.kosafinalprojbackend.domains.member.model.dto.AllTaskDto;
 import com.kosa.kosafinalprojbackend.domains.member.model.dto.MemberDto;
 import com.kosa.kosafinalprojbackend.domains.member.model.dto.ProjectByTaskDto;
-import com.kosa.kosafinalprojbackend.domains.member.model.form.LoginForm;
+import com.kosa.kosafinalprojbackend.domains.member.model.dto.SearchEmail;
 import com.kosa.kosafinalprojbackend.domains.member.model.form.AuthenticationCodeForm;
+import com.kosa.kosafinalprojbackend.domains.member.model.form.LoginForm;
 import com.kosa.kosafinalprojbackend.domains.member.model.form.ResetPasswordForm;
 import com.kosa.kosafinalprojbackend.domains.member.model.form.SignUpForm;
 import com.kosa.kosafinalprojbackend.global.amazon.service.S3Service;
-import com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode;
 import com.kosa.kosafinalprojbackend.global.error.exception.CustomBaseException;
 import com.kosa.kosafinalprojbackend.global.redis.service.RedisService;
 import com.kosa.kosafinalprojbackend.global.security.filter.JwtTokenProvider;
@@ -28,8 +36,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.*;
 
 @Slf4j
 @Service
@@ -301,14 +307,15 @@ public class MemberService {
 
 
   // 다른 유저 이메일로 조회
-  public List<MemberDto> selectMemberByEmail(Long memberId, String searchEmail) {
+  @Transactional
+  public MemberDto selectMemberByEmail(Long memberId, SearchEmail searchEmail) {
 
-    log.info("searchEmail: {}", searchEmail);
+    log.info("searchEmail: {}", searchEmail.getEmail());
     if (!memberMapper.existsByMemberId(memberId)) {
       throw new CustomBaseException(NOT_FOUND_ID);
     }
 
-    return memberMapper.selectMemberByEmail(searchEmail);
+    return memberMapper.selectMemberByEmail(searchEmail.getEmail());
   }
 
 }
