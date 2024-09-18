@@ -76,4 +76,11 @@ public class WebSocketController {
     public CommonMesssage deleteCard(@DestinationVariable String projectId, CommonMesssage message) {
         return message;
     }
+
+    // 카드 정보 변경
+    @MessageMapping("/project/{projectId}/update-info")
+    @SendTo("/topic/project/{projectId}")
+    public CommonMesssage updateCardInfo(@DestinationVariable String projectId, CommonMesssage message) {
+        return message;
+    }
 }
