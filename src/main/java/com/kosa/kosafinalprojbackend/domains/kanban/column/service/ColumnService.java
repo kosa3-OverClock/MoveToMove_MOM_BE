@@ -127,7 +127,7 @@ public class ColumnService {
     @Transactional
     public ProjectInCardDto insertKanbanCard(Long kanbanColumnId, KanbanCardForm kanbanCardForm, Long memberId) {
 
-        log.info("칸반 카드 생성====>>>>>>>>>> {} {}", kanbanColumnId, kanbanCardForm.getTitle());
+        log.info("칸반 카드 생성====>>>>>>>>>> {} {} 유저 ID {}", kanbanColumnId, kanbanCardForm.getTitle(), memberId);
         // 유저 아이디 확인
         if (!memberMapper.existsByMemberId(memberId)) {
             throw new CustomBaseException(NOT_FOUND_ID);

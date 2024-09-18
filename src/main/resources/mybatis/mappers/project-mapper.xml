@@ -9,6 +9,21 @@
                     WHERE project_id = #{projectId}) AS result
   </select>
 
+  <!-- 조회 (projectId 기준) -->
+  <select id="findByProjectId">
+    SELECT project_id
+         , project_name
+         , project_description
+         , start_at
+         , end_at
+         , created_at
+         , deleted_at
+      FROM projects
+     WHERE project_id   = #{projectId}
+       AND deleted_at IS NULL
+  </select>
+
+
   <!-- 프로젝트 참여자 조회 -->
   <select id="selectProjectMember" parameterType="Long" resultType="com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectMemberDto">
     SELECT me.member_id

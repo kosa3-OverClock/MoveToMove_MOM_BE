@@ -13,6 +13,7 @@ import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectMem
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.enums.ProjectLeaderYN;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.form.ProjectForm;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.service.ProjectService;
+import com.kosa.kosafinalprojbackend.domains.member.model.dto.MemberDto;
 import com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode;
 import com.kosa.kosafinalprojbackend.global.security.model.CustomUserDetails;
 import java.util.List;
@@ -138,4 +139,16 @@ public class ProjectController {
 
         return ResponseEntity.status(OK).body(RELEASE_MEMBER);
     }
+
+
+    // 프로젝트 참여자 초대
+    @PostMapping("/{project-id}/project-joins")
+    public ResponseEntity<?> insertProjectJoin(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+        @PathVariable("project-id") Long projectId, @RequestBody List<MemberDto> memberDtoList) {
+
+        projectService.insertProjectJoin(customUserDetails.getId(), projectId, memberDtoList);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
 }
