@@ -1,6 +1,7 @@
 package com.kosa.kosafinalprojbackend.global.websocket.controller;
 
 import com.kosa.kosafinalprojbackend.global.websocket.dto.CardMoveMessage;
+import com.kosa.kosafinalprojbackend.global.websocket.dto.CommonMesssage;
 import com.kosa.kosafinalprojbackend.global.websocket.dto.column.ColumnAddMessage;
 import com.kosa.kosafinalprojbackend.global.websocket.dto.column.ColumnDeleteMessage;
 import com.kosa.kosafinalprojbackend.global.websocket.dto.column.ColumnMoveMessage;
@@ -59,6 +60,13 @@ public class WebSocketController {
     @MessageMapping("/project/{projectId}/update-project")
     @SendTo("/topic/project/{projectId}")
     public ProjectUpdateMessage updateProject(@DestinationVariable String projectId, ProjectUpdateMessage message) {
+        return message;
+    }
+
+    // 카드 생성
+    @MessageMapping("/project/{projectId}/add-card")
+    @SendTo("/topic/project/{projectId}")
+    public CommonMesssage addCard(@DestinationVariable String projectId, CommonMesssage message) {
         return message;
     }
 }
