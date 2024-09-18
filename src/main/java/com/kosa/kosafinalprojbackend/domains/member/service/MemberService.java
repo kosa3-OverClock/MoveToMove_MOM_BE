@@ -29,6 +29,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -230,8 +231,7 @@ public class MemberService {
 
   // 인증번호 발송
   @Transactional
-  public Map<String, Object> sendAuthenticationCode(AuthenticationCodeForm authenticationCodeForm)
-      throws MessagingException {
+  public Map<String, Object> sendAuthenticationCode(AuthenticationCodeForm authenticationCodeForm) {
     String email = authenticationCodeForm.getEmail();
 
     // 메일 확인
@@ -239,8 +239,8 @@ public class MemberService {
       throw new CustomBaseException(NOT_FOUND_MEMBER.withData("checkEmail"));
     }
     
-    // 메일 보내기 (+ 인증 코드 받아오기)
-    String code = emailService.sendVerificationCode(email);
+    // 인증코드 만들기
+    String code = generateVerificationCode();
 
     // Redis에 인증번호와 만료시간 저장
     String expiresIn = redisService.saveVerificationCode(email, code);
@@ -252,6 +252,13 @@ public class MemberService {
     result.put("expiresIn", expiresIn);
 
     return result;
+  }
+
+  // 랜덤 6자리 생성
+  private String generateVerificationCode() {
+    Random random = new Random();
+    int code = 100000 + random.nextInt(900000); // 6자리 랜덤 코드 생성
+    return String.valueOf(code);
   }
 
   // 인증 코드 확인

@@ -2,11 +2,13 @@ package com.kosa.kosafinalprojbackend.global.redis.service;
 
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RedisService {
@@ -37,17 +39,14 @@ public class RedisService {
   // 인증 코드 저장
   public String saveVerificationCode(String email, String code) {
     String key = "verification:" + email;
-    redisTemplate.opsForValue().set(key, code, Duration.ofMinutes(2));    // 인증 코드 2분 유효
+    redisTemplate.opsForValue().set(key, code, Duration.ofMinutes(3));    // 인증 코드 3분 유효
+    log.info("Key '{}' 저장 후 TTL: {}", key, redisTemplate.getExpire(key, TimeUnit.SECONDS));
+
+    Long seconds = redisTemplate.getExpire(key, TimeUnit.SECONDS);
 
     // 시간 포맷화
-    return getFormattedRemainingTime(key);
-  }
-
-
-  // 시간 포맷화
-  private String getFormattedRemainingTime(String key) {
-    Long seconds = redisTemplate.getExpire(key, TimeUnit.SECONDS);
-    if(seconds == null || seconds <= 0) {
+    log.info("seconds: {}", seconds);
+    if(seconds == null) {
       return "00:00";
     }
 
@@ -56,6 +55,23 @@ public class RedisService {
 
     return String.format("%02d:%02d", minutes, remainingSeconds);
   }
+
+
+  // 시간 포맷화
+//  private String getFormattedRemainingTime(String key) {
+//    log.info("key: {}", redisTemplate.getExpire(key, TimeUnit.MINUTES));
+//    Long seconds = redisTemplate.getExpire(key, TimeUnit.SECONDS);
+//
+//    log.info("seconds: {}", seconds);
+//    if(seconds == null) {
+//      return "00:00";
+//    }
+//
+//    long minutes = seconds / 60;
+//    long remainingSeconds = seconds % 60;
+//
+//    return String.format("%02d:%02d", minutes, remainingSeconds);
+//  }
 
 
   // 인증 코드 조회

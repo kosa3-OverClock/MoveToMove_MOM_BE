@@ -23,22 +23,19 @@ public class EmailService {
 
     // 인증 코드 보내기
     @Async
-    public String sendVerificationCode(String email) throws MessagingException {
-        String verificationCode = generateVerificationCode();
+    public void sendVerificationCode(String email, String verificationCode) {
         String subject = "Move-tO-Move 비밀번호 찾기 인증번호";
         String content = htmlContent(verificationCode);
 
-        sendEmail(email, subject, content);
-
-        return verificationCode;
+        try {
+            sendEmail(email, subject, content);
+            log.info("====>>>>>>>>>> {}: 인증코드 전송 성공", email);
+        } catch (MessagingException e) {
+            log.info("====>>>>>>>>>> {}: 인증코드 전송 실패", email);
+            throw new RuntimeException(e);
+        }
     }
 
-    // 랜덤 6자리 생성
-    private String generateVerificationCode() {
-        Random random = new Random();
-        int code = 100000 + random.nextInt(900000); // 6자리 랜덤 코드 생성
-        return String.valueOf(code);
-    }
 
     // 인증코드 HTML 만들기
     private String htmlContent(String verificationCode) {

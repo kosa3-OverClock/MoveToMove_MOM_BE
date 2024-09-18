@@ -18,6 +18,7 @@ import com.kosa.kosafinalprojbackend.domains.member.model.dto.SearchEmail;
 import com.kosa.kosafinalprojbackend.domains.member.model.form.AuthenticationCodeForm;
 import com.kosa.kosafinalprojbackend.domains.member.model.form.LoginForm;
 import com.kosa.kosafinalprojbackend.domains.member.model.form.ResetPasswordForm;
+import com.kosa.kosafinalprojbackend.domains.member.service.EmailService;
 import com.kosa.kosafinalprojbackend.domains.member.service.MemberService;
 import com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode;
 import com.kosa.kosafinalprojbackend.global.security.model.CustomUserDetails;
@@ -46,6 +47,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class MemberController {
 
     private final MemberService memberService;
+    private final EmailService emailService;
+
 
     // 회원 조회
     @GetMapping()
@@ -115,6 +118,11 @@ public class MemberController {
 
         Map<String, Object> emailAndNumber = memberService.sendAuthenticationCode(
             authenticationCodeForm);
+
+        // 메일 보내기
+        emailService.sendVerificationCode((String) emailAndNumber.get("email"),
+            (String) emailAndNumber.get("code"));
+
         return ResponseEntity.ok(SEND_AUTHENTICATION_CODE.withData(emailAndNumber));
     }
 
