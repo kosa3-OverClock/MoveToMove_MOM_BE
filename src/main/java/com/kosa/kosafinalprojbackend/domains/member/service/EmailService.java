@@ -116,8 +116,8 @@ public class EmailService {
             "    .email-footer { text-align: center; font-size: 12px; color: #777777; margin-top: 20px; }" +
             "    .invite-message { font-size: 18px; font-weight: bold; color: #333333; text-align: center; margin: 20px 0; padding: 10px; background-color: #f2f2f2; border-radius: 4px; }" +
             "    .project-name { font-size: 22px; font-weight: bold; color: #007bff; text-align: center; margin: 20px 0; }" +
-            "    .cta-button { display: inline-block; padding: 10px 20px; font-size: 16px; color: #ffffff; background-color: #000000; text-decoration: none; border-radius: 5px; margin-top: 20px; text-align: center; }" +
-            "    .cta-button:hover { background-color: #0056b3; }" +
+            "    .cta-button { display: inline-block; padding: 10px 20px; font-size: 16px; color: #ffffff !important; background-color: #6b9e9b; text-decoration: none; border-radius: 5px; margin-top: 20px; text-align: center; font-weight: bold; }" +
+            "    .cta-button:hover { background-color: #4a7875; }" +
             "  </style>" +
             "</head>" +
             "<body>" +
