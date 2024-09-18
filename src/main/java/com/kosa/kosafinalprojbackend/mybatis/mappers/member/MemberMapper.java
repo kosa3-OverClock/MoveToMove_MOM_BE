@@ -50,5 +50,5 @@ public interface MemberMapper {
 
     
     // 다른 유저 이메일 조회 % 와일드 카드 사용
-    List<MemberDto> selectMemberByEmail(@Param("searchEmail") String searchEmail);
+    MemberDto selectMemberByEmail(@Param("searchEmail") String searchEmail);
 }
