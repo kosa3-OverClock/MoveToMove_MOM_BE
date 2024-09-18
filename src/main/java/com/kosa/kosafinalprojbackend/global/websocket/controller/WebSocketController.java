@@ -77,10 +77,10 @@ public class WebSocketController {
         return message;
     }
 
-    // 카드 제목 변경
-    @MessageMapping("/project/{projectId}/update-title")
+    // 카드 정보 변경
+    @MessageMapping("/project/{projectId}/update-info")
     @SendTo("/topic/project/{projectId}")
-    public CommonMesssage updateCardTitle(@DestinationVariable String projectId, CommonMesssage message) {
+    public CommonMesssage updateCardInfo(@DestinationVariable String projectId, CommonMesssage message) {
         return message;
     }
 }
