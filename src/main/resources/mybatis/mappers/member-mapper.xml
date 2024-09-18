@@ -178,7 +178,7 @@
          , created_at
          , deleted_at
       FROM members
-     WHERE email LIKE CONCAT(#{searchEmail}, '%')
+     WHERE email = #{searchEmail}
        AND deleted_at IS NULL
   </select>
 

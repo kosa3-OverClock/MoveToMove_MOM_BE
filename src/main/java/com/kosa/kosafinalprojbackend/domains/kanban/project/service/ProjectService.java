@@ -5,10 +5,13 @@ import static com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode.
 import com.kosa.kosafinalprojbackend.domains.folder.model.dto.NotIncludedProjectDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.card.domain.dto.CardMemberDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectCardDetailDto;
+import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectInCardDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.dto.ProjectMemberDto;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.enums.ProjectLeaderYN;
 import com.kosa.kosafinalprojbackend.domains.kanban.project.model.form.ProjectForm;
+import com.kosa.kosafinalprojbackend.domains.member.model.dto.MemberDto;
+import com.kosa.kosafinalprojbackend.domains.member.service.EmailService;
 import com.kosa.kosafinalprojbackend.global.error.errorCode.ResponseCode;
 import com.kosa.kosafinalprojbackend.global.error.exception.CustomBaseException;
 import com.kosa.kosafinalprojbackend.global.security.model.CustomUserDetails;
@@ -38,6 +41,7 @@ public class ProjectService {
     private final MemberMapper memberMapper;
     private final KanbanColumnMapper kanbanColumnMapper;
     private final KanbanCardMapper kanbanCardMapper;
+    private final EmailService emailService;
 
 
     // 저장
@@ -142,6 +146,7 @@ public class ProjectService {
 
 
     // 프로젝트 참여자 조회
+    @Transactional
     public List<ProjectMemberDto> selectProjectMember(Long memberId, Long projectId) {
         log.info("====>>>>>>>>>>>> selectProjectMember: {}", projectId);
         // 유저 아이디 확인
@@ -158,6 +163,7 @@ public class ProjectService {
     }
 
     // 칸반 카드 조회 (프로젝트 기준)
+    @Transactional
     public List<ProjectCardDetailDto> selectKanbanCardByProject(Long projectId) {
 
         // 프로젝트 존재 여부 확인
@@ -189,6 +195,7 @@ public class ProjectService {
     }
 
     // 유저가 참여한 프로젝트 ID 조회
+    @Transactional
     public List<Long> selectProjectsIdByUserId(Long memberId) {
         if (!memberMapper.existsByMemberId(memberId)) {
             throw new CustomBaseException(NOT_FOUND_ID);
@@ -198,6 +205,7 @@ public class ProjectService {
 
 
     // 팀장 권한 이전
+    @Transactional
     public void updateTransferLeader(Long projectId, Long tranMemberId, Long memberId) {
         log.info("====>>>>>>>>>>>> updateTransferLeader");
 
@@ -219,6 +227,7 @@ public class ProjectService {
 
 
     // 프로젝트만 조회
+    @Transactional
     public NotIncludedProjectDto selectProjectByProjectId(Long projectId, Long memberId) {
 
         if (!memberMapper.existsByMemberId(memberId)) {
@@ -251,5 +260,23 @@ public class ProjectService {
         }
 
         projectJoinMapper.deleteReleaseMember(projectId, releaseMemberId);
+    }
+
+
+    // 프로젝트 참여자 저장 및 초대
+    @Transactional
+    public void insertProjectJoin(Long memberId, Long projectId, List<MemberDto> memberDtoList) {
+        if(!memberMapper.existsByMemberId(memberId)) {
+            throw new CustomBaseException(NOT_FOUND_ID);
+        }
+
+        ProjectDto projectDto = projectMapper.findByProjectId(projectId)
+            .orElseThrow(() -> new CustomBaseException(NOT_FOUND_ID));
+
+        // insert 배치
+        projectJoinMapper.insertProjectJoins(projectId, memberDtoList);
+        
+        // 초대 이메일 전송
+        emailService.projectInvite(projectDto.getProjectName(), memberDtoList);
     }
 }
