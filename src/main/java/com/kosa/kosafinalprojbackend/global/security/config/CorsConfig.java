@@ -30,6 +30,8 @@ public class CorsConfig {
     configuration.addAllowedOriginPattern(frontServerCorsLocal);
     configuration.addAllowedOriginPattern(frontServerCorsVercel);
     configuration.addAllowedOriginPattern(frontServerDistribute);
+    // 리디렉션 URI 도메인 추가
+    configuration.addAllowedOriginPattern("https://api.move-to-move.online");
     configuration.setAllowedMethods(
         Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
     configuration.addAllowedHeader("*");
