@@ -25,7 +25,7 @@ public class CustomOAuth2AuthenticationFailureHandler implements AuthenticationF
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        log.error("소셜 로그인 exception 내용: {}", exception.getMessage());
+        log.error("OAuth2 login failed. Reason: {}", exception.getMessage(), exception);
         // 예외에 따라 ResponseCode를 결정합니다.
         ResponseCode responseCode = determineResponseCode(exception);
 
