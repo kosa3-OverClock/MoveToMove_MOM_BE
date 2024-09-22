@@ -44,8 +44,14 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private OAuth2User process(OAuth2UserRequest userRequest, OAuth2User user) {
         ProviderType providerType = ProviderType.valueOf(userRequest.getClientRegistration().getRegistrationId().toUpperCase());
-        OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(providerType, user.getAttributes());
-
+        OAuth2UserInfo userInfo = null;
+        try {
+            userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(providerType, user.getAttributes());
+            log.info("User Info: {}", userInfo);
+        } catch (Exception e) {
+            log.error("Failed to fetch user info: {}", e.getMessage(), e);
+            throw e;
+        }
         log.info("social Type = {}", providerType);
         log.info("email = {}", userInfo.getEmail());
 
