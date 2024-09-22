@@ -51,7 +51,7 @@ public class SecurityConfig {
             authorizeRequests -> authorizeRequests
                 .requestMatchers("/ws/**").permitAll()
                 .requestMatchers("/**").permitAll()
-                .requestMatchers("/oauth2/**").permitAll()
+                .requestMatchers("/api/oauth2/**").permitAll()
                 .anyRequest().permitAll()
         )
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
@@ -74,7 +74,7 @@ public class SecurityConfig {
     // 소셜 로그인
       http.oauth2Login(oauth2 -> oauth2
               .authorizationEndpoint(authConfig ->
-                      authConfig.baseUri("/oauth2/authorization"))
+                      authConfig.baseUri("/api/oauth2/authorization"))
               .userInfoEndpoint(userInfoEndpointConfig ->
                       userInfoEndpointConfig.userService(customOAuth2UserService))
               .successHandler(customOAuth2AuthenticationSuccessHandler)
