@@ -42,9 +42,9 @@ public class SecurityConfig {
         // CSRF 보호 기능을 비활성화
         .csrf(AbstractHttpConfigurer::disable)
 
-        // 세션 관리 비활성화
-        .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(
-            SessionCreationPolicy.STATELESS))
+        // // 필요한 경우 세션 생성
+        .sessionManagement(sessionManagement -> sessionManagement
+        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
 
         // 요청 권한 설정
         .authorizeHttpRequests(
