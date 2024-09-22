@@ -20,7 +20,7 @@ import java.io.IOException;
 @Slf4j
 public class CustomOAuth2AuthenticationFailureHandler implements AuthenticationFailureHandler {
 
-    @Value("${frontend.server.url}")
+    @Value("${cors.front_server_distribute}")
     private String frontendServerUrl;
 
     @Override
