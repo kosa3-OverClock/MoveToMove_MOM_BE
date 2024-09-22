@@ -25,7 +25,7 @@ public class CustomOAuth2AuthenticationSuccessHandler extends SimpleUrlAuthentic
     private int REFRESH_EXPIRE_TIME;
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisService redisService;
-    @Value("${frontend.server.url}")
+    @Value("${cors.front_server_distribute}")
     private String frontendServerUrl;
     /*
     *   소셜 아이디로 로그인에 성공했을 경우 jwt를 생성하고 레디스에 토큰을 저장 후 프론트 서버로 토큰을 전달하는 메서드
