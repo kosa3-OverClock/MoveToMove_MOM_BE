@@ -15,6 +15,8 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -72,16 +74,21 @@ public class SecurityConfig {
 
 
     // 소셜 로그인
-      http.oauth2Login(oauth2 -> oauth2
-              .authorizationEndpoint(authConfig ->
-                      authConfig.baseUri("/api/oauth2/authorization"))
-              .redirectionEndpoint(redirectConfig ->
-                      redirectConfig.baseUri("/api/login/oauth2/code/*"))
-              .userInfoEndpoint(userInfoEndpointConfig ->
-                      userInfoEndpointConfig.userService(customOAuth2UserService))
-              .successHandler(customOAuth2AuthenticationSuccessHandler)
-              .failureHandler(customOAuth2AuthenticationFailureHandler)
-      );
+    http.oauth2Login(oauth2 -> oauth2
+            .authorizationEndpoint(authConfig ->
+                    authConfig
+                            .baseUri("/api/oauth2/authorization")
+                            .authorizationRequestRepository(cookieOAuth2AuthorizationRequestRepository()) // 쿠키 기반 저장소 설정
+            )
+            .redirectionEndpoint(redirectConfig ->
+                    redirectConfig.baseUri("/api/login/oauth2/code/*")
+            )
+            .userInfoEndpoint(userInfoEndpointConfig ->
+                    userInfoEndpointConfig.userService(customOAuth2UserService)
+            )
+            .successHandler(customOAuth2AuthenticationSuccessHandler)
+            .failureHandler(customOAuth2AuthenticationFailureHandler)
+    );
 
     return http.build();
   }
@@ -89,5 +96,9 @@ public class SecurityConfig {
   @Bean
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
+  }
+  @Bean
+  public AuthorizationRequestRepository<OAuth2AuthorizationRequest> cookieOAuth2AuthorizationRequestRepository() {
+    return new HttpCookieOAuth2AuthorizationRequestRepository();
   }
 }
