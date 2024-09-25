@@ -16,6 +16,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 
 @Component
 @RequiredArgsConstructor
@@ -47,19 +48,20 @@ public class CustomOAuth2AuthenticationSuccessHandler extends SimpleUrlAuthentic
         redisService.saveRefreshToken(loginUser.getMemberId(), refreshToken);
         // TODO: 프론트 서버로 응답 설정 ( response에 담아서, 쿼리파라미터에 담아서 토큰 전송 )
         // refresh token 쿠키에 저장
-        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
-        refreshTokenCookie.setHttpOnly(true);   // 스크립트에서 접근 불가
-        refreshTokenCookie.setSecure(false);    // HTTPS를 사용하는 경우에 사용
-        refreshTokenCookie.setPath("/");        // 쿠키 경로 설정
-        refreshTokenCookie.setMaxAge(REFRESH_EXPIRE_TIME / 1000); // 시간 설정
-        response.addCookie(refreshTokenCookie);
+//        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+//        refreshTokenCookie.setHttpOnly(true);   // 스크립트에서 접근 불가
+//        refreshTokenCookie.setSecure(true);    // HTTPS를 사용하는 경우에 사용
+//        refreshTokenCookie.setPath("/");        // 쿠키 경로 설정
+//        refreshTokenCookie.setMaxAge(REFRESH_EXPIRE_TIME / 1000); // 시간 설정
+//        response.addCookie(refreshTokenCookie);
 
         // 응답 설정: JSON 형태로 accessToken을 프론트엔드로 전달
-        response.setContentType("application/json");
-        response.setCharacterEncoding("utf-8");
-        response.getWriter().write("{\"accessToken\": \"" + accessToken + "\"}");
+//        response.setContentType("application/json");
+//        response.setCharacterEncoding("utf-8");
+//        response.getWriter().write("{\"accessToken\": \"" + accessToken + "\"}");
 
         // 프론트엔드 URL로 리다이렉트
+        String encodedAccessToken = URLEncoder.encode(accessToken, "UTF-8");
         String redirectUrl = frontendServerUrl + "/social-login/callback?accessToken=" + accessToken;
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);
     }
