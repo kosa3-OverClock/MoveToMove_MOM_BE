@@ -46,7 +46,7 @@ public class SecurityConfig {
 
         // // 필요한 경우 세션 생성
         .sessionManagement(sessionManagement -> sessionManagement
-        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
         // 요청 권한 설정
         .authorizeHttpRequests(
