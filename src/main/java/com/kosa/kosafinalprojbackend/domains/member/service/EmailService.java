@@ -1,25 +1,27 @@
 package com.kosa.kosafinalprojbackend.domains.member.service;
 
 import com.kosa.kosafinalprojbackend.domains.member.model.dto.MemberDto;
+import com.kosa.kosafinalprojbackend.mybatis.mappers.projectinvite.ProjectInviteMapper;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import java.util.List;
-import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class EmailService {
 
-    private final JavaMailSender mailSender;
+    private static final int MAX_RETRY_COUNT = 3;
+    private static final int FAILURE_REASON_LIMIT = 255;
 
+    private final JavaMailSender mailSender;
+    private final ProjectInviteMapper projectInviteMapper;
 
     // 인증 코드 보내기
     @Async
@@ -35,7 +37,6 @@ public class EmailService {
             throw new RuntimeException(e);
         }
     }
-
 
     // 인증코드 HTML 만들기
     private String htmlContent(String verificationCode) {
@@ -73,33 +74,54 @@ public class EmailService {
     private void sendEmail(String email, String subject, String content) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
-        
+
         mimeMessageHelper.setTo(email);
         mimeMessageHelper.setSubject(subject);
-        mimeMessageHelper.setText(content, true);   // 두번째 파라미터 HTML 설정
+        mimeMessageHelper.setText(content, true);
 
         mailSender.send(mimeMessage);
     }
 
-
     // 프로젝트 초대
     @Async
-    public void projectInvite(String projectName, List<MemberDto> memberDtoList) {
-        memberDtoList.forEach(member -> {
-            String email = member.getEmail();
-            String subject = "Move-tO-Move" + projectName + " 프로젝트 초대";
-            String content = projectInviteHtml(projectName);
+    public void projectInvite(String projectName, Long projectId, List<MemberDto> memberDtoList) {
+        String subject = "Move-tO-Move" + projectName + " 프로젝트 초대";
+        String content = projectInviteHtml(projectName);
 
-            try {
-                sendEmail(email, subject, content);
-                log.info("====>>>>>>>>>> {}: 이메일 전송 성공", email);
-            } catch (MessagingException e) {
-                log.info("====>>>>>>>>>> {}: 이메일 전송 실패", email);
-                throw new RuntimeException(e);
-            }
-        });
+        memberDtoList.forEach(member -> sendInviteWithRetry(projectId, member, subject, content));
     }
 
+    private void sendInviteWithRetry(Long projectId, MemberDto member, String subject, String content) {
+        String email = member.getEmail();
+        Long memberId = member.getMemberId();
+
+        for (int tryCount = 1; tryCount <= MAX_RETRY_COUNT; tryCount++) {
+            try {
+                sendEmail(email, subject, content);
+                projectInviteMapper.updateInviteSuccess(projectId, memberId);
+                log.info("====>>>>>>>>>> {}: 이메일 전송 성공 (시도 {}/{})", email, tryCount, MAX_RETRY_COUNT);
+                return;
+            } catch (MessagingException e) {
+                log.warn("====>>>>>>>>>> {}: 이메일 전송 실패 (시도 {}/{})", email, tryCount, MAX_RETRY_COUNT, e);
+            }
+        }
+
+        String failureReason = trimFailureReason("메일 전송 재시도 실패: " + email);
+        projectInviteMapper.updateInviteFailed(projectId, memberId, failureReason);
+        log.error("====>>>>>>>>>> {}: 이메일 전송 최종 실패", email);
+    }
+
+    private String trimFailureReason(String failureReason) {
+        if (failureReason == null) {
+            return null;
+        }
+
+        if (failureReason.length() <= FAILURE_REASON_LIMIT) {
+            return failureReason;
+        }
+
+        return failureReason.substring(0, FAILURE_REASON_LIMIT);
+    }
 
     // 프로젝트 초대 HTML
     private String projectInviteHtml(String projectName) {

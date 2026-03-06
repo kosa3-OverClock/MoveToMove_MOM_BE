@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kosa.kosafinalprojbackend.mybatis.mappers.projectinvite.ProjectInviteMapper">
+
+  <insert id="insertPendingInvites" parameterType="list">
+    INSERT INTO project_invites
+    ( project_id
+    , member_id
+    , email
+    , status
+    , failure_reason
+    )
+    VALUES
+    <foreach collection="memberList" item="memberDto" separator=",">
+      ( #{projectId}
+      , #{memberDto.memberId}
+      , #{memberDto.email}
+      , 'PENDING'
+      , NULL
+      )
+    </foreach>
+  </insert>
+
+  <update id="updateInviteSuccess">
+    UPDATE project_invites
+       SET status = 'SUCCESS'
+         , failure_reason = NULL
+         , updated_at = CURRENT_TIMESTAMP
+     WHERE project_id = #{projectId}
+       AND member_id = #{memberId}
+  </update>
+
+  <update id="updateInviteFailed">
+    UPDATE project_invites
+       SET status = 'FAILED'
+         , failure_reason = #{failureReason}
+         , updated_at = CURRENT_TIMESTAMP
+     WHERE project_id = #{projectId}
+       AND member_id = #{memberId}
+  </update>
+
+</mapper>
