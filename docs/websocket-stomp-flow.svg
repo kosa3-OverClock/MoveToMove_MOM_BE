@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="700" viewBox="0 0 1400 700" role="img" aria-labelledby="svgTitle svgDesc">
+  <title id="svgTitle">WebSocket STOMP 흐름도</title>
+  <desc id="svgDesc">클라이언트가 /ws로 연결하고 /app으로 발행하면 서버가 /topic/project/{projectId}로 브로드캐스트하는 흐름도</desc>
+  <defs>
+    <style>
+      .title { font: 700 28px 'Arial'; fill: #0f172a; }
+      .subtitle { font: 500 16px 'Arial'; fill: #334155; }
+      .box { fill: #f8fafc; stroke: #64748b; stroke-width: 2; rx: 12; ry: 12; }
+      .box2 { fill: #ecfeff; stroke: #0891b2; stroke-width: 2; rx: 12; ry: 12; }
+      .text { font: 600 16px 'Arial'; fill: #0f172a; }
+      .small { font: 500 14px 'Arial'; fill: #334155; }
+      .arrow { stroke: #334155; stroke-width: 2.5; fill: none; marker-end: url(#m); }
+      .dashed { stroke-dasharray: 8 6; }
+      .step { font: 700 14px 'Arial'; fill: #0369a1; }
+    </style>
+    <marker id="m" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#334155" />
+    </marker>
+  </defs>
+
+  <text x="40" y="48" class="title">WebSocket + STOMP 메시지 흐름</text>
+  <text x="40" y="74" class="subtitle">현재 백엔드 구현 기준 (/ws, /app, /topic/project/{projectId})</text>
+
+  <rect x="60" y="140" width="240" height="90" class="box"/>
+  <text x="90" y="175" class="text">클라이언트(프론트)</text>
+  <text x="88" y="200" class="small">브라우저 + STOMP Client</text>
+
+  <rect x="360" y="140" width="240" height="90" class="box2"/>
+  <text x="392" y="175" class="text">WebSocket Endpoint</text>
+  <text x="450" y="200" class="small" text-anchor="middle">/ws (SockJS)</text>
+
+  <rect x="680" y="120" width="300" height="130" class="box"/>
+  <text x="708" y="160" class="text">Application Destination</text>
+  <text x="830" y="185" class="small" text-anchor="middle">/app/project/{projectId}/...</text>
+  <text x="830" y="210" class="small" text-anchor="middle">@MessageMapping 처리</text>
+
+  <rect x="1040" y="120" width="280" height="130" class="box2"/>
+  <text x="1085" y="160" class="text">Simple Broker</text>
+  <text x="1180" y="185" class="small" text-anchor="middle">/topic, /queue</text>
+  <text x="1180" y="210" class="small" text-anchor="middle">@SendTo /topic/project/{projectId}</text>
+
+  <rect x="930" y="360" width="390" height="210" class="box"/>
+  <text x="955" y="395" class="text">구독자들 (SUB)</text>
+  <text x="960" y="425" class="small">- 사용자 A: /topic/project/{projectId}</text>
+  <text x="960" y="455" class="small">- 사용자 B: /topic/project/{projectId}</text>
+  <text x="960" y="485" class="small">- 사용자 N: /topic/project/{projectId}</text>
+  <text x="960" y="530" class="small">연결 성공 직후 topic 구독</text>
+
+  <line x1="300" y1="185" x2="360" y2="185" class="arrow"/>
+  <text x="312" y="168" class="step">1) /ws 연결</text>
+
+  <line x1="600" y1="185" x2="680" y2="185" class="arrow"/>
+  <text x="620" y="168" class="step">2) SEND /app/...</text>
+
+  <line x1="980" y1="185" x2="1040" y2="185" class="arrow"/>
+  <text x="992" y="168" class="step">3) @SendTo</text>
+
+  <line x1="1180" y1="250" x2="1180" y2="360" class="arrow"/>
+  <text x="1192" y="315" class="step">4) 브로드캐스트</text>
+
+  <path d="M 1040 430 C 860 430, 860 185, 680 185" class="arrow dashed"/>
+  <text x="800" y="420" class="step">projectId 기준 라우팅</text>
+</svg>
