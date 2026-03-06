@@ -19,6 +19,7 @@ import com.kosa.kosafinalprojbackend.mybatis.mappers.kanbancard.KanbanCardMapper
 import com.kosa.kosafinalprojbackend.mybatis.mappers.kanbancolumn.KanbanColumnMapper;
 import com.kosa.kosafinalprojbackend.mybatis.mappers.member.MemberMapper;
 import com.kosa.kosafinalprojbackend.mybatis.mappers.project.ProjectMapper;
+import com.kosa.kosafinalprojbackend.mybatis.mappers.projectinvite.ProjectInviteMapper;
 import com.kosa.kosafinalprojbackend.mybatis.mappers.projectjoin.ProjectJoinMapper;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,6 +31,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 @Slf4j
 @Service
@@ -42,6 +45,7 @@ public class ProjectService {
     private final KanbanColumnMapper kanbanColumnMapper;
     private final KanbanCardMapper kanbanCardMapper;
     private final EmailService emailService;
+    private final ProjectInviteMapper projectInviteMapper;
 
 
     // 저장
@@ -273,10 +277,25 @@ public class ProjectService {
         ProjectDto projectDto = projectMapper.findByProjectId(projectId)
             .orElseThrow(() -> new CustomBaseException(NOT_FOUND_ID));
 
-        // insert 배치
+        // 프로젝트 참여자 insert 배치
         projectJoinMapper.insertProjectJoins(projectId, memberDtoList);
-        
-        // 초대 이메일 전송
-        emailService.projectInvite(projectDto.getProjectName(), memberDtoList);
+
+        // 초대 상태(PENDING) 선저장
+        projectInviteMapper.insertPendingInvites(projectId, memberDtoList);
+
+        // 커밋 이후 비동기 메일 전송 요청
+        if (TransactionSynchronizationManager.isActualTransactionActive()) {
+            TransactionSynchronizationManager.registerSynchronization(
+                new TransactionSynchronization() {
+                    @Override
+                    public void afterCommit() {
+                        emailService.projectInvite(projectDto.getProjectName(), projectId, memberDtoList);
+                    }
+                }
+            );
+            return;
+        }
+
+        emailService.projectInvite(projectDto.getProjectName(), projectId, memberDtoList);
     }
 }

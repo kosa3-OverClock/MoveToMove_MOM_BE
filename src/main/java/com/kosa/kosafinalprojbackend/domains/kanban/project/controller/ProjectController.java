@@ -148,7 +148,7 @@ public class ProjectController {
 
         projectService.insertProjectJoin(customUserDetails.getId(), projectId, memberDtoList);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
 }
